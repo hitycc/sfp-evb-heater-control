@@ -1,0 +1,10 @@
+D:\VS2019\part3\EVBHeaterControl\bin\Debug\EVBHeaterControl.exe.config
+D:\VS2019\part3\EVBHeaterControl\bin\Debug\EVBHeaterControl.exe
+D:\VS2019\part3\EVBHeaterControl\bin\Debug\EVBHeaterControl.pdb
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.csproj.AssemblyReference.cache
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.Form1.resources
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.Properties.Resources.resources
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.csproj.GenerateResource.cache
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.csproj.CoreCompileInputs.cache
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.exe
+D:\VS2019\part3\EVBHeaterControl\obj\Debug\EVBHeaterControl.pdb
