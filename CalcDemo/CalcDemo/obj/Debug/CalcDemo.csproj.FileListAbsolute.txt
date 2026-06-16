@@ -1,0 +1,8 @@
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\bin\Debug\CalcDemo.exe
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\bin\Debug\CalcDemo.pdb
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\ResolveAssemblyReference.cache
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.Form1.resources
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.Properties.Resources.resources
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.csproj.GenerateResource.Cache
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.exe
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.pdb

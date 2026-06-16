@@ -1,0 +1,11 @@
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\bin\Debug\MyFirstApp.exe
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\bin\Debug\MyFirstApp.pdb
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\obj\Debug\ResolveAssemblyReference.cache
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.exe
+D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.pdb
+G:\Projects\MyFirstApp\MyFirstApp\bin\Debug\MyFirstApp.exe
+G:\Projects\MyFirstApp\MyFirstApp\bin\Debug\MyFirstApp.pdb
+G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.csproj.AssemblyReference.cache
+G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.csproj.CoreCompileInputs.cache
+G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.exe
+G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.pdb
