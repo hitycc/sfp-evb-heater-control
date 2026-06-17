@@ -8,3 +8,13 @@ D:\ProgramData\ProjectDate\Projects\LastEVBControlDemoApp\bin\Debug\LastEVBContr
 D:\ProgramData\ProjectDate\Projects\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.Form1.resources
 D:\ProgramData\ProjectDate\Projects\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.exe
 D:\ProgramData\ProjectDate\Projects\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\bin\Debug\LastEVBControlDemoApp.exe.config
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\bin\Debug\LastEVBControlDemoApp.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\bin\Debug\LastEVBControlDemoApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.csproj.AssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.Form1.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.csproj.GenerateResource.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.csproj.CoreCompileInputs.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\LastEVBControlDemoApp\obj\Debug\LastEVBControlDemoApp.pdb

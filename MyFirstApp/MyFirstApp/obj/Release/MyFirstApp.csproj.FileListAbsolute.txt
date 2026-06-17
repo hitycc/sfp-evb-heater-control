@@ -3,3 +3,9 @@ D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstA
 D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\obj\Release\ResolveAssemblyReference.cache
 D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\obj\Release\MyFirstApp.exe
 D:\Users\Administrator\Documents\Visual Studio 2008\Projects\MyFirstApp\MyFirstApp\obj\Release\MyFirstApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Release\MyFirstApp.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Release\MyFirstApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\bin\Release\MyFirstApp.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\bin\Release\MyFirstApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Release\MyFirstApp.csproj.AssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Release\MyFirstApp.csproj.CoreCompileInputs.cache

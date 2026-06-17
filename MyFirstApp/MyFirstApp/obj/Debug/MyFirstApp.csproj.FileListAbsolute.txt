@@ -9,3 +9,9 @@ G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.csproj.AssemblyReference.
 G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.csproj.CoreCompileInputs.cache
 G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.exe
 G:\Projects\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\bin\Debug\MyFirstApp.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\bin\Debug\MyFirstApp.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.csproj.AssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.csproj.CoreCompileInputs.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\MyFirstApp\MyFirstApp\obj\Debug\MyFirstApp.pdb

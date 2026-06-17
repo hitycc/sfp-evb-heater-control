@@ -6,3 +6,5 @@ D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\o
 D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.csproj.GenerateResource.Cache
 D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.exe
 D:\Users\Administrator\Documents\Visual Studio 2008\Projects\CalcDemo\CalcDemo\obj\Debug\CalcDemo.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\CalcDemo\CalcDemo\obj\Debug\CalcDemo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\CalcDemo\CalcDemo\obj\Debug\CalcDemo.pdb

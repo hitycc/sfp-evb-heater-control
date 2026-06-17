@@ -518,7 +518,7 @@ namespace VP_Communication.Communication.Heater
         /// <returns>1=高电平，0=低电平</returns>
         public string GetTxFalu(int slot)
         {
-            string cmd = string.Format("IO{0}:getTxFalut", slot);
+            string cmd = string.Format("IO{0}:getTxFalu", slot);
             string res = SendCommand(cmd);
 
             if (string.IsNullOrEmpty(res) || !res.Contains("TX_FALU:"))
@@ -644,17 +644,12 @@ namespace VP_Communication.Communication.Heater
                 Console.WriteLine("RS0_HIGH状态：" + rs0High);
 
              // ========== 新增：IIC 读测试代码（对应你表格指令）==========
-            Console.WriteLine("\n===== IIC 读写测试换成端口2=====");
+            Console.WriteLine("\n===== IIC 读写测试 =====");
             // 示例2：IIC读取 IIC2:get a0,0,9  就是你要的查询指令
             string iicReadResult = heater.IIC_Get(2, "a0", "0", "9");
             Console.WriteLine("IIC读取指令：IIC2:get a0,0,9");
             Console.WriteLine("IIC读取返回数据：\n" + iicReadResult);
             // ==========================================================
-
-            // 单独测试 getTxFalut（带t）
-            Console.WriteLine("\n===== 测试指令 getTxFalut（带t） =====");
-            string txFalu1 = heater.GetTxFalu();
-            Console.WriteLine("返回结果：" + (txFalu1 ?? "无数据/指令错误"));
 
             // 4. 断开连接
             Console.WriteLine("\n===== 测试完成 =====");
