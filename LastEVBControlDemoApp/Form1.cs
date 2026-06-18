@@ -325,7 +325,7 @@ namespace LastEVBControlDemoApp
             string abs = _heater.GetABS(DefaultSlot);
 
             // 更新显示
-            lblTxFalu.Text = $"TX_FALU：{(txFalu ?? "无数据")}";
+            lblTxFalu.Text = $"TX_FAULT：{(txFalu ?? "无数据")}";
             lblRxLos.Text = $"RX_LOS：{(rxLos ?? "无数据")}";
             lblABS.Text = $"ABS：{(abs ?? "无数据")}";
 
@@ -357,5 +357,10 @@ namespace LastEVBControlDemoApp
             lblVoltage.Text = $"电压：{(voltage ?? "无数据")} mV";
         }
         #endregion
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

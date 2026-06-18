@@ -518,7 +518,7 @@ namespace VP_Communication.Communication.Heater
         /// <returns>1=高电平，0=低电平</returns>
         public string GetTxFalu(int slot)
         {
-            string cmd = string.Format("IO{0}:getTxFalut", slot);
+            string cmd = string.Format("IO{0}:getTxFault", slot);
             string res = SendCommand(cmd);
 
             if (string.IsNullOrEmpty(res) || !res.Contains("TX_FALU:"))
@@ -652,7 +652,7 @@ namespace VP_Communication.Communication.Heater
             // ==========================================================
 
             // 单独测试 getTxFalut（带t）
-            Console.WriteLine("\n===== 测试指令 getTxFalut（带t） =====");
+            Console.WriteLine("\n===== 测试指令 getTxFault(这里是ult) =====");
             string txFalu1 = heater.GetTxFalu();
             Console.WriteLine("返回结果：" + (txFalu1 ?? "无数据/指令错误"));
 

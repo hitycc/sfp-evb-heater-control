@@ -337,9 +337,9 @@ namespace LastEVBControlDemoApp
             this.lblTxFalu.Font = new System.Drawing.Font("宋体", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lblTxFalu.Location = new System.Drawing.Point(6, 79);
             this.lblTxFalu.Name = "lblTxFalu";
-            this.lblTxFalu.Size = new System.Drawing.Size(70, 11);
+            this.lblTxFalu.Size = new System.Drawing.Size(76, 11);
             this.lblTxFalu.TabIndex = 1;
-            this.lblTxFalu.Text = "TX_FALU：--";
+            this.lblTxFalu.Text = "TX_FAULT：--";
             // 
             // btnQueryAllPin
             // 
@@ -415,6 +415,7 @@ namespace LastEVBControlDemoApp
             this.Controls.Add(this.btnConnect);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.grpPinControl.ResumeLayout(false);
             this.grpPinControl.PerformLayout();
             this.grpPinStatus.ResumeLayout(false);

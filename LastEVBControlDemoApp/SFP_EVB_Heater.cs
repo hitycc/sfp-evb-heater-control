@@ -259,9 +259,9 @@ namespace LastEVBControlDemoApp
         /// </summary>
         public string GetTxFalu(int slot = 1)
         {
-            string cmd = $"IO{slot}:getTxFalu";
+            string cmd = $"IO{slot}:getTxFault";
             string res = SendCommand(cmd);
-            if (string.IsNullOrEmpty(res) || !res.Contains("TX_FALU:")) return null;
+            if (string.IsNullOrEmpty(res) || !res.Contains("TX_FAULT:")) return null;
             return res.Split(':')[1].Trim();
         }
 
