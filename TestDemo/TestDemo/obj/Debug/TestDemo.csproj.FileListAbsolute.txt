@@ -1,0 +1,8 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\bin\Debug\TestDemo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\bin\Debug\TestDemo.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\obj\Debug\ResolveAssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\obj\Debug\TestDemo.Form1.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\obj\Debug\TestDemo.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\obj\Debug\TestDemo.csproj.GenerateResource.Cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\obj\Debug\TestDemo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\TestDemo\TestDemo\obj\Debug\TestDemo.pdb
