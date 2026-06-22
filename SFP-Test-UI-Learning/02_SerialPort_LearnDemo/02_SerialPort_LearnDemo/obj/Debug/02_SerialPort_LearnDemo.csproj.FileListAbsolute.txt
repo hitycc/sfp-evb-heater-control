@@ -1,0 +1,10 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\bin\Debug\02_SerialPort_LearnDemo.exe.config
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\bin\Debug\02_SerialPort_LearnDemo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\bin\Debug\02_SerialPort_LearnDemo.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\02_SerialPort_LearnDemo.csproj.AssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\_02_SerialPort_LearnDemo.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\02_SerialPort_LearnDemo.csproj.GenerateResource.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\02_SerialPort_LearnDemo.csproj.CoreCompileInputs.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\02_SerialPort_LearnDemo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\02_SerialPort_LearnDemo.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\02_SerialPort_LearnDemo\02_SerialPort_LearnDemo\obj\Debug\_02_SerialPort_LearnDemo.Form1.resources
