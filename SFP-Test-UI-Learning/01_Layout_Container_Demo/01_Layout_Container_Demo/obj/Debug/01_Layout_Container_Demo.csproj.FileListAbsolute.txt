@@ -1,0 +1,8 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\obj\Debug\ResolveAssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\obj\Debug\_01_Layout_Container_Demo.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\obj\Debug\01_Layout_Container_Demo.csproj.GenerateResource.Cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\bin\Debug\_01_Layout_Container_Demo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\bin\Debug\_01_Layout_Container_Demo.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\obj\Debug\TestDemo.Form1.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\obj\Debug\_01_Layout_Container_Demo.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\SFP-Test-UI-Learning\01_Layout_Container_Demo\01_Layout_Container_Demo\obj\Debug\_01_Layout_Container_Demo.pdb

@@ -44,18 +44,18 @@
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.tableParam = new System.Windows.Forms.TableLayoutPanel();
+            this.rxPower = new System.Windows.Forms.TextBox();
+            this.txPower = new System.Windows.Forms.TextBox();
+            this.txtTemp = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.txtVoltage = new System.Windows.Forms.TextBox();
-            this.txtTemp = new System.Windows.Forms.TextBox();
-            this.txPower = new System.Windows.Forms.TextBox();
-            this.rxPower = new System.Windows.Forms.TextBox();
             this.panelLogBox = new System.Windows.Forms.Panel();
-            this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.panelStatusBottom = new System.Windows.Forms.Panel();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.flowTopBtn.SuspendLayout();
             this.splitMain.Panel1.SuspendLayout();
             this.splitMain.Panel2.SuspendLayout();
@@ -216,7 +216,8 @@
             this.cboSFPType.Items.AddRange(new object[] {
             "SFP",
             "SFP+",
-            "SFP28"});
+            "SFP28",
+            "800G"});
             this.cboSFPType.Location = new System.Drawing.Point(3, 105);
             this.cboSFPType.Name = "cboSFPType";
             this.cboSFPType.Size = new System.Drawing.Size(121, 20);
@@ -274,6 +275,30 @@
             this.tableParam.Size = new System.Drawing.Size(319, 200);
             this.tableParam.TabIndex = 0;
             // 
+            // rxPower
+            // 
+            this.rxPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.rxPower.Location = new System.Drawing.Point(93, 164);
+            this.rxPower.Name = "rxPower";
+            this.rxPower.Size = new System.Drawing.Size(223, 21);
+            this.rxPower.TabIndex = 7;
+            // 
+            // txPower
+            // 
+            this.txPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txPower.Location = new System.Drawing.Point(93, 114);
+            this.txPower.Name = "txPower";
+            this.txPower.Size = new System.Drawing.Size(223, 21);
+            this.txPower.TabIndex = 6;
+            // 
+            // txtTemp
+            // 
+            this.txtTemp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTemp.Location = new System.Drawing.Point(93, 64);
+            this.txtTemp.Name = "txtTemp";
+            this.txtTemp.Size = new System.Drawing.Size(223, 21);
+            this.txtTemp.TabIndex = 5;
+            // 
             // label2
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -323,30 +348,6 @@
             this.txtVoltage.Size = new System.Drawing.Size(223, 21);
             this.txtVoltage.TabIndex = 4;
             // 
-            // txtTemp
-            // 
-            this.txtTemp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTemp.Location = new System.Drawing.Point(93, 64);
-            this.txtTemp.Name = "txtTemp";
-            this.txtTemp.Size = new System.Drawing.Size(223, 21);
-            this.txtTemp.TabIndex = 5;
-            // 
-            // txPower
-            // 
-            this.txPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txPower.Location = new System.Drawing.Point(93, 114);
-            this.txPower.Name = "txPower";
-            this.txPower.Size = new System.Drawing.Size(223, 21);
-            this.txPower.TabIndex = 6;
-            // 
-            // rxPower
-            // 
-            this.rxPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.rxPower.Location = new System.Drawing.Point(93, 164);
-            this.rxPower.Name = "rxPower";
-            this.rxPower.Size = new System.Drawing.Size(223, 21);
-            this.rxPower.TabIndex = 7;
-            // 
             // panelLogBox
             // 
             this.panelLogBox.BackColor = System.Drawing.Color.LightGray;
@@ -358,17 +359,6 @@
             this.panelLogBox.Name = "panelLogBox";
             this.panelLogBox.Size = new System.Drawing.Size(319, 335);
             this.panelLogBox.TabIndex = 0;
-            // 
-            // rtbLog
-            // 
-            this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbLog.Location = new System.Drawing.Point(0, 0);
-            this.rtbLog.Name = "rtbLog";
-            this.rtbLog.ReadOnly = true;
-            this.rtbLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtbLog.Size = new System.Drawing.Size(319, 335);
-            this.rtbLog.TabIndex = 0;
-            this.rtbLog.Text = "";
             // 
             // panelStatusBottom
             // 
@@ -388,6 +378,17 @@
             this.lblStatus.Size = new System.Drawing.Size(125, 12);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "设备未连接，位置靠左";
+            // 
+            // rtbLog
+            // 
+            this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbLog.Location = new System.Drawing.Point(0, 0);
+            this.rtbLog.Name = "rtbLog";
+            this.rtbLog.ReadOnly = true;
+            this.rtbLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.rtbLog.Size = new System.Drawing.Size(319, 335);
+            this.rtbLog.TabIndex = 0;
+            this.rtbLog.Text = "";
             // 
             // Form1
             // 

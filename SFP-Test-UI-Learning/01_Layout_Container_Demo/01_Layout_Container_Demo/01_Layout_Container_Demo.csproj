@@ -8,8 +8,8 @@
     <ProjectGuid>{9FBD68DD-1D82-4118-95C0-C708074EDDEA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestDemo</RootNamespace>
-    <AssemblyName>TestDemo</AssemblyName>
+    <RootNamespace>_01_Layout_Container_Demo</RootNamespace>
+    <AssemblyName>_01_Layout_Container_Demo</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -68,6 +68,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

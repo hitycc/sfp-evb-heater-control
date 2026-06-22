@@ -15,8 +15,8 @@ namespace TestDemo
         {
             InitializeComponent();
             // 窗体初始化，预先填充SFP型号下拉选项
-            cboSFPType.Items.AddRange(new string[] { "SFP", "SFP+", "SFP28" });
-            cboSFPType.SelectedIndex = 0;
+            //cboSFPType.Items.AddRange(new string[] { "SFP", "SFP+", "SFP28" });
+            //cboSFPType.SelectedIndex = 0;
             // 初始状态栏文字
             lblStatus.Text = "当前状态：设备未连接";
             // 初始化日志

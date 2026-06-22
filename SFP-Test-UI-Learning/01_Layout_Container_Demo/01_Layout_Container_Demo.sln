@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDemo", "TestDemo\TestDemo.csproj", "{9FBD68DD-1D82-4118-95C0-C708074EDDEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01_Layout_Container_Demo", "01_Layout_Container_Demo\01_Layout_Container_Demo.csproj", "{9FBD68DD-1D82-4118-95C0-C708074EDDEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
