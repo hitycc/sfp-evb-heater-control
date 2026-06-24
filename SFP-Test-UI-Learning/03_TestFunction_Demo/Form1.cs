@@ -63,6 +63,7 @@ namespace _03_TestFunction_Demo
             progressTest.Value = 0;
             testDataList.Clear();
             lblTestStatus.Text = "测试：运行中";
+            lblDevStatus.Text = "设备：已连接";
             AddLog("===== 开始批量SFP模块自动测试 =====");
             // 模拟10个光模块循环测试
             int totalModule = 10;
@@ -115,7 +116,6 @@ namespace _03_TestFunction_Demo
                 MessageBox.Show($"保存失败{ex.Message}", "错误");
             }
         }
-
         private void btnSaveCsvReport_Click(object sender, EventArgs e)
         {
             if(testDataList.Count==0)
