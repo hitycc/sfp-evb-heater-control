@@ -110,7 +110,6 @@ namespace _03_TestFunction_Demo
                     result = "不合格";
                     MessageBox.Show($"模块{moduleId}参数超标！\n电压{voltNum}V 温度:{tempNum}℃","温度异常");
                 }
-
                 // 给标签赋值，合格绿色、不合格红色
                 string showStr = $"模块{moduleId} 电压{voltNum} 温度{tempNum}";
                 lblSingleData.Text = showStr;

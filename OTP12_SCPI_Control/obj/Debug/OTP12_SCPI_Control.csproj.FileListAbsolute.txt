@@ -1,0 +1,10 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\bin\Debug\OTP12_SCPI_Control.exe.config
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\bin\Debug\OTP12_SCPI_Control.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\bin\Debug\OTP12_SCPI_Control.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.csproj.AssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.csproj.GenerateResource.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.csproj.CoreCompileInputs.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\OTP12_SCPI_Control\obj\Debug\OTP12_SCPI_Control.Form1.resources
