@@ -46,6 +46,7 @@
     <Compile Include="OTP12Driver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SFP_EVB_Heater.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

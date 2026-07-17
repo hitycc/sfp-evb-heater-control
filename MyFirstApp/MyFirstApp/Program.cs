@@ -646,9 +646,13 @@ namespace VP_Communication.Communication.Heater
              // ========== 新增：IIC 读测试代码（对应你表格指令）==========
             Console.WriteLine("\n===== IIC 读写测试换成端口2=====");
             // 示例2：IIC读取 IIC2:get a0,0,9  就是你要的查询指令
-            string iicReadResult = heater.IIC_Get(2, "a0", "0", "9");
-            Console.WriteLine("IIC读取指令：IIC2:get a0,0,9");
+            string iicReadResult = heater.IIC_Get(2, "a2", "0", "9");
+            Console.WriteLine("IIC读取指令：IIC2:get a2,0,9");
             Console.WriteLine("IIC读取返回数据：\n" + iicReadResult);
+            Console.WriteLine("\n【测试2】传入槽位2 + 器件地址 a2，剩余参数默认");
+            bool writeTest2 = heater.IIC_Set(slot: 2, deviceAddr: "a2");
+            Console.WriteLine($"组装下发指令：IIC2:set a2,0,5,a1,9,1b,2c,3d");
+            Console.WriteLine(writeTest2 ? "✅ 硬件返回 iic set ok，写入成功" : "❌ 硬件无ok返回，写入失败/通信异常");
             // ==========================================================
 
             // 单独测试 getTxFalut（带t）
