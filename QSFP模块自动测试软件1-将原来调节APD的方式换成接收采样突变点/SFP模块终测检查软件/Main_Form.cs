@@ -2210,7 +2210,7 @@ namespace SFP模块终测检查软件
                 return;
             }
             //
-            //autoTestCtrl == false`表示当前自动测试是停止状态，这次点击是 &#x8981;__&#x542F;&#x52A8;__&#x6D4B;试。后面的`else`分支则是停止。
+            //autoTestCtrl == false表示当前自动测试是停止状态，这次点击是运行测试。后面的else分支则是停止。
             //如果启用了Rx DDM测试，需要两个核心仪器：
             //光衰减器(Optical Attenuator)__：可以精确控制光功率衰减量，用于DDM校准时设定不同的标准光功率点（比如 - 5dBm、-15dBm、-24dBm等），也用于灵敏度测试时将光功率调到灵敏度点。
             //光功率计(Optical Power Meter)__：测量当前实际光功率，作为校准的"真值"参考。
@@ -2232,8 +2232,8 @@ namespace SFP模块终测检查软件
                         return;
                     }
                     //2024.05.29
-                    //如果启用了灵敏度测试(`sen_test`)，必须连接误码仪(BERT，Bit Error Rate Tester)。
-                    //误码仪(PSS BERT)__：产生PRBS测试码型发送给模块，同时检测模块接收端输出的数据流，统计误码个数和误码率。灵敏度测试必须有误码仪。
+                    //如果启用了灵敏度测试(sen_test)，必须连接误码仪(BERT，Bit Error Rate Tester)。
+                    //误码仪(PSS BERT)：产生PRBS测试码型发送给模块，同时检测模块接收端输出的数据流，统计误码个数和误码率。灵敏度测试必须有误码仪。
 
                     if (GlobalVarFun.sen_test)
                     {
@@ -2244,10 +2244,13 @@ namespace SFP模块终测检查软件
                         }
                     }
                 }
-                //
+                //眼图仪(Oscilloscope/86100D)：Keysight DCA-X 86100D宽带采样示波器，可以显示眼图并测量消光比(ER)、抖动(Jitter)、眼高/眼宽等参数。
+                //初测必须用眼图仪：因为消光比(ER)调试需要眼图仪来测量ER值，没有眼图仪无法调ER。
+                //终测可以不用眼图仪：终测如果不做眼图模板测试，可以只测光功率不测眼图参数（ER可能通过模块寄存器间接检查，或光功率计足够）。这里是弹提示框但不阻止启动。
+
                 if (GlobalVarFun.tx_test)
                 {
-                    if (GlobalVarFun.instrument_connected == false) // 连接眼图仪判断
+                    if (GlobalVarFun.instrument_connected == false) // 眼图仪连接检查
                     {
                         //2023.3.1修改
                         if (GlobalVarFun.testType == "firstTest")
@@ -2258,47 +2261,61 @@ namespace SFP模块终测检查软件
                         else
                         {
                             MessageBox.Show("终测：发射只测试发光功率，不进行发射眼图参数测试！！！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                           // connection_button.BackColor = System.Drawing.Color.Red;
+                            // connection_button.BackColor = System.Drawing.Color.Red;
+                            // 终测没眼图仪不是致命错误，只是不测眼图，继续运行
                         }
                     }
+                    //测量发射光功率有两种方式：
+                    //用光功率计（optoMeter_connected = true）：外部仪器实测，准确
+                    //用DAC值估算（power_use_DAC = true）：不通过外部仪器，通过模块内部的DAC设置值或Mon背光二极管电流来估算光功率，速度快但精度低
+                    //如果两种方式都没有（既没光功率计也不用DAC估算），就无法测光功率，阻止启动。
+
                     if (GlobalVarFun.optoMeter_connected == false && GlobalVarFun.power_use_DAC == false) // 不使用眼图仪测试发光功率时，连接光功率计判断
                     {
                         MessageBox.Show("请先连接光功率计！ 请确认！！！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                     //2023.3.1修改
+                    //如果选择用DAC方式估算光功率但也需要眼图仪（因为ER还是需要眼图仪测），眼图仪必须连接。
                     if (GlobalVarFun.power_use_DAC == true && GlobalVarFun.instrument_connected == false)
                     {
                         MessageBox.Show("使用眼图仪测试发光功率，请先连接眼图仪！ 请确认！！！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }            
                 }
+                //将SQL记录状态与SQL连接状态同步，确保连接正常才能记录数据。
+                //更新记录状态和SQL连接状态一致 2018.5.19
+                GlobalVarFun.sql_record_status = GlobalVarFun.sql_connect_status;
+                //autoTestCtrl = true：这是核心状态标志。
+                //界面上的Timer或模块检测逻辑会周期性检测模块插入事件，当autoTestCtrl == true
+                //且检测到新模块插入时，自动调用FirstTestProcess()或FinalTestProcess()。
+                autoTestCtrl = true;// 标记自动测试运行中
+                //禁用设置按钮：测试过程中不允许修改参数，防止误操作。
+                btnSetup.Enabled = false;// 禁用设置按钮（测试中不能改参数）
+                //Startautoset_button（开始单只测试按钮）变橙色，提示插入模块。
+                start_button.BackColor = Color.GreenYellow;// 按钮变绿黄色
+                start_button.Text = "停止批量调试";// 按钮文字变为"停止"
                 //
-                //
-                GlobalVarFun.sql_record_status = GlobalVarFun.sql_connect_status;//更新记录状态和SQL连接状态一致 2018.5.19
-                autoTestCtrl = true;
-                btnSetup.Enabled = false;
-                start_button.BackColor = Color.GreenYellow;
-                start_button.Text = "停止批量调试";
-                //
-                Startautoset_button.BackColor = Color.Orange;
+                Startautoset_button.BackColor = Color.Orange;// 提示灯变橙色
                 Startautoset_button.Text = "自动批量测试启动，请插入模块......";
                 //
                 //SetDebugParaCtrlStatus(false);
-                txMustDebug_checkBox.Enabled = false;
+                //txMustDebug_checkBox："发射必须重新调试"选项被禁用，测试过程中不能切换。
+                txMustDebug_checkBox.Enabled = false;// 禁用"必须重新调试"复选框
             }
-            else
+            //停止自动测试模式（else分支）
+            else// autoTestCtrl == true，当前是运行中，点击就是"停止"
             {
-                autoTestCtrl = false;
-                btnSetup.Enabled = true;
-                start_button.BackColor = Color.Gray;
-                start_button.Text = "开始批量调试";
+                autoTestCtrl = false;// 标记停止
+                btnSetup.Enabled = true;// 启用设置按钮
+                start_button.BackColor = Color.Gray;// 按钮变灰色
+                start_button.Text = "开始批量调试";// 文字恢复
                 //
                 Startautoset_button.BackColor = Color.OrangeRed;
                 Startautoset_button.Text = "自动批量测试已停止......";
                 //
                 //SetDebugParaCtrlStatus(true);
-                txMustDebug_checkBox.Enabled = true;
+                txMustDebug_checkBox.Enabled = true; // 启用复选框
             }
         }
 
@@ -2308,44 +2325,79 @@ namespace SFP模块终测检查软件
         {
             string str;
             // 实时更新数据库连接状态
+            //SetLED(pictureBox, isError)：自定义函数，控制界面上的LED图标显示（绿灯 = 正常，红灯 = 异常）。注意参数传的是`!status`，即status为true（正常）时LED灭（false = 绿灯），status为false（异常）时LED亮（true = 红灯）。
+            ////四个LED指示灯分别表示：
+            ///sqlrecord：SQL记录保存状态（上一只模块的测试结果是否成功写入数据库）
+            ///sqlconnt__：SQL Server数据库连接状态
+            ///accessconnt__：Access数据库连接状态
+            ///accessupdated__：Access配置是否已更新 / 加载
+            ///每次定时器触发都刷新这些LED，让操作人员实时看到连接状态。
+
             SetLED(sqlrecord_pictureBox, !GlobalVarFun.sql_record_status);
             SetLED(sqlconnt_pictureBox, !GlobalVarFun.sql_connect_status);
             SetLED(accessconnt_pictureBox, !GlobalVarFun.access_connect_status);
             SetLED(accessupdated_pictureBox, !GlobalVarFun.access_updated_status);
             //
+            //ShowModuleDdmInfo()：从模块实时读取DDM（数字诊断监控）数据，更新界面显示。包括：
+            //模块温度
+            //供电电压VCC
+            //各通道偏置电流Bias
+            //各通道发射 / 接收光功率
+            //这就是为什么即使不按任何按钮，界面上的DDM数值也在跳动——定时器在持续刷新。
+
             ShowModuleDdmInfo();
             
             //更新眼图测试最大累计点
             TestResult.waveforms_count = Convert.ToInt32(GlobalVarFun.waveforms_num);
 
-            pnshow_textBox.Text = TestResult.fibertop_pn;//moduletype_comboBox.Text;
+            //从全局变量 / 模块读取信息显示到界面：
+            //PN(Part Number)：物料编号 / 型号
+            //BN(Batch Number)：批次号
+            //TOSA SN / ROSA SN：发射组件 / 接收组件的序列号（光模块由TOSA + ROSA组成，这些组件本身有序列号，模块组装时写入Flash）
+            //tester_no：测试员编号，从界面文本框读取，记录谁测的这只模块（追溯用）
 
-            TestResult.tester_no = textBoxTester.Text;
-            bn_textBox.Text = TestResult.fibertop_bn;
-            tosaSn_textBox.Text = TestResult.tosa_sn;
-            rosaSn_textBox.Text = TestResult.rosa_sn;
-            Refresh();
-            //
-  
+            pnshow_textBox.Text = TestResult.fibertop_pn;// 料号(PN)
+            TestResult.tester_no = textBoxTester.Text;// 测试员工号
+            bn_textBox.Text = TestResult.fibertop_bn;// 批次号(BN)
+            tosaSn_textBox.Text = TestResult.tosa_sn;// TOSA序列号
+            rosaSn_textBox.Text = TestResult.rosa_sn; // ROSA序列号
+            Refresh();//刷新程序
+
+            //I2C：MCU / 测试板与光模块之间通信的总线协议（Inter - Integrated Circuit）。所有对模块寄存器的读写都通过I2C。
+            //如果I2C通道不可用（USB - I2C适配器未连接 / 驱动异常），直接返回，不做后续检测。这是第一道防线——没有通信手段就什么也做不了。
+
             if (GlobalVarFun.i2c_can_use == false)
             {       
-                return;
+                return;// I2C不可用，直接返回，不做任何检测
             }
+
+            //检查USB转I2C适配器（如Silicon Labs CP2112等）是否正常工作。
+            //usb_i2c_open：USB设备是否已打开 / 连接。
+            //usb_can_use：USB设备是否可用（可能打开了但通信异常）。
+            //注意这里只更新LED，不return，因为USB异常可能是暂时的（如误码仪断连），不影响模块检测。
+
             if (GlobalVarFun.usb_i2c_open == true)
             {
                 if (GlobalVarFun.usb_can_use == false)
                 {
-                    SetLED(usbok_pictureBox, true);
+                    SetLED(usbok_pictureBox, true);// 红灯=USB异常
                     //Startautoset_button.BackColor = Color.Red;
                     //Startautoset_button.Text = "USB连接状态异常, 无法测试 ......";
                     //return;
                 }
                 else
                 {
-                    SetLED(usbok_pictureBox, false);
+                    SetLED(usbok_pictureBox, false);// 绿灯=USB正常
                 }
             }
-            //
+            //模块电压检测（判断模块是否在位）
+            //GetVCC()：读取模块的供电电压。QSFP + 模块标准供电是3.3V。
+            //电压 < 2.0V说明模块不在位__（没插模块时测试座上可能有微小的浮空电压，但不会到3.3V），或者模块电源短路拉低了电压。
+            //moduleOnline = false：标记当前没有模块在线。
+            //LED变红，按钮变橙色（等待状态），return不继续检测。
+            //如果电压≥2.0V（说明模块已插入且供电正常），I2C灯变绿，继续往下执行。
+            //这是判断"有没有插模块"的关键检测点__——通过模块自身的供电电压来判断物理存在。
+
             if (test.GetVCC() < 2.0) //电源电压小于2.00V 异常模块
             {
                 moduleOnline = false;
@@ -2356,30 +2408,45 @@ namespace SFP模块终测检查软件
                 Startautoset_button.BackColor = Color.Orange;
                 return;
             }
-            //
+            //I2C绿灯
             SetLED(i2cok_pictureBox1, false);
             SetLED(i2cok_pictureBox2, false);
             //
-            //2021.5.29 增加模块方案检查选择
+            //2021.5.29 增加模块方案检查选择 模块方案/芯片类型检查
             if (GlobalVarFun.distype_check)
             {
+                // 禁用类型检查模式：清空类型LED，标记芯片OK
                 TestResult.chipIsOK = true;
                 typeok_pictureBox1.Image = imageList1.Images["LedNone.ico"];
                 sr850_pictureBox1.Image = imageList1.Images["LedNone.ico"];
                 chipok_pictureBox1.Image = imageList1.Images["LedNone.ico"];
             }
+            //模块方案 / 芯片类型检查：
+            //distype_check：如果开启了"禁用类型检查"（调试模式），则跳过类型校验，清空所有类型LED。
+            //否则调用CheckTestTypeInfo()：从模块寄存器读取芯片 / 方案标识信息，判断是否与当前选择的测试方案匹配。例如读取芯片ID判断是GN1196还是GN25L95等芯片方案。
+            //涉及三个LED：
+            //typeok：模块类型是否匹配（绿灯 = 匹配，红灯 = 不匹配）
+            //sr850：是否是SR / 850nm多模方案的指示灯chipok：芯片是否正常工作
+            //如果类型不匹配（比如选了100G方案但插的是40G模块），类型灯变红，return不继续测试。__防止测错模块__。
+
             else
             {
                 if (test.CheckTestTypeInfo() == false) // 模块方案类型信息判断
                 {
-                    SetLED(typeok_pictureBox1, true);
+                    SetLED(typeok_pictureBox1, true);// 类型错误红灯
                     sr850_pictureBox1.Image = imageList1.Images["LedNone.ico"];
                     chipok_pictureBox1.Image = imageList1.Images["LedNone.ico"];
                     return;
                 }
-                SetLED(typeok_pictureBox1, false);
+                SetLED(typeok_pictureBox1, false);// 类型正确绿灯
             }
-            //       
+            //ShowCheckModuleStatus()：这是一个综合检查函数，通常包括：
+            //读取模块的状态寄存器（如Tx / Rx使能状态、Fault状态、模块是否Ready）
+            //判断固件版本是否匹配
+            //检查芯片工作模式是否正常（是否在正确的工作速率下）
+            //读取模块速率等级
+            //如果芯片工作状态异常（如模块内部故障、固件不对、未完成初始化），按钮变红，拒绝测试。
+    
             ShowModuleDdmInfo();// 显示DDM信息
             //
             if (ShowCheckModuleStatus() == false) //显示并判断模块方案/速率/版本/工作状态等信息
@@ -2387,45 +2454,72 @@ namespace SFP模块终测检查软件
                 Startautoset_button.BackColor = Color.Red;
                 Startautoset_button.Text = "模块芯片工作状态异常Error, 无法测试 ......";
                 return;
-            }           
+            }
             //
             // 判断自动批量调试是否启动
+            //这就是前面start_button_Click()中设置的autoTestCtrl标志。如果操作人员没有点"开始批量调试"，即使有模块插入也不会自动测试。
+            //手动测试模式下，这个定时器只做状态显示和LED更新，不自动启动测试流程。
             if (autoTestCtrl == false)
             {
                 //AddTestLog(errorMessage); //
                 return;
             }
             //
-            //2018.5.19  SQL数据连接并且测试记录保存出错进入异常处理
+            //2018.5.19  SQL数据连接并且测试记录保存出错进入异常处理 这段被注释掉了。原本的逻辑是：如果SQL连接正常但上一条记录保存失败，阻止继续测试。被注释可能是因为不想让数据库问题阻塞产线测试（模块测试通过了但没存上数据库，总比完全测不了强）。
+
             if ((GlobalVarFun.sql_connect_status == true) && (GlobalVarFun.sql_record_status == false))
             {
                 //Startautoset_button.BackColor = Color.OrangeRed;
                 //Startautoset_button.Text = "已测试模块参数记录保存SQL数据库异常, 请停止自动测试并检查连接 ......";
                 //return;
             }
-            //
+            //条件1：moduleOnline == false：上一次没有模块在测试（即上一只模块已经测试完成或还没插模块）。这个标志防止对同一只模块重复启动测试。
+            //条件2：test.CheckDebugPWD() == 0x02：检查调试密码寄存器，返回值0x02表示模块 &#x5DF2;__&#x6B63;确响应I2C通信并且进入了可调试状态__。这实际上是在确认：
+            //模块物理上已经插上（I2C有应答）
+            //模块供电稳定且芯片已完成上电初始化（刚插入时芯片需要几百ms启动）
+            //模块是正确的类型（能响应调试密码检查）
+            //返回值0x02是协议定义的"密码验证成功/模块就绪"状态码（其他值如0x00可能表示无应答，0x01表示密码错误等）
+
             if ((moduleOnline == false) && (test.CheckDebugPWD() == 0x02)) // 检测到 新测试模块插入测试板
             {
+                // 检测到新模块插入！
+                //timer.Reset(); timer.Start()：
+                //启动/重置一个高精度计时器（Stopwatch），用于统计这只模块的测试耗时。
                 timer.Reset();
                 timer.Start();
-                //
+                //清空数据：清掉上一只模块的日志和结果显示，准备新一轮测试。
                 errorMessage = "";
-                ClearTestLog();
-                ClearTextVal();
+                ClearTestLog();// 清空上一只模块的测试日志
+                ClearTextVal();// 清空界面上的测试结果数值
                 //
                 progressBar1.Value = 0;
-                Startautoset_button.BackColor = Color.Honeydew;
+                Startautoset_button.BackColor = Color.Honeydew;// 蜜白色=准备测试
                 Startautoset_button.Text = "已检测到模块插入, 请不要插拔模块......";
-                moduleOnline = true;
+                //moduleOnline = true：标记模块已在线，后续Tick不会重复触发（除非模块被拔出，在段6的电压检测中moduleOnline会被重置为false）。
+                moduleOnline = true;// 标记模块在线
                 Refresh();
             }
             else
             {
-                return;
-            }         
-            //
+                return;// 不是新模块插入（模块已在测试或无模块），直接返回 如果条件不满足（else），直接return，等待下一次Tick再检测。
+            }
+
+            //Read_moduleInfo()：从模块的A0/A2 EEPROM页读取基本信息，包括：
+            //模块型号PN(Part Number)
+            //序列号SN(Serial Number)
+            //厂商信息
+            //波长、传输距离、速率等级等
+            //校准类型（内部校准 / 外部校准）
+            //接口类型等
+            //这些信息是从模块的标准SFF - 8436 / 8472规定的内存区域读取的，每个光模块都必须有。
+            //读取后填充到TestResult结构体和界面文本框中（pn_textBox、sn_textBox等）。
+
             Read_moduleInfo();
             //
+            //原本有温度范围检查（0~40°C），但整个if条件被注释掉了。
+            //可能原因：某些型号模块刚插入时TEC还没稳定，温度可能瞬间超过40°C，导致误判；或者产线环境温度本来就高，这个检查被暂时禁用。
+            //goto RTN_POS：直接跳到函数末尾的收尾代码（停止计时、显示测试时间）。使用goto在这里是为了统一出口处理。
+
             // 模块DDM温度判断 0~40
             //if ((GlobalVarFun.testType != "firstTest") || ((GlobalVarFun.moduleType != "SFPP-GN1196") && (GlobalVarFun.moduleType != "SFP-GN25L95") && (GlobalVarFun.moduleType != "SFP-GN25L96") && (GlobalVarFun.moduleType != "SFP-UX3320C") && (GlobalVarFun.moduleType != "SFP-UX3320T")))
             //{
@@ -2436,7 +2530,12 @@ namespace SFP模块终测检查软件
             //        goto RTN_POS;  //return;
             //    }
             //}
+
             // 模块DDM电压判断 3.15~3.45V  //终测
+            // 终测模式下检查模块供电电压是否在3.15V~3.45V范围内（标准3.3V±5 % 左右）。
+            // 为什么终测才检查，初测不检查？__ 因为初测是调试阶段，模块在TEC启动瞬间电流很大，电压可能短暂跌落，初测时电压还没完全稳定；而终测时模块已经经过初测、参数写入Flash、重新上电，此时电压应该完全稳定在正常范围内。终测是出货检验，要求更严格。
+            // 电压异常说明模块可能存在短路、功耗过大等硬件问题。
+
             if (GlobalVarFun.testType != "firstTest")
             {
                 if ((TestResult.vccDDM > 3.45) || (TestResult.vccDDM < 3.15))
@@ -2448,6 +2547,11 @@ namespace SFP模块终测检查软件
             }
             //
             // 模块型号比较
+            //防呆机制：确保插入的模块型号与当前选择的测试方案一致。如果选了"QSFP-LR4"方案但插了一只"QSFP-SR4"模块，测试参数完全不同，测出来肯定不对。
+            //两种模式：
+            //客户定制型号(CPN, Customer Part Number)：为特定客户定制的模块，型号存储在cpn_textBox中，需要与模块内部写入的客户料号比对。
+            //自有品牌型号：比对模块内部的PN与GlobalVarFun.moduleType（软件选择的模块型号）。
+            //这是非常重要的防错措施，产线工人可能插错模块类型，如果没有这个校验，错误型号的模块会被错误的参数调试，直接损坏模块或导致测试结果无效。
             if (cpn_checkBox.Checked) // 客户定制型号
             {
                 if ((pn_textBox.Text).Trim() != (cpn_textBox.Text).Trim())
@@ -2458,7 +2562,7 @@ namespace SFP模块终测检查软件
                 }
                 Refresh();
             }
-            else // 飞思卓型号
+            else // 飞思卓自有品牌型号
             {
                 if ((pn_textBox.Text).Trim() != (GlobalVarFun.moduleType).Trim())
                 {
@@ -2468,13 +2572,17 @@ namespace SFP模块终测检查软件
                 }
             }
             //
-            GlobalVarFun.record_need_save = false;
+            GlobalVarFun.record_need_save = false;  // 重置保存标志
             //
+            //重置record_need_save标志（测试过程中各项通过后会设为true）。
+            //清空界面上的接收光功率显示框。
+            //进度条设为5 %，按钮显示"测试中"，提示操作人员不要插拔模块。
+
             ddm_rxpower1_textbox.Text = "";
             ddm_rxpower2_textbox.Text = "";
             ddm_rxpower3_textbox.Text = "";
             ddm_rxpower4_textbox.Text = "";
-            ddm_rxpower5_textbox.Text = "";
+            ddm_rxpower5_textbox.Text = ""; // 清空Rx功率显示
             //label_apcval.Text = "test";
             //label_modval.Text = "test";
             // label_losval.Text = "test";
@@ -2488,6 +2596,12 @@ namespace SFP模块终测检查软件
             errorMessage = "";
             testLog_textBox.ForeColor = Color.Red;
             //
+            //根据当前测试类型调用对应的处理函数：
+            //firstTest（初测）：调用`FirstTestProcess()`进行参数调试和校准（之前你已经看过了这个函数）
+            //finalTest（终测）：调用`FinalTestProcess()`进行参数验证检查
+            //注意：这两个函数的返回值(bool)在这里没有被判断！函数内部已经自行处理了按钮颜色和文字（成功→绿灯，失败→红灯），这里只是调用，不需要再判断返回值。
+            //这是一个同步调用：FirstTestProcess()/FinalTestProcess()会在UI线程上阻塞执行（可能几十秒到几分钟），在这期间定时器的Tick事件不会被处理（因为同一个UI线程被占了）。这也是为什么测试过程中界面会"卡死"——这是你们做多线程改造的核心原因。
+
             if (GlobalVarFun.testType == "firstTest")
             {
                 FirstTestProcess(); // 初测调试处理
@@ -2495,11 +2609,18 @@ namespace SFP模块终测检查软件
             else // (GlobalVarFun.testType == "finalTest")
             {
                 FinalTestProcess(); // 终测检查处理
-            }            
+            }
             ///////////////////////////////////////////////////////////////////////////////////////////////
+            
+            //不管测试成功还是失败（包括goto RTN_POS跳过来的异常情况），都会执行到这里。
+            //RTN_POS是C#的标签(label)，配合goto RTN_POS使用，实现"统一出口"模式——所有异常路径都跳到这里做收尾工作。
+            //停止Stopwatch计时器，计算测试耗时。测试时间对产线效率很重要（如"初测平均45秒/只"决定了产线产能）。
+            //Substring(3, 7)截取时间字符串的"分:秒.毫秒"部分显示。
+            //最后的Refresh()刷新界面，确保所有按钮颜色、文字、进度条都正确显示。
+            //注意这里没有重置moduleOnline = false！这是因为moduleOnline是在段6（电压<2V时）才重置的。也就是说，测试完成后`moduleOnline`仍然是true，只有当工人把模块拔下来（电压掉下去），下一次Tick检测到电压<2V时才会重置`moduleOnline = false`，准备检测下一只模块。
 
             RTN_POS:
-            timer.Stop();
+            timer.Stop();// 停止计时
             str = timer.Elapsed.ToString();
             //str = str.Substring(6, 5);
             str = str.Substring(3, 7);
