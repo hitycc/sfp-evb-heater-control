@@ -2132,7 +2132,7 @@ namespace SFP模块终测检查软件
             //bias：激光器偏置电流范围（单位mA）
             //er：消光比(ER)范围（单位dB）
             //"F1"：格式化为1位小数
-            //这些值来源于TestSet结构体（可能是从配置窗体Setup_Form或Access数据库加载的），显示出来是为了让操作人&#x5458;__&#x786E;认参数正确。
+            //这些值来源于TestSet结构体（可能是从配置窗体Setup_Form或Access数据库加载的），显示出来是为了让操作人确认参数正确。
             txpwr_min_textBox.Text = TestSet.txPwr_Min.ToString("F1");
             txpwr_max_textBox.Text = TestSet.txPwr_Max.ToString("F1");
             bias_min_textBox.Text = TestSet.bias_Min.ToString("F1");
@@ -2212,8 +2212,8 @@ namespace SFP模块终测检查软件
             //
             //autoTestCtrl == false表示当前自动测试是停止状态，这次点击是运行测试。后面的else分支则是停止。
             //如果启用了Rx DDM测试，需要两个核心仪器：
-            //光衰减器(Optical Attenuator)__：可以精确控制光功率衰减量，用于DDM校准时设定不同的标准光功率点（比如 - 5dBm、-15dBm、-24dBm等），也用于灵敏度测试时将光功率调到灵敏度点。
-            //光功率计(Optical Power Meter)__：测量当前实际光功率，作为校准的"真值"参考。
+            //光衰减器(Optical Attenuator)：可以精确控制光功率衰减量，用于DDM校准时设定不同的标准光功率点（比如 - 5dBm、-15dBm、-24dBm等），也用于灵敏度测试时将光功率调到灵敏度点。
+            //光功率计(Optical Power Meter)：测量当前实际光功率，作为校准的"真值"参考。
             if (autoTestCtrl == false)
             {
                 if (GlobalVarFun.rx_ddm_test)
@@ -2328,9 +2328,9 @@ namespace SFP模块终测检查软件
             //SetLED(pictureBox, isError)：自定义函数，控制界面上的LED图标显示（绿灯 = 正常，红灯 = 异常）。注意参数传的是`!status`，即status为true（正常）时LED灭（false = 绿灯），status为false（异常）时LED亮（true = 红灯）。
             ////四个LED指示灯分别表示：
             ///sqlrecord：SQL记录保存状态（上一只模块的测试结果是否成功写入数据库）
-            ///sqlconnt__：SQL Server数据库连接状态
-            ///accessconnt__：Access数据库连接状态
-            ///accessupdated__：Access配置是否已更新 / 加载
+            ///sqlconnt：SQL Server数据库连接状态
+            ///accessconnt：Access数据库连接状态
+            ///accessupdated：Access配置是否已更新 / 加载
             ///每次定时器触发都刷新这些LED，让操作人员实时看到连接状态。
 
             SetLED(sqlrecord_pictureBox, !GlobalVarFun.sql_record_status);
@@ -2474,7 +2474,7 @@ namespace SFP模块终测检查软件
                 //return;
             }
             //条件1：moduleOnline == false：上一次没有模块在测试（即上一只模块已经测试完成或还没插模块）。这个标志防止对同一只模块重复启动测试。
-            //条件2：test.CheckDebugPWD() == 0x02：检查调试密码寄存器，返回值0x02表示模块 &#x5DF2;__&#x6B63;确响应I2C通信并且进入了可调试状态__。这实际上是在确认：
+            //条件2：test.CheckDebugPWD() == 0x02：检查调试密码寄存器，返回值0x02表示模块响应I2C通信并且进入了可调试状态。这实际上是在确认：
             //模块物理上已经插上（I2C有应答）
             //模块供电稳定且芯片已完成上电初始化（刚插入时芯片需要几百ms启动）
             //模块是正确的类型（能响应调试密码检查）
@@ -2667,7 +2667,7 @@ namespace SFP模块终测检查软件
 
             // 0、写入TX-PE等调试参数 高速信号在 PCB 走线中会衰减，预加重是在发射端提前增强高频分量，补偿传输损耗
             //调试前先把参数复位到已知的初始状态，确保调试从一致的基础开始
-            //__PE = Pre-emphasis（预加重）__：高速数字信号在传输线上传输时，高频分量衰减比低频分量大。
+            //PE = Pre-emphasis（预加重）：高速数字信号在传输线上传输时，高频分量衰减比低频分量大。
             //预加重是在发射端预先提升高频分量，补偿传输线的高频损耗，使接收端眼图张开。
             //为什么要先写默认值？因为如果模块之前被调试过（比如重试），
             //寄存器里可能有上次的调试值，从一个确定的初始状态开始调试更可靠。
@@ -2682,7 +2682,7 @@ namespace SFP模块终测检查软件
                     return false;
                 }
             }
-            /*调试阶段为什么需要关闭CDR;CDR__？因为CDR会"掩盖"信号质量问题。
+            /*调试阶段为什么需要关闭CDR;CDR？因为CDR会"掩盖"信号质量问题。
             我们需要看到信号的真实质量来校准APD偏压和光功率，如果CDR开着，可能会把已经很差的信号"修复"好，导致调试出来的参数在实际使用中（CDR也能修复的范围内）没问题，
             但超出CDR修复能力就出问题。调试时必须看"裸信号"。*/
             if (GlobalVarFun.txrx_cdr_dis)
@@ -2699,13 +2699,13 @@ namespace SFP模块终测检查软件
                 AddTestLog("TxRx_CDR操作完成！");
             }
             //接收(Rx)调试——主循环
-            /*-这是一个测试设备配置分支，有三种情况：
-            1.__多模模块(MM)__：必须使用物理光开关切换，用光开关把光功率计 / 误码仪的光通路切换到第i + 1通道（光开关通道从1开始编号，所以i + 1）。多模下光开关切换用try - catch包裹，因为多模光开关可能有机械异常。
-            2.__单模 + 有光开关__：同样用光开关切换。
-            3.__单模 + 无光开关__：用软件方式使能对应通道的光源（通过误码仪 / BERT的通道控制来开启第i通道的光输出）。
-            - `opticalSwitchSet(channel)`：控制物理光开关器件将光路径切换到指定通道。
-            - `SourceSoftEn(i)`：通过USB / GPIB控制误码仪(BERT)，打开发射通道i的光输出。
-            - `GlobalVarFun.usb_can_use = false`：如果光源使能失败，标记USB设备可能异常（如误码仪USB断线），后续流程可能会尝试重连。*/
+            /*这是一个测试设备配置分支，有三种情况：
+            1.多模模块(MM)：必须使用物理光开关切换，用光开关把光功率计 / 误码仪的光通路切换到第i + 1通道（光开关通道从1开始编号，所以i + 1）。多模下光开关切换用try - catch包裹，因为多模光开关可能有机械异常。
+            2.单模 + 有光开关：同样用光开关切换。
+            3.单模 + 无光开关：用软件方式使能对应通道的光源（通过误码仪 / BERT的通道控制来开启第i通道的光输出）。
+            - opticalSwitchSet(channel)：控制物理光开关器件将光路径切换到指定通道。
+            - SourceSoftEn(i)：通过USB / GPIB控制误码仪(BERT)，打开发射通道i的光输出。
+            - GlobalVarFun.usb_can_use = false：如果光源使能失败，标记USB设备可能异常（如误码仪USB断线），后续流程可能会尝试重连。*/
             if (GlobalVarFun.rx_ddm_test)
             {
                 for (int i = 0; i < 4; i++)
@@ -3029,7 +3029,7 @@ namespace SFP模块终测检查软件
                     if (TxDebugIsOKCheck() == false)
                     {
                         //发射光功率自动调试（APC）
-                        //APC = Automatic Power Control（自动功率控制）__：通过调节激光器的偏置电流(Bias Current)来控制发射光功率到目标值（如0~3dBm，依规格而定）。
+                        //APC = Automatic Power Control（自动功率控制）：通过调节激光器的偏置电流(Bias Current)来控制发射光功率到目标值（如0~3dBm，依规格而定）。
                         //激光器的光功率 - 电流(P - I)曲线是非线性的，而且每个激光器因制造差异P - I曲线不同，需要逐只校准。
                         //TxPowerAutoSet()：自动搜索Bias DAC值，通常是逐步增大Bias电流，同时用光功率计实时监测光功率，直到光功率达到目标值范围。
                         if (TxPowerAutoSet() == false)

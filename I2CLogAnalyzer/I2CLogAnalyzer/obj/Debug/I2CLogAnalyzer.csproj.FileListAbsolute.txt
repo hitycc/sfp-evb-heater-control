@@ -1,0 +1,10 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\bin\Debug\I2CLogAnalyzer.exe.config
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\bin\Debug\I2CLogAnalyzer.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\bin\Debug\I2CLogAnalyzer.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.csproj.AssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.Form1.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.csproj.GenerateResource.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.csproj.CoreCompileInputs.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\I2CLogAnalyzer\I2CLogAnalyzer\obj\Debug\I2CLogAnalyzer.pdb
