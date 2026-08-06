@@ -99,7 +99,30 @@ namespace LastEVBControlDemoApp
                     byte[] recBuf = new byte[2048];
                     int recLen = _clientSocket.Receive(recBuf, SocketFlags.None);
                     if (recLen <= 0) return null;
-                    return Encoding.UTF8.GetString(recBuf, 0, recLen).Trim();
+                    string raw = Encoding.UTF8.GetString(recBuf, 0, recLen).Trim();
+                    // 清洗SCPI提示符（如 READY>、SCPI>、LINS001> 等）
+                    // 设备返回格式：响应数据\r\n<提示符>，需去掉末尾的提示符行
+                    string[] lines = raw.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+                    int lastValidIdx = lines.Length - 1;
+                    // 从末尾向前跳过空行和提示符行（纯字母/数字以>结尾的行）
+                    while (lastValidIdx >= 0)
+                    {
+                        string line = lines[lastValidIdx].Trim();
+                        if (string.IsNullOrEmpty(line))
+                        {
+                            lastValidIdx--;
+                            continue;
+                        }
+                        // 判断是否为SCPI提示符行：匹配 READY> / SCPI> / LINSxxx> 等
+                        if (line.EndsWith(">") && !line.Contains(" ") && !line.Contains(","))
+                        {
+                            lastValidIdx--;
+                            continue;
+                        }
+                        break;
+                    }
+                    if (lastValidIdx < 0) return raw; // 全部是提示符，返回原始
+                    return string.Join("\r\n", lines, 0, lastValidIdx + 1).Trim();
                 }
                 catch
                 {

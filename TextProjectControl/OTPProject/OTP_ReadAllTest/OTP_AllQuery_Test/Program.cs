@@ -1,498 +1,194 @@
-﻿using System;
+using System;
+using System.Threading;
 
 namespace LastEVBControlDemoApp
 {
     class Program
     {
+        // ========== 测试参数配置 ==========
+        const string Slot = "09";                       // VOA槽位号（接收端衰减）
+        const int Ch = 1;                               // VOA通道
+        const string DeviceIp = "192.168.100.156";      // 设备IP
+        const int DevicePort = 5024;                    // SCPI端口
+        const int StabilizeMs = 2000;                   // 功率稳定等待时间(ms)
+        static readonly double[] TargetPowers = { -8, -22, -30 };  // 目标功率列表(dBm)
+
+        // ========== 光开关配置（加热台1号通道 → 接收路径）==========
+        // 供应商说明：测接收前必须先切光开关到接收，否则模块Tx反向进光导致VOA异常
+        // Rx接收方向：光源/VOA(inCh=2) → 模块Rx(outCh=1)  槽位11
+        const string SwitchSlot = "11";
+        const int RxSwitchInCh = 2;
+        const int RxSwitchOutCh = 1;
+        // 测试结束后切回Tx发射：模块Tx(inCh=1) → 仪器(outCh=2)
+        const int TxSwitchInCh = 1;
+        const int TxSwitchOutCh = 2;
+
         static void Main(string[] args)
         {
-            Console.WriteLine("===== 光开关 + 光功率测试 =====");
+            Console.WriteLine("============================================");
+            Console.WriteLine("  VOA接收端光功率/衰减值 测试程序");
+            Console.WriteLine("  VOA槽位: {0}  通道: {1}", Slot, Ch);
+            Console.WriteLine("  光开关槽位: {0}  接收路径: in{1}→out{2}", SwitchSlot, RxSwitchInCh, RxSwitchOutCh);
+            Console.WriteLine("  目标功率: {0} dBm", string.Join(", ", TargetPowers));
+            Console.WriteLine("============================================");
+            Console.WriteLine();
+            Console.WriteLine("[提示] 请先确认光模块已插入加热台，外部光源正常。");
+            Console.WriteLine("按任意键开始测试...");
+            Console.ReadKey(true);
+            Console.WriteLine();
 
-            // 1. 初始化设备
-            OTP12Driver otp12 = new OTP12Driver();
-            SFP_EVB_Heater heater = new SFP_EVB_Heater();
-
-            // 2. 连接 OTP12
-            Console.Write("连接 OTP12...");
-            if (otp12.Connect("192.168.100.156"))  // 改成你的OTP12 IP
+            OTP12Driver drv = new OTP12Driver();
+            try
             {
-                Console.WriteLine("成功！");
+                // ------ 1. 连接设备 ------
+                Console.WriteLine("[1] 连接设备 {0}:{1} ...", DeviceIp, DevicePort);
+                if (!drv.Connect(DeviceIp, DevicePort))
+                {
+                    Console.WriteLine("错误：连接失败！请检查IP/网络。");
+                    Console.ReadKey();
+                    return;
+                }
+                Console.WriteLine("  -> 连接成功。");
+                string idn = drv.QueryDeviceInfo();
+                Console.WriteLine("  -> 设备信息: {0}", idn ?? "无响应");
+                Console.WriteLine();
+
+                // ------ 2. 先切光开关到接收路径（关键！防止模块Tx反向进光）------
+                Console.WriteLine("[2] 切换光开关到接收路径（槽位{0}, in{1}→out{2}）...", SwitchSlot, RxSwitchInCh, RxSwitchOutCh);
+                drv.SetSlot(SwitchSlot);
+                bool swOk = drv.SW_SetChannel(RxSwitchInCh, RxSwitchOutCh);
+                Console.WriteLine("  -> 光开关切换: {0}", swOk ? "OK" : "FAIL");
+                // 切回VOA槽位
+                drv.SetSlot(Slot);
+                Thread.Sleep(500); // 等待光开关切换稳定
+                Console.WriteLine();
+
+                // ------ 3. 配置VOA通道 ------
+                Console.WriteLine("[3] 配置VOA通道{0} ...", Ch);
+                bool ok;
+                ok = drv.VOA_SetMode(Ch, "POWer");
+                Console.WriteLine("  -> 功率控制模式(POWer): {0}", ok ? "OK" : "FAIL");
+               /* ok = drv.VOA_SetAlcState(Ch, "ON");
+                Console.WriteLine("  -> ALC自动功率跟踪(ON): {0}", ok ? "OK" : "FAIL");
+                ok = drv.VOA_SetApMode(Ch, "ABSolute");
+                Console.WriteLine("  -> 绝对功率模式(ABSolute): {0}", ok ? "OK" : "FAIL");*/
+                ok = drv.VOA_SetOutputState(Ch, "ON");
+                Console.WriteLine("  -> 输出光路(ON): {0}", ok ? "OK" : "FAIL");
+                Console.WriteLine();
+
+                // ------ 4. 逐点测试 ------
+                Console.WriteLine("[4] 开始逐点测试...");
+                Console.WriteLine();
+                Console.WriteLine("+----------------------------------------------------------------+");
+                Console.WriteLine("| 目标功率(dBm) | 实际功率(dBm) | 衰减值(dB)  | 输入功率(dBm) |");
+                Console.WriteLine("+----------------------------------------------------------------+");
+
+                foreach (double target in TargetPowers)
+                {
+                    Console.WriteLine("  设置目标功率: {0} dBm ...", target);
+                    bool setOk = drv.VOA_SetOutPower(Ch, target);
+                    if (!setOk)
+                    {
+                        Console.WriteLine("  -> 设置失败，跳过该点。");
+                        Console.WriteLine("|{0,10}     |{1,12}     |{2,10}     |{3,11}     |",
+                            target, "ERR", "ERR", "ERR");
+                        continue;
+                    }
+
+                    Console.WriteLine("  等待 {0}ms 功率稳定...", StabilizeMs);
+                    Thread.Sleep(StabilizeMs);
+
+                    string outPwrStr = drv.VOA_GetOutputPower(Ch);   // 实际输出功率
+                    string inPwrStr  = drv.VOA_GetInputPower(Ch);     // 输入功率
+
+                    // 计算实际衰减 = 输入功率 - 输出功率（与Web面板一致）
+                    // POWer模式下INPut:ATT?返回的是设定值而非ALC实时衰减，所以用功率差计算
+                    string attStr = CalcAttenuation(inPwrStr, outPwrStr);
+
+                    Console.WriteLine("|{0,10}     |{1,12}     |{2,10}     |{3,11}     |",
+                        target, Fmt(outPwrStr), attStr, Fmt(inPwrStr));
+                }
+
+                Console.WriteLine("+----------------------------------------------------------------+");
+                Console.WriteLine();
+
+/*                // ------ 5. 收尾 ------
+                Console.WriteLine("[5] 测试完成，关闭VOA输出...");
+                drv.SetSlot(Slot);
+                drv.VOA_SetOutputState(Ch, "OFF");
+                Console.WriteLine("  -> VOA输出已关闭。");*/
+
+                // 切回光开关发射路径（方便后续测发射端）
+                Console.WriteLine("  切回光开关发射路径（槽位{0}, in{1}→out{2}）...", SwitchSlot, TxSwitchInCh, TxSwitchOutCh);
+                drv.SetSlot(SwitchSlot);
+                bool swBack = drv.SW_SetChannel(TxSwitchInCh, TxSwitchOutCh);
+                Console.WriteLine("  -> 光开关切回: {0}", swBack ? "OK" : "FAIL");
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("失败！按任意键退出");
-                Console.ReadKey();
-                return;
+                Console.WriteLine("异常: " + ex.Message);
+            }
+            finally
+            {
+                drv.DisConnect();
+                Console.WriteLine("  -> 已断开连接。");
             }
 
-            // 3. 连接加热台
-            Console.Write("连接加热台...");
-            if (heater.Open("129.168.1.133"))  // 改成你的加热台IP
+            Console.WriteLine();
+            Console.WriteLine("按任意键退出...");
+            Console.ReadKey(true);
+        }
+
+        /// <summary>
+        /// 根据输入功率和输出功率计算实际衰减值 (dB)
+        /// 衰减 = 输入功率(dBm) - 输出功率(dBm)
+        /// </summary>
+        static string CalcAttenuation(string inPwrRaw, string outPwrRaw)
+        {
+            double inPwr = ParseDbm(inPwrRaw);
+            double outPwr = ParseDbm(outPwrRaw);
+            if (double.IsNaN(inPwr) || double.IsNaN(outPwr))
+                return "N/A";
+            double att = inPwr - outPwr;
+            return att.ToString("F3");
+        }
+
+        /// <summary>
+        /// 解析SCPI返回的dBm数值字符串（支持科学计数、带单位格式）
+        /// </summary>
+        static double ParseDbm(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return double.NaN;
+            string s = raw.Trim();
+            string[] parts = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string num = parts[0];
+            if (double.TryParse(num,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double v))
             {
-                Console.WriteLine("成功！");
+                return v;
             }
-            else
+            return double.NaN;
+        }
+
+        /// <summary>
+        /// 将SCPI返回的数值字符串（可能带科学计数、可能带单位）格式化为3位小数字符串
+        /// </summary>
+        static string Fmt(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "N/A";
+            string s = raw.Trim();
+            string[] parts = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string num = parts[0];
+            if (double.TryParse(num,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double v))
             {
-                Console.WriteLine("失败！按任意键退出");
-                Console.ReadKey();
-                return;
+                return v.ToString("F3");
             }
-
-            // ========== 测试 1 号模块 TX 发射 ==========
-            Console.WriteLine("\n===== 测试 1 号模块 TX 发射 =====");
-
-            // 4. 给 1 号槽位上电，打开发射
-            Console.WriteLine("给 1 号槽位上电...");
-            heater.SetPowerEN(1, 1);  // PowerEN = 1（上电）
-            heater.SetTxDis(0, 1);    // TxDis = 0（不关闭发射，让它发光）
-
-            System.Threading.Thread.Sleep(500);  // 等模块启动
-
-            // 5. 设置光开关到 1 号模块通道（SLOT-11，第1路）
-            Console.WriteLine("设置光开关到 1 号模块通道...");
-            otp12.SetSlot("11");  // 切换到11号槽位的光开关
-
-            // 注意：这里的通道号需要实际测试确认
-            // SWD2-02 是双路2x2，第一路对应 PA01-PA04（1号模块）
-            // 假设 inCh=1 是第一路，outCh=1 是直通
-            otp12.SW_SetChannel(1, 2);  // 设置输入1到输出1
-
-            System.Threading.Thread.Sleep(200);
-
-            // 6. 读取光功率（SLOT-05，OPM-04）
-            Console.WriteLine("读取光功率...");
-            otp12.SetSlot("05");  // 切换到5号槽位的光功率计
-
-            // 假设发射光接到光功率计的通道1
-            string powerStr = otp12.OPM_ReadPower(1);
-            Console.WriteLine($"光功率计通道1: {powerStr} dBm");
-
-/*            // 也可以读一下其他通道，看看光到底进了哪个通道
-            for (int i = 1; i <= 4; i++)
-            {
-                string p = otp12.OPM_ReadPower(i);
-                Console.WriteLine($"  通道{i}: {p} dBm");
-            }*/
-
-            // ========== 测试 2 号模块（可选） ==========
-            Console.WriteLine("\n===== 测试 2 号模块 TX 发射 =====");
-
-            // 给2号槽位上电
-            heater.SetPowerEN(1, 2);
-            heater.SetTxDis(0, 2);
-            System.Threading.Thread.Sleep(500);
-
-            // 切换光开关到第二路（PB01-PB04，对应2号模块）
-            otp12.SetSlot("11");
-            otp12.SW_SetChannel(3, 4);  // 输入3到输出4
-            System.Threading.Thread.Sleep(200);
-
-            // 6. 读取光功率（SLOT-05，OPM-04）
-            Console.WriteLine("读取光功率...");
-            otp12.SetSlot("05");  // 切换到5号槽位的光功率计
-
-            // 假设发射光接到光功率计的通道2
-            string powerStr1 = otp12.OPM_ReadPower(2);
-            Console.WriteLine($"光功率计通道2: {powerStr1} dBm");
-
-            /*for (int i = 1; i <= 4; i++)
-            {
-                string p = otp12.OPM_ReadPower(i);
-                Console.WriteLine($"  通道{i}: {p} dBm");
-            }*/
-
-            // ========== 测试 3 号模块（可选） ==========
-            Console.WriteLine("\n===== 测试 3 号模块 TX 发射 =====");
-
-            // 给2号槽位上电
-            heater.SetPowerEN(1, 3);
-            heater.SetTxDis(0, 3);
-            System.Threading.Thread.Sleep(500);
-
-            // 切换光开关到第二路（PB01-PB04，对应2号模块）
-            otp12.SetSlot("12");
-            otp12.SW_SetChannel(1, 2);  // 输入2到输出1？需要测试确认
-            System.Threading.Thread.Sleep(200);
-
-            // 6. 读取光功率（SLOT-05，OPM-04）
-            Console.WriteLine("读取光功率...");
-            otp12.SetSlot("05");  // 切换到5号槽位的光功率计
-
-            // 假设发射光接到光功率计的通道3
-            string powerStr3 = otp12.OPM_ReadPower(3);
-            Console.WriteLine($"光功率计通道3: {powerStr3} dBm");
-
-
-            // ========== 测试 4 号模块（可选） ==========
-            Console.WriteLine("\n===== 测试 4 号模块 TX 发射 =====");
-
-            // 给2号槽位上电
-            heater.SetPowerEN(1, 4);
-            heater.SetTxDis(0, 4);
-            System.Threading.Thread.Sleep(500);
-
-            // 切换光开关到第二路（PB01-PB04，对应2号模块）
-            otp12.SetSlot("12");
-            otp12.SW_SetChannel(3, 4);  // 输入3到输出4
-            System.Threading.Thread.Sleep(200);
-
-            Console.WriteLine("读取光功率...");
-            otp12.SetSlot("05");  // 切换到5号槽位的光功率计
-
-            // 假设发射光接到光功率计的通道1
-            string powerStr4 = otp12.OPM_ReadPower(4);
-            Console.WriteLine($"光功率计通道4: {powerStr4} dBm");
-
-            // ========== 结束 ==========
-            Console.WriteLine("\n测试完成！按任意键退出");
-            Console.ReadKey();
-
-            // 关闭模块
-            heater.SetPowerEN(0, 1);
-            heater.SetPowerEN(0, 2);
-            heater.SetPowerEN(0, 3);
-            heater.SetPowerEN(0, 4);
-
-            // 断开连接
-            heater.Close();
+            return s;
         }
     }
 }
-/*using System;
-using System.Threading;
-
-namespace OTP_AutoRead_Test
-{
-    class Program
-    {
-        static OTP12Driver driver = new OTP12Driver();
-        static readonly string ip = "192.168.100.156";
-        static readonly int port = 5024;
-        // 单条指令间隔毫秒
-        private const int CmdDelayMs = 80;
-        // 模块切换大间隔
-        private const int SectionDelayMs = 200;
-
-        static void Main(string[] args)
-        {
-            Console.WriteLine("================ OTP全部只读自动测试(自动切换槽+防延时版) ================");
-            Console.WriteLine($"设备地址：{ip}:{port}\n");
-
-            // 打印整机槽位硬件对照表
-            PrintSlotHardwareMap();
-
-            // 连接设备
-            bool connOk = driver.Connect(ip, port);
-            if (!connOk)
-            {
-                Console.WriteLine("❌ 设备连接失败，终止测试");
-                Console.ReadKey();
-                return;
-            }
-            Console.WriteLine("✅ 连接成功，开始自动测试\n");
-            Thread.Sleep(SectionDelayMs);
-
-           *//* // 系统&公共命令固定01槽BE板
-            driver.SetSlot("01");
-            TestSection4_System();
-            Thread.Sleep(SectionDelayMs);
-
-            TestSection5_BoardCommon();
-            Thread.Sleep(SectionDelayMs);
-
-            // OPM 切换到05槽
-            driver.SetSlot("05");
-            TestSection6_OPM();
-            Thread.Sleep(SectionDelayMs);
-
-            // VOA 切换到07槽
-            driver.SetSlot("07");
-            TestSection7_VOA();
-            Thread.Sleep(SectionDelayMs);*//*
-
-            // 光开关SW 切换到11槽
-            driver.SetSlot("11");
-            TestSection8_Switch();
-            Thread.Sleep(SectionDelayMs);
-            driver.SetSlot("12");
-            TestSection8_Switch();
-            Thread.Sleep(SectionDelayMs);
-
-            *//* // ERM 切换到06槽
-             driver.SetSlot("06");
-             TestSection9_ERM();
-             Thread.Sleep(SectionDelayMs);
-
-             // 下面机箱无对应硬件
-             driver.SetSlot("01");
-             TestSection10_LAC();
-             Thread.Sleep(SectionDelayMs);
-             TestSection11_LAG();
-             Thread.Sleep(SectionDelayMs);
-             TestSection12_BERT();
-             Thread.Sleep(SectionDelayMs);
-             TestSection13_PCS_PCG();
-             Thread.Sleep(SectionDelayMs);
-             TestSection14_OPMT();
-             Thread.Sleep(SectionDelayMs);
-             TestSection15_Trigger();*/
-
-/* //===== 【修正位置】四路测试放到断开连接之前！=====
- //四路光模块自动循环测试（发射指标：功率+消光比+衰减值）
- string[] swSlotArr = { "11", "11", "12", "12" };
- int[] chArr = { 1, 2, 1, 2 };
- string[] voaSlotArr = { "07", "07", "08", "08" };
-
- Console.WriteLine("\n=============== 开始四路SFP模块自动测试 ===============");
-
- //循环4次，依次测试1~4号模块
- for (int index = 0; index < 4; index++)
- {
-     int moduleNo = index + 1;
-     string swSlot = swSlotArr[index];
-     int channel = chArr[index];
-     string voaSlot = voaSlotArr[index];
-
-     Console.WriteLine($"\n---------- 正在测试第{moduleNo}号加热台模块 ----------");
-
-     //① 切换光开关槽位，切换对应通道
-     driver.SetSlot(swSlot);
-     string ret = driver.SW_SetChannel(channel);
-     Thread.Sleep(300);
-     string realCh = driver.SW_GetCurrentChannel(1);
-     Console.WriteLine($"已切换到【槽位{swSlot}】光开关，目标通道{channel}，当前实际通道：{realCh}");
-
-     //② 切换到05槽，读取OPM光功率
-     driver.SetSlot("05");
-     string power = driver.OPM_ReadPower(1);
-     if (power.Contains("-200"))
-         Console.WriteLine($"模块{moduleNo} 发射光功率：{power} 【警告：无光输入，检查光纤】");
-     else
-         Console.WriteLine($"模块{moduleNo} 发射光功率：{power}");
-     Thread.Sleep(100);
-
-     //③ 切换到06槽，读取ERM消光比
-     driver.SetSlot("06");
-     string erData = driver.ERM_ReadERData(1);
-     Console.WriteLine($"模块{moduleNo} 消光比数据：{erData}");
-     Thread.Sleep(100);
-
-     //④ 切换到对应VOA槽位，读取当前衰减值
-     driver.SetSlot(voaSlot);
-     string att = driver.VOA_GetAttenuation(1);
-     Console.WriteLine($"模块{moduleNo} 当前光路衰减dB：{att}");
-     Thread.Sleep(100);
- }*//*
-
- Console.WriteLine("\n=============== 四路模块全部测试完毕 ===============");
-
- // 【最后才断开TCP连接】
- driver.DisConnect();
- Console.WriteLine("\n================ 全部模块测试完成 ================");
-
- Console.WriteLine("按任意键关闭窗口...");
- Console.ReadKey();
-}
-
-
-#region 新增：整机槽位硬件打印函数
-/// <summary>
-/// 开机打印12槽硬件对应关系，方便新人核对
-/// </summary>
-static void PrintSlotHardwareMap()
-{
- Console.WriteLine("==================== 整机12槽硬件配置对照表 ====================");
- Console.WriteLine("SLOT-01  → BE2-03  主控板（通道1系统通信）");
- Console.WriteLine("SLOT-02  → BE2-03  主控板（通道2系统通信）");
- Console.WriteLine("SLOT-03  → BE2-03  主控板（通道3系统通信）");
- Console.WriteLine("SLOT-04  → BE2-03  主控板（通道4系统通信）");
- Console.WriteLine("SLOT-05  → OPM-04  四路共用光功率计 | 读取发射光功率");
- Console.WriteLine("SLOT-06  → ERM-04  四路共用消光比板 | 读取消光比ER");
- Console.WriteLine("SLOT-07  → VOA-02  通道1/2 发射光路可调衰减");
- Console.WriteLine("SLOT-08  → VOA-02  通道3/4 发射光路可调衰减");
- Console.WriteLine("SLOT-09  → VOA-02  通道1/2 接收光路可调衰减");
- Console.WriteLine("SLOT-10  → VOA-02 通道3/4 接收光路可调衰减");
- Console.WriteLine("SLOT-11  → SWD2-02 光开关 | 控制1、2号模块光路切换");
- Console.WriteLine("SLOT-12  → SWD2-02 光开关 | 控制3、4号模块光路切换");
- Console.WriteLine("================================================================\n");
-}
-#endregion
-
-#region 4 系统级命令 Slot固定01
-static void TestSection4_System()
-{
- Console.WriteLine("========【4 系统级只读命令 | 槽位01 BE2】========");
- PrintResult("401 查询设备型号", driver.QueryDeviceInfo());
- PrintResult("402 查询全部槽位单板", driver.QueryAllBoardCatalog());
- PrintResult("403 查询系统日期", driver.GetSystemDate());
- PrintResult("404 查询系统时间", driver.GetSystemTime());
- PrintResult("405 查询SCPI版本", driver.GetScpiVersion());
- PrintResult("406 查询会话超时", driver.GetSessionTimeout());
- PrintResult("407 当前连接数量", driver.GetSessionCount());
- PrintResult("408 查询子架ID", driver.GetRackId());
- PrintResult("409 查询网1IP", driver.GetEthIp(1));
- PrintResult("410 查询当前告警", driver.QueryCurrentAlarm());
- PrintResult("411 读取槽1工作日志", driver.ReadBoardLog(1, "work", 500));
- PrintResult("412 查询槽1单板类型", driver.QueryBoardInfo(1, "TYPE"));
- PrintResult("413 读取数值格式", driver.GetDataFormat());
- PrintResult("414 自动升级状态", driver.GetAutoUpgradeState());
- Console.WriteLine();
-}
-#endregion
-
-#region 5 单板公共命令 Slot固定01
-static void TestSection5_BoardCommon()
-{
- Console.WriteLine("========【5 单板公共只读 | 槽位01 BE2】========");
- PrintResult("501 单板序列号", driver.QueryBoardSN());
- PrintResult("502 单板运行状态", driver.QueryBoardStatus());
- Console.WriteLine();
-}
-#endregion
-
-#region 6 OPM模块 Slot自动05
-static void TestSection6_OPM()
-{
- Console.WriteLine("========【6 OPM光功率模块 | 槽位05 OPM-04】========");
- PrintResult("601 通道1光功率", driver.OPM_ReadPower(1));
- PrintResult("602 平均采样次数", driver.OPM_GetAverCount(1));
- PrintResult("603 参考光功率", driver.OPM_GetRefPower(1));
- PrintResult("604 参考模式开关", driver.OPM_GetRefState(1));
- PrintResult("605 当前波长", driver.OPM_GetWaveLength(1));
- PrintResult("606 功率单位", driver.OPM_GetPowerUnit(1));
- Console.WriteLine();
-}
-#endregion
-
-#region 7 VOA衰减模块 Slot自动07
-static void TestSection7_VOA()
-{
- Console.WriteLine("========【7 VOA衰减模块 | 槽位07 VOA-02】========");
- PrintResult("701 工作模式", driver.VOA_GetMode(1));
- PrintResult("702 支持模式列表", driver.VOA_GetModeList(1));
- PrintResult("703 衰减分辨率", driver.VOA_GetAttRes(1));
- PrintResult("704 当前衰减值", driver.VOA_GetAttenuation(1));
- PrintResult("705 输入功率", driver.VOA_GetInputPower(1));
- PrintResult("706 输出功率", driver.VOA_GetOutputPower(1));
- PrintResult("707 输出开关状态", driver.VOA_GetOutputState(1));
- PrintResult("708 ALC自动功率", driver.VOA_GetAlcState(1));
- Console.WriteLine();
-}
-#endregion
-
-#region 8 SW光开关 Slot自动11
-static void TestSection8_Switch()
-{
- Console.WriteLine("========【8 光开关SW | 槽位11 SWD2-02】========");
- PrintResult("801 开关类型", driver.SW_GetSwitchType());
- PrintResult("802 当前通道", driver.SW_GetCurrentChannel(1));
- PrintResult("803 总通道数", driver.SW_GetSwitchTotalCount());
- Console.WriteLine();
-}
-#endregion
-
-#region 9 ERM消光比 Slot自动06
-static void TestSection9_ERM()
-{
- Console.WriteLine("========【9 ERM消光比 | 槽位06 ERM-04】========");
- PrintResult("901 消光比数据", driver.ERM_ReadERData(1));
- PrintResult("902 参考值", driver.ERM_GetRef(1));
- PrintResult("903 速率", driver.ERM_GetRate(1));
- PrintResult("904 校准模式", driver.ERM_GetCalibrateModel(1));
- Console.WriteLine();
-}
-#endregion
-
-#region 10 LAC光源（本机无硬件）
-static void TestSection10_LAC()
-{
- Console.WriteLine("========【10 LAC固定光源（本机无板）】========");
- PrintResult("1001 光源开关", driver.LAC_GetState(1));
- PrintResult("1002 输出功率", driver.LAC_GetPower(1));
- PrintResult("1003 工作波长", driver.LAC_GetWave(1));
- Console.WriteLine();
-}
-#endregion
-
-#region 11 LAG可调光源（本机无硬件）
-static void TestSection11_LAG()
-{
- Console.WriteLine("========【11 LAG可调光源（本机无板）】========");
- PrintResult("1101 光源状态", driver.LAG_GetState(1));
- PrintResult("1102 输出功率", driver.LAG_GetPower(1));
- PrintResult("1103 通道号", driver.LAG_GetChannel(1));
- PrintResult("1104 调制频率", driver.LAG_GetFreq(1));
- PrintResult("1105 波长", driver.LAG_GetWave(1));
- PrintResult("1106 老化状态", driver.LAG_GetAge(1));
- PrintResult("1107 网格间隔", driver.LAG_GetGrid(1));
- PrintResult("1108 寄存器0x01", driver.LAG_GetRegData(1, "0x01"));
- Console.WriteLine();
-}
-#endregion
-
-#region 12 BERT误码仪（本机无硬件）
-static void TestSection12_BERT()
-{
- Console.WriteLine("========【12 BERT误码仪（本机无板）】========");
- PrintResult("1201 比特速率", driver.BERT_GetRate());
- PrintResult("1202 码型", driver.BERT_GetPattern());
- PrintResult("1203 DUT状态", driver.BERT_GetDutStatus());
- PrintResult("1204 通道1幅度", driver.BERT_GetPGAmpl(1));
- PrintResult("1205 极性", driver.BERT_GetPGPol(1));
- PrintResult("1206 误码数据", driver.BERT_GetErrData(1));
- Console.WriteLine();
-}
-#endregion
-
-#region 13 PCS偏振（本机无硬件）
-static void TestSection13_PCS_PCG()
-{
- Console.WriteLine("========【13 PCS/PCG偏振（本机无板）】========");
- PrintResult("1301 偏振扫描状态", driver.PCS_GetScanState());
- PrintResult("1302 偏振输出状态", driver.PCG_GetPolarState());
- Console.WriteLine();
-}
-#endregion
-
-#region 14 OPMT多通道（本机无硬件）
-static void TestSection14_OPMT()
-{
- Console.WriteLine("========【14 OPMT多通道（本机无板）】========");
- PrintResult("1401 通道1功率", driver.OPMT_ReadPower(1));
- PrintResult("1402 平均次数", driver.OPMT_GetAverCount(1));
- PrintResult("1403 轨迹点数", driver.OPM_GetTracePoint(1));
- PrintResult("1404 轨迹数据", driver.OPM_GetTraceResult(1));
- Console.WriteLine();
-}
-#endregion
-
-#region 15 TRIG触发（本机无硬件）
-static void TestSection15_Trigger()
-{
- Console.WriteLine("========【15 TRIG触发（本机无板）】========");
- PrintResult("1501 触发边沿", driver.TRIG_GetSlope());
- PrintResult("1502 触发源", driver.TRIG_GetSource());
- PrintResult("1503 波长范围", driver.TRIG_GetWaveRange());
- PrintResult("1504 触发延时", driver.TRIG_GetDelay());
- PrintResult("1505 日志参数", driver.TRIG_GetLogParam());
- PrintResult("1506 SWS触发状态", driver.SWS_GetTriggerState());
- PrintResult("1507 SWS触发结果", driver.SWS_GetTriggerResult());
- Console.WriteLine();
-}
-#endregion
-
-/// 统一打印 + 每条指令后自动Sleep(80)
-static void PrintResult(string funcName, string ret)
-{
- if (string.IsNullOrEmpty(ret))
-     Console.WriteLine($"【{funcName}】 → 无返回/超时");
- else if (ret.Contains("ERROR"))
-     Console.WriteLine($"【{funcName}】 → 报错：{ret}");
- else
-     Console.WriteLine($"【{funcName}】 → 正常：{ret}");
-
- // 每条命令执行完休眠80ms，解决Device busy
- Thread.Sleep(CmdDelayMs);
-}
-}
-}*/
