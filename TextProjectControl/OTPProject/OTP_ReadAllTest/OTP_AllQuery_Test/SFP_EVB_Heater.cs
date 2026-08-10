@@ -4,8 +4,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace LastEVBControlDemoApp
+namespace FibertopTest_Common
 {
     /// <summary>
     /// SFP EVB加热台 TCP 全功能控制类
@@ -86,36 +87,109 @@ namespace LastEVBControlDemoApp
         #endregion
 
         #region 通用指令收发方法
-        public string SendCommand(string cmd) => SendCommand(cmd, 300);
+
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
-        /// 核心指令收发方法
+        /// 核心异步指令收发
         /// </summary>
-        public string SendCommand(string cmd, int delay)
+        private async Task<string> SendCommandInternalAsync(string cmd, int delayMs)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+            try
             {
                 if (!IsOpen) return null;
+
+                byte[] wbuf = Encoding.UTF8.GetBytes(cmd + "\r\n");
+
+                // ✅ 异步发送
+                await TaskCompletionSourceSendAsync(Client, wbuf, 0, wbuf.Length, SocketFlags.None);
+
+                // ✅ 非阻塞延迟
+                if (delayMs > 0)
+                    await Task.Delay(delayMs);
+
+                byte[] rbuf = new byte[1024];
+
+                // ✅ 异步接收
+                int count = await TaskCompletionSourceReceiveAsync(Client, rbuf, 0, rbuf.Length, SocketFlags.None);
+
+                if (count > 0)
+                    return Encoding.UTF8.GetString(rbuf, 0, count).Trim();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"SendCommand error: {ex.Message}");
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 将 Socket.BeginSend/EndSend 包装为 Task
+        /// </summary>
+        private static Task<int> TaskCompletionSourceSendAsync(
+            Socket socket, byte[] buffer, int offset, int size, SocketFlags flags)
+        {
+            var tcs = new TaskCompletionSource<int>();
+            socket.BeginSend(buffer, offset, size, flags, ar =>
+            {
                 try
                 {
-                    byte[] wbuf = Encoding.UTF8.GetBytes(cmd + "\r\n");
-                    Client.Send(wbuf, SocketFlags.None);
-                    Thread.Sleep(delay);
-                    byte[] rbuf = new byte[1024];
-                    int count = Client.Receive(rbuf, SocketFlags.None);
-                    if (count > 0)
-                        return Encoding.UTF8.GetString(rbuf, 0, count).Trim();
+                    tcs.SetResult(socket.EndSend(ar));
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            }, null);
+            return tcs.Task;
+        }
+
+        /// <summary>
+        /// 将 Socket.BeginReceive/EndReceive 包装为 Task
+        /// </summary>
+        private static Task<int> TaskCompletionSourceReceiveAsync(
+            Socket socket, byte[] buffer, int offset, int size, SocketFlags flags)
+        {
+            var tcs = new TaskCompletionSource<int>();
+            socket.BeginReceive(buffer, offset, size, flags, ar =>
+            {
+                try
+                {
+                    tcs.SetResult(socket.EndReceive(ar));
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            }, null);
+            return tcs.Task;
+        }
+
+        /// <summary>
+        /// 同步发送命令（内部走异步实现）
+        /// </summary>
+        public string SendCommand(string cmd) => SendCommand(cmd, 100);
+
+        public string SendCommand(string cmd, int delay)
+        {
+            try
+            {
+                return SendCommandInternalAsync(cmd, delay).GetAwaiter().GetResult();
+            }
+            catch
+            {
                 return null;
             }
         }
+
         #endregion
 
         #region 一、EVB 功率/电流/电压 读写功能
-        /// <summary>
-        /// 查询槽位功率
-        /// </summary>
         public string GetPower(int slot = 1)
         {
             string cmd = $"evb{slot}:getpower?";
@@ -125,9 +199,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(numberOnly) ? numberOnly : null;
         }
 
-        /// <summary>
-        /// 查询槽位电流
-        /// </summary>
         public string GetCurrent(int slot = 1)
         {
             string cmd = $"evb{slot}:getcurrent?";
@@ -137,9 +208,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(numberOnly) ? numberOnly : null;
         }
 
-        /// <summary>
-        /// 查询槽位电压
-        /// </summary>
         public string GetVoltage(int slot = 1)
         {
             string cmd = $"evb{slot}:getvoltage?";
@@ -149,9 +217,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(numberOnly) ? numberOnly : null;
         }
 
-        /// <summary>
-        /// 设置槽位电压（范围3.15~3.3V）
-        /// </summary>
         public bool SetVoltage(double voltage, int slot = 1)
         {
             string cmd = $"evb{slot}:setvoltage {voltage}";
@@ -160,11 +225,8 @@ namespace LastEVBControlDemoApp
         }
         #endregion
 
-        #region 二、IO 引脚控制功能（完整覆盖Excel所有引脚）
-        #region 1. PowerEN 模块使能引脚
-        /// <summary>
-        /// 设置模块使能引脚
-        /// </summary>
+        #region 二、IO 引脚控制功能
+        #region 1. PowerEN
         public bool SetPowerEN(int state, int slot = 1)
         {
             string cmd = $"IO{slot}:setPowerEN {state}";
@@ -172,9 +234,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(res) && res.Contains($"POWER_EN:{state}");
         }
 
-        /// <summary>
-        /// 查询模块使能引脚状态
-        /// </summary>
         public string GetPowerEN(int slot = 1)
         {
             string cmd = $"IO{slot}:getPowerEN";
@@ -184,10 +243,7 @@ namespace LastEVBControlDemoApp
         }
         #endregion
 
-        #region 2. TxDis 引脚
-        /// <summary>
-        /// 设置TX_DIS引脚
-        /// </summary>
+        #region 2. TxDis
         public bool SetTxDis(int state, int slot = 1)
         {
             string cmd = $"IO{slot}:setTxDis {state}";
@@ -195,9 +251,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(res) && res.Contains($"TX_DIS:{state}");
         }
 
-        /// <summary>
-        /// 查询TX_DIS引脚状态
-        /// </summary>
         public string GetTxDis(int slot = 1)
         {
             string cmd = $"IO{slot}:getTxDis";
@@ -207,10 +260,7 @@ namespace LastEVBControlDemoApp
         }
         #endregion
 
-        #region 3. Rs0High 引脚
-        /// <summary>
-        /// 设置RS0_HIGH引脚
-        /// </summary>
+        #region 3. Rs0High
         public bool SetRs0High(int state, int slot = 1)
         {
             string cmd = $"IO{slot}:setRs0High {state}";
@@ -218,9 +268,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(res) && res.Contains($"RS0_HIGH:{state}");
         }
 
-        /// <summary>
-        /// 查询RS0_HIGH引脚状态
-        /// </summary>
         public string GetRs0High(int slot = 1)
         {
             string cmd = $"IO{slot}:getRs0High";
@@ -230,10 +277,7 @@ namespace LastEVBControlDemoApp
         }
         #endregion
 
-        #region 4. Rs1High 引脚
-        /// <summary>
-        /// 设置RS1_HIGH引脚
-        /// </summary>
+        #region 4. Rs1High
         public bool SetRs1High(int state, int slot = 1)
         {
             string cmd = $"IO{slot}:setRs1High {state}";
@@ -241,9 +285,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(res) && res.Contains($"RS1_HIGH:{state}");
         }
 
-        /// <summary>
-        /// 查询RS1_HIGH引脚状态
-        /// </summary>
         public string GetRs1High(int slot = 1)
         {
             string cmd = $"IO{slot}:getRs1High";
@@ -253,10 +294,7 @@ namespace LastEVBControlDemoApp
         }
         #endregion
 
-        #region 5. 只读引脚查询（Excel完整覆盖）
-        /// <summary>
-        /// 查询TX_FALU引脚状态
-        /// </summary>
+        #region 5. 只读引脚查询
         public string GetTxFalu(int slot = 1)
         {
             string cmd = $"IO{slot}:getTxFault";
@@ -265,9 +303,6 @@ namespace LastEVBControlDemoApp
             return res.Split(':')[1].Trim();
         }
 
-        /// <summary>
-        /// 查询RX_LOS引脚状态
-        /// </summary>
         public string GetRxLos(int slot = 1)
         {
             string cmd = $"IO{slot}:getRxLos";
@@ -276,9 +311,6 @@ namespace LastEVBControlDemoApp
             return res.Split(':')[1].Trim();
         }
 
-        /// <summary>
-        /// 查询ABS引脚状态
-        /// </summary>
         public string GetABS(int slot = 1)
         {
             string cmd = $"IO{slot}:getABS";
@@ -289,10 +321,7 @@ namespace LastEVBControlDemoApp
         #endregion
         #endregion
 
-        #region 三、IIC 读写功能（Excel完整覆盖）
-        /// <summary>
-        /// IIC 写入数据
-        /// </summary>
+        #region 三、IIC 读写功能
         public bool IIC_Set(string deviceAddr, string regAddr, string dataLength, string data, int slot = 1)
         {
             string cmd = $"IIC{slot}:set {deviceAddr},{regAddr},{dataLength},{data}";
@@ -300,9 +329,6 @@ namespace LastEVBControlDemoApp
             return !string.IsNullOrEmpty(res) && res.Contains("iic set ok");
         }
 
-        /// <summary>
-        /// IIC 读取数据
-        /// </summary>
         public string IIC_Get(string deviceAddr, string regAddr, string dataLength, int slot = 1)
         {
             string cmd = $"IIC{slot}:get {deviceAddr},{regAddr},{dataLength}";
@@ -311,9 +337,6 @@ namespace LastEVBControlDemoApp
         #endregion
 
         #region 四、设备IP设置功能
-        /// <summary>
-        /// 设置设备IP地址
-        /// </summary>
         public bool SetDeviceIP(string newIP)
         {
             string cmd = $"setip {newIP}";

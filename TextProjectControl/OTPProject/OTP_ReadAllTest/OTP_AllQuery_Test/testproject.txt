@@ -1,5 +1,338 @@
 using System;
 using System.Threading;
+
+namespace LastEVBControlDemoApp
+{
+    /// <summary>
+    /// 通道配置：VOA槽位/通道 + 光开关槽位/inCh/outCh
+    /// </summary>
+    public class ChannelConfig
+    {
+        public string VoaSlot;   // VOA模块所在板卡号（字符串，如"09"表示第9号槽位）
+        public int VoaCh;        // VOA通道号（每个VOA模块有ch1和ch2两个通道）
+        public string SwSlot;    // 光开关模块所在板卡号（如"11"表示第11号槽位）
+        public int SwIn;         // 光开关输入端口号
+        public int SwOut;        // 光开关输出端口号
+    }
+
+    class Program
+    {
+        const string DeviceIp = "192.168.100.156";
+        const int DevicePort = 5024;
+        const int StabilizeMs = 2000;
+        const double TargetPower = -8.0; // 默认目标功率 dBm
+
+        static void Main(string[] args)
+        {
+            OTP12Driver drv = new OTP12Driver();
+            try
+            {
+                drv.Connect(DeviceIp, DevicePort);//连接OTP加热台
+                //
+                Console.WriteLine("通道号 | 输出光功率(dBm) | 衰减值(dB) | 输入光功率(dBm)");
+                Console.WriteLine("--------+---------------+-----------------+-------------");
+
+                for (int ch = 1; ch <= 4; ch++)
+                {
+                    if(ch==3)
+                    {
+                        continue;
+                    }
+                    var result = MeasureAttenuation(drv, ch, TargetPower);//可以得到通道号、输出光功率、衰减值、输入光功率
+                    Console.WriteLine("  {0}     |    {1,8:F3}   |     {2,8:F3}    |   {3,8:F3}",
+                        ch, result.OutPower, result.Attenuation, result.InPower);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERR: " + ex.Message);
+            }
+            finally
+            {
+                drv.DisConnect();
+                Console.WriteLine("按任意键退出..."); 
+                Console.ReadKey(true);
+            }
+        }
+
+        /// <summary>
+        /// 获取加热台通道(1~4)对应的VOA+光开关配置
+        /// 光开关(2x2互锁): 切in1→out2自动in2→out1，Tx/Rx同时通
+        /// 模块1: VOA=09ch1, SW=11 in1→out2
+        /// 模块2: VOA=09ch2, SW=11 in3→out4
+        /// 模块3: VOA=10ch1, SW=12 in1→out2
+        /// 模块4: VOA=10ch2, SW=12 in3→out4
+        /// </summary>
+        public static ChannelConfig GetChannelConfig(int channel)
+        {
+            switch (channel)
+            {
+                case 1: return new ChannelConfig { VoaSlot = "09", VoaCh = 1, SwSlot = "11", SwIn = 1, SwOut = 2 };
+                case 2: return new ChannelConfig { VoaSlot = "09", VoaCh = 2, SwSlot = "11", SwIn = 3, SwOut = 4 };
+                case 3: return new ChannelConfig { VoaSlot = "10", VoaCh = 1, SwSlot = "12", SwIn = 1, SwOut = 2 };
+                case 4: return new ChannelConfig { VoaSlot = "10", VoaCh = 2, SwSlot = "12", SwIn = 3, SwOut = 4 };
+                default: throw new ArgumentException("无效通道: " + channel);
+            }
+        }
+
+        /// <summary>
+        /// 切换光开关到指定通道对应的光路上（Tx/Rx同时打通）
+        /// </summary>
+        public static void SwitchToChannel(OTP12Driver drv, int channel)
+        {
+            var cfg = GetChannelConfig(channel);
+            drv.SetSlot(cfg.SwSlot);
+            drv.SW_SetChannel(cfg.SwIn, cfg.SwOut);
+            Thread.Sleep(300);
+            drv.SetSlot(cfg.VoaSlot);
+        }
+
+        /// <summary>
+        /// 测量指定通道的接收端实际衰减
+        /// 流程: 切光开关 → 配VOA(POWer/ON/设功率) → 等稳定 → 读功率 → 计算衰减
+        /// 返回 (OutPower, Attenuation, InPower)
+        /// </summary>
+        public static (double OutPower, double Attenuation, double InPower) MeasureAttenuation(
+            OTP12Driver drv, int channel, double targetPowerDbm)
+        {
+            var cfg = GetChannelConfig(channel);
+
+            // 切光开关
+            SwitchToChannel(drv, channel);
+
+            // 配置VOA: POWer模式, 开输出, 设目标功率
+            drv.VOA_SetMode(cfg.VoaCh, "POWer");
+            drv.VOA_SetOutputState(cfg.VoaCh, "ON");
+            drv.VOA_SetOutPower(cfg.VoaCh, targetPowerDbm);
+
+            // 等待功率稳定
+            Thread.Sleep(StabilizeMs);
+
+            // 读取实际功率
+            string outStr = drv.VOA_GetOutputPower(cfg.VoaCh);
+            string inStr  = drv.VOA_GetInputPower(cfg.VoaCh);
+
+            double outPwr = ParseDbm(outStr);
+            double inPwr  = ParseDbm(inStr);
+            double att    = double.IsNaN(inPwr) || double.IsNaN(outPwr) ? double.NaN : inPwr - outPwr;
+
+            return (outPwr, att, inPwr);
+        }
+
+        /// <summary>
+        /// 解析SCPI返回的dBm数值（支持科学计数、带单位格式）
+        /// </summary>
+        static double ParseDbm(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return double.NaN;
+            string[] parts = raw.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (double.TryParse(parts[0],
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double v))
+                return v;
+            return double.NaN;
+        }
+    }
+}
+
+using System;
+using System.Threading;
+
+namespace LastEVBControlDemoApp
+{
+    class Program
+    {
+        // ========== 测试参数配置 ==========
+        const string Slot = "09";                       // VOA槽位号（接收端衰减）
+        const int Ch = 1;                               // VOA通道
+        const string DeviceIp = "192.168.100.156";      // 设备IP
+        const int DevicePort = 5024;                    // SCPI端口
+        const int StabilizeMs = 2000;                   // 功率稳定等待时间(ms)
+        static readonly double[] TargetPowers = { -8, -22, -30 };  // 目标功率列表(dBm)
+
+        // ========== 光开关配置（加热台1号通道 → 接收路径）==========
+        // 供应商说明：测接收前必须先切光开关到接收，否则模块Tx反向进光导致VOA异常
+        // Rx接收方向：光源/VOA(inCh=2) → 模块Rx(outCh=1)  槽位11
+        const string SwitchSlot = "11";
+        const int RxSwitchInCh = 2;
+        const int RxSwitchOutCh = 1;
+        // 测试结束后切回Tx发射：模块Tx(inCh=1) → 仪器(outCh=2)
+        const int TxSwitchInCh = 1;
+        const int TxSwitchOutCh = 2;
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("============================================");
+            Console.WriteLine("  VOA接收端光功率/衰减值 测试程序");
+            Console.WriteLine("  VOA槽位: {0}  通道: {1}", Slot, Ch);
+            Console.WriteLine("  光开关槽位: {0}  接收路径: in{1}→out{2}", SwitchSlot, RxSwitchInCh, RxSwitchOutCh);
+            Console.WriteLine("  目标功率: {0} dBm", string.Join(", ", TargetPowers));
+            Console.WriteLine("============================================");
+            Console.WriteLine();
+            Console.WriteLine("[提示] 请先确认光模块已插入加热台，外部光源正常。");
+            Console.WriteLine("按任意键开始测试...");
+            Console.ReadKey(true);
+            Console.WriteLine();
+
+            OTP12Driver drv = new OTP12Driver();
+            try
+            {
+                // ------ 1. 连接设备 ------
+                Console.WriteLine("[1] 连接设备 {0}:{1} ...", DeviceIp, DevicePort);
+                if (!drv.Connect(DeviceIp, DevicePort))
+                {
+                    Console.WriteLine("错误：连接失败！请检查IP/网络。");
+                    Console.ReadKey();
+                    return;
+                }
+                Console.WriteLine("  -> 连接成功。");
+                string idn = drv.QueryDeviceInfo();
+                Console.WriteLine("  -> 设备信息: {0}", idn ?? "无响应");
+                Console.WriteLine();
+
+                // ------ 2. 先切光开关到接收路径（关键！防止模块Tx反向进光）------
+                Console.WriteLine("[2] 切换光开关到接收路径（槽位{0}, in{1}→out{2}）...", SwitchSlot, RxSwitchInCh, RxSwitchOutCh);
+                drv.SetSlot(SwitchSlot);
+                bool swOk = drv.SW_SetChannel(RxSwitchInCh, RxSwitchOutCh);
+                Console.WriteLine("  -> 光开关切换: {0}", swOk ? "OK" : "FAIL");
+                // 切回VOA槽位
+                drv.SetSlot(Slot);
+                Thread.Sleep(500); // 等待光开关切换稳定
+                Console.WriteLine();
+
+                // ------ 3. 配置VOA通道 ------
+                Console.WriteLine("[3] 配置VOA通道{0} ...", Ch);
+                bool ok;
+                ok = drv.VOA_SetMode(Ch, "POWer");
+                Console.WriteLine("  -> 功率控制模式(POWer): {0}", ok ? "OK" : "FAIL");
+               /* ok = drv.VOA_SetAlcState(Ch, "ON");
+                Console.WriteLine("  -> ALC自动功率跟踪(ON): {0}", ok ? "OK" : "FAIL");
+                ok = drv.VOA_SetApMode(Ch, "ABSolute");
+                Console.WriteLine("  -> 绝对功率模式(ABSolute): {0}", ok ? "OK" : "FAIL");*/
+                ok = drv.VOA_SetOutputState(Ch, "ON");
+                Console.WriteLine("  -> 输出光路(ON): {0}", ok ? "OK" : "FAIL");
+                Console.WriteLine();
+
+                // ------ 4. 逐点测试 ------
+                Console.WriteLine("[4] 开始逐点测试...");
+                Console.WriteLine();
+                Console.WriteLine("+----------------------------------------------------------------+");
+                Console.WriteLine("| 目标功率(dBm) | 实际功率(dBm) | 衰减值(dB)  | 输入功率(dBm) |");
+                Console.WriteLine("+----------------------------------------------------------------+");
+
+                foreach (double target in TargetPowers)
+                {
+                    Console.WriteLine("  设置目标功率: {0} dBm ...", target);
+                    bool setOk = drv.VOA_SetOutPower(Ch, target);
+                    if (!setOk)
+                    {
+                        Console.WriteLine("  -> 设置失败，跳过该点。");
+                        Console.WriteLine("|{0,10}     |{1,12}     |{2,10}     |{3,11}     |",
+                            target, "ERR", "ERR", "ERR");
+                        continue;
+                    }
+
+                    Console.WriteLine("  等待 {0}ms 功率稳定...", StabilizeMs);
+                    Thread.Sleep(StabilizeMs);
+
+                    string outPwrStr = drv.VOA_GetOutputPower(Ch);   // 实际输出功率
+                    string inPwrStr  = drv.VOA_GetInputPower(Ch);     // 输入功率
+
+                    // 计算实际衰减 = 输入功率 - 输出功率（与Web面板一致）
+                    // POWer模式下INPut:ATT?返回的是设定值而非ALC实时衰减，所以用功率差计算
+                    string attStr = CalcAttenuation(inPwrStr, outPwrStr);
+
+                    Console.WriteLine("|{0,10}     |{1,12}     |{2,10}     |{3,11}     |",
+                        target, Fmt(outPwrStr), attStr, Fmt(inPwrStr));
+                }
+
+                Console.WriteLine("+--------------------------------结束-------------------------------+");
+                Console.WriteLine();
+
+/*                // ------ 5. 收尾 ------
+                Console.WriteLine("[5] 测试完成，关闭VOA输出...");
+                drv.SetSlot(Slot);
+                drv.VOA_SetOutputState(Ch, "OFF");
+                Console.WriteLine("  -> VOA输出已关闭。");*/
+
+               /* // 切回光开关发射路径（方便后续测发射端）
+                Console.WriteLine("  切回光开关发射路径（槽位{0}, in{1}→out{2}）...", SwitchSlot, TxSwitchInCh, TxSwitchOutCh);
+                drv.SetSlot(SwitchSlot);
+                bool swBack = drv.SW_SetChannel(TxSwitchInCh, TxSwitchOutCh);
+                Console.WriteLine("  -> 光开关切回: {0}", swBack ? "OK" : "FAIL");*/
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("异常: " + ex.Message);
+            }
+            finally
+            {
+                drv.DisConnect();
+                Console.WriteLine("  -> 已断开连接。");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("按任意键退出...");
+            Console.ReadKey(true);
+        }
+
+        /// <summary>
+        /// 根据输入功率和输出功率计算实际衰减值 (dB)
+        /// 衰减 = 输入功率(dBm) - 输出功率(dBm)
+        /// </summary>
+        static string CalcAttenuation(string inPwrRaw, string outPwrRaw)
+        {
+            double inPwr = ParseDbm(inPwrRaw);
+            double outPwr = ParseDbm(outPwrRaw);
+            if (double.IsNaN(inPwr) || double.IsNaN(outPwr))
+                return "N/A";
+            double att = inPwr - outPwr;
+            return att.ToString("F3");
+        }
+
+        /// <summary>
+        /// 解析SCPI返回的dBm数值字符串（支持科学计数、带单位格式）
+        /// </summary>
+        static double ParseDbm(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return double.NaN;
+            string s = raw.Trim();
+            string[] parts = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string num = parts[0];
+            if (double.TryParse(num,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double v))
+            {
+                return v;
+            }
+            return double.NaN;
+        }
+
+        /// <summary>
+        /// 将SCPI返回的数值字符串（可能带科学计数、可能带单位）格式化为3位小数字符串
+        /// </summary>
+        static string Fmt(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "N/A";
+            string s = raw.Trim();
+            string[] parts = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string num = parts[0];
+            if (double.TryParse(num,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double v))
+            {
+                return v.ToString("F3");
+            }
+            return s;
+        }
+    }
+}
+
+using System;
+using System.Threading;
 using LastEVBControlDemoApp;
 
 namespace OTP_AllQuery_Test
