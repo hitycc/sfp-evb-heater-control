@@ -28,7 +28,45 @@ namespace LastEVBControlDemoApp
         {
             _slot = slotNum;
         }
-        
+
+        /// <summary>
+        /// 线程安全：向指定槽位发送SCPI命令（原子操作）
+        /// 【多线程关键】SetSlot + SendScpiCmd 在同一个lock内完成，
+        /// 避免多线程并发时slot被其他线程篡改导致命令发错槽位。
+        /// </summary>
+        /// <param name="slot">目标槽位，如"05"、"07"、"11"</param>
+        /// <param name="cmd">不包含板卡前缀的SCPI命令部分，如":READ1:SCALar:POWer:DC?"</param>
+        /// <param name="delayMs">发送后等待延时</param>
+        /// <returns>设备响应字符串</returns>
+        public string SendScpiToSlot(string slot, string cmd, int delayMs = 300)
+        {
+            lock (_lock)
+            {
+                if (!IsConnected) return null;
+                string savedSlot = _slot;
+                try
+                {
+                    _slot = slot;
+                    string fullCmd = BoardPrefix + cmd;
+                    byte[] sendBuf = Encoding.UTF8.GetBytes(fullCmd + "\r\n");
+                    _clientSocket.Send(sendBuf, SocketFlags.None);
+                    Thread.Sleep(delayMs);
+                    byte[] recBuf = new byte[2048];
+                    int recLen = _clientSocket.Receive(recBuf, SocketFlags.None);
+                    if (recLen <= 0) return null;
+                    return Encoding.UTF8.GetString(recBuf, 0, recLen).Trim();
+                }
+                catch
+                {
+                    return null;
+                }
+                finally
+                {
+                    _slot = savedSlot;
+                }
+            }
+        }
+
         public bool IsConnected => _clientSocket != null && _clientSocket.Connected;
 
         public bool Connect() => Connect(DefaultIp, DefaultPort, Timeout);
@@ -714,6 +752,37 @@ namespace LastEVBControlDemoApp
         #endregion
 
         #region 8 SWITCH光开关 
+
+        /// <summary>
+        /// 根据模块槽位和测试方向切换光开关路由
+        /// </summary>
+        /// <param name="moduleSlot">模块槽位 1~4</param>
+        /// <param name="isTxTest">true=发射测试(模块→功率计), false=接收测试(光源→模块)</param>
+        /// <returns>true=切换成功</returns>
+        public bool SW_SetRouteForModule(int moduleSlot, bool isTxTest)
+        {
+            // SLOT-11: 模块1和模块2; SLOT-12: 模块3和模块4
+            string slotNum = (moduleSlot <= 2) ? "11" : "12";
+
+            int inCh, outCh;
+            if (isTxTest)
+            {
+                // 发射测试：模块光 → 光功率计
+                // 模块1/3: 输入1→输出2; 模块2/4: 输入3→输出4
+                if (moduleSlot == 1 || moduleSlot == 3) { inCh = 1; outCh = 2; }
+                else { inCh = 3; outCh = 4; }
+            }
+            else
+            {
+                // 接收测试：光源 → 模块（反向）
+                // 模块1/3: 输入2→输出1; 模块2/4: 输入4→输出3
+                if (moduleSlot == 1 || moduleSlot == 3) { inCh = 2; outCh = 1; }
+                else { inCh = 4; outCh = 3; }
+            }
+
+            return SendScpiToSlot(slotNum, $":ROUTe{inCh}:SCAN {outCh}") != null;
+        }
+
         /// <summary>【8.1 查询】获取开关型号
         /// SCPI:LINSxyy:ROUTe:PATH:CATalog?
         /// 返回示例：1x4 / 1x24
