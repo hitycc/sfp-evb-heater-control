@@ -342,8 +342,8 @@ namespace SFPXFP自动测试软件多端口
                 if (TestResult.vccDDM < 2.0)
                 {
                     moduleOnline = false;
-                    SetLED(i2cok_pictureBox1, true);
-                    SetLED(i2cok_pictureBox2, true);
+                    /*SetLED(i2cok_pictureBox1, true);
+                    SetLED(i2cok_pictureBox2, true);*/
                     toolStripStatusLabel1.Text = ".......................";
                     Startautoset_button.BackColor = Color.Orange;
                     return;
@@ -703,8 +703,8 @@ namespace SFPXFP自动测试软件多端口
             pnshow_textBox.Text = TestResult.fibertop_pn;
             //设置两个 I2C 状态指示灯为绿色（false=正常/绿色，true=异常/红色，
             //结合之前定时器中离线时传 true 变红色可知）。
-            SetLED(i2cok_pictureBox1, false);
-            SetLED(i2cok_pictureBox2, false);
+           /* SetLED(i2cok_pictureBox1, false);
+            SetLED(i2cok_pictureBox2, false);*/
             //强制刷新窗体界面，让上面的 UI 变更立即显示出来，而不是等消息循环空闲时才刷新
             Update();
 

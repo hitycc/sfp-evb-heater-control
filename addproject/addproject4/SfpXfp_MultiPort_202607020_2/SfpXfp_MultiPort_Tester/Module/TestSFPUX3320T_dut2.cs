@@ -143,10 +143,10 @@ namespace FibertopTest_Common
                 GlobalVarFun.ModuleDebugLog(_slot, $"CheckTestTypeInfo[Dut2]: 当前测试类型={GlobalVarFun.testType}, 跳过E2PROM检查");
             }
 
-            // 恢复page0（重要！Dut2原来缺少此步骤，会导致后续A2寄存器读取错误页面）
+            /*// 恢复page0（重要！Dut2原来缺少此步骤，会导致后续A2寄存器读取错误页面）
             temp_val[0] = 0x00;
             TWI_WritePage(0xA2, 127, temp_val, 1);
-            GlobalVarFun.ModuleDebugLog(_slot, "CheckTestTypeInfo[Dut2]: 检查通过，已恢复page0，返回true");
+            GlobalVarFun.ModuleDebugLog(_slot, "CheckTestTypeInfo[Dut2]: 检查通过，已恢复page0，返回true");*/
             return true;
         }
 
@@ -1249,6 +1249,7 @@ namespace FibertopTest_Common
             return true;
         }
 
+
         public bool SetTxModBias(UInt16 setVal)
         {
             byte[] w_val = new byte[2];
@@ -1261,7 +1262,12 @@ namespace FibertopTest_Common
             TestResult2.txmodVal = setVal;
 
             // 选择表 03
-            if (SelectTable(3) == false) return false;
+            if (SelectTable(3) == false)
+            {
+                MessageBox.Show($"SelectTable(3) == false", "通信告警", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
             Thread.Sleep(5); //延时
 
             w_val[1] = register[0x88 - 0x80]; //TWI_ReadByte(0xA2, 0x88);
@@ -1270,11 +1276,21 @@ namespace FibertopTest_Common
             w_val[0] = (byte)((setVal >> 2) & 0xFF);
             w_val[1] |= (byte)(setVal & 0x03);
 
-            if (TWI_WritePage(0xA2, 0x87, w_val, 2) != 2) return false;
-            Thread.Sleep(100); //延时
-            if (TWI_ReadPage(0xA2, 0x87, r_val, 2) != 2) return false;
+            if (TWI_WritePage(0xA2, 0x87, w_val, 2) != 2)
+            {
+                MessageBox.Show($"TWI_WritePage(0xA2, 0x87, w_val, 2) != 2,长度不等于2,w_val[0]={w_val[0]}", "通信告警", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            Thread.Sleep(200); //延时
+            if (TWI_ReadPage(0xA2, 0x87, r_val, 2) != 2)
+            {
+                MessageBox.Show($"TWI_ReadPage(0xA2, 0x87, r_val, 2) != 2,长度不等于2,r_val[0]={r_val[0]}", "通信告警", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
             if (r_val[0] != w_val[0])
             {
+                MessageBox.Show($"r_val[0] != w_val[0]，r_val[0]={r_val[0]}，w_val[0]={w_val[0]}", "通信告警", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -1413,7 +1429,7 @@ namespace FibertopTest_Common
             TestResult2.txPwrCal_b = 0;
 
             float fk = TestResult2.txPwrCal_k;
-            if (fk < 0)   fk = 0;
+            if (fk < 0) fk = 0;
             if (fk > 255) fk = 255;
             writeByte[0] = (byte)fk;
             writeByte[1] = (byte)((fk - writeByte[0]) * 256);
@@ -1509,13 +1525,21 @@ namespace FibertopTest_Common
                 if (SelectTable(3) == false) return false;
 
                 //
-                if (TWI_WritePage(0xA2, 0xC0, writeByte, 16) != 16)
+                if (!I2C_WriteSplit(0xA2, 0xC0, writeByte, 16))
                 {
+                    MessageBox.Show($"TWI_WritePage(0xA2, 0xC0, writeByte, 16) != 16 writeByte={writeByte}",
+                "通信故障",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
                     return false;
                 }
                 Thread.Sleep(50); // 延时
-                if (TWI_ReadPage(0xA2, 0xC0, readByte, 16) != 16)
+                if (!I2C_ReadSplit(0xA2, 0xC0, readByte, 16))
                 {
+                    MessageBox.Show($"TWI_ReadPage(0xA2, 0xC0, readByte, 16) != 16 readByte={readByte}",
+                "通信故障",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
                     return false;
                 }
             }
@@ -2090,7 +2114,196 @@ namespace FibertopTest_Common
             return true;
         }
 
+        /*#region TWI底层通信方法(适配SFP_EVB_Heater，支持十六进制/十进制参数，public可外部调用)
+
+        /// <summary>
+        /// TWI 单次页读 (private)。单次I2C事务，最多读8字节，避免len>=10时十进制字符串与十六进制混淆。
+        /// </summary>
+        private int TWI_ReadPageRaw(int deviceAddr, int regAddr, byte[] buf, int len)
+        {
+            try
+            {
+                string dA = $"{(deviceAddr & 0xFF):X2}";
+                string rA = $"{(regAddr & 0xFF):X2}";
+                string resp = i2c.IIC_Get(dA, rA, len.ToString(), _slot);
+                if (string.IsNullOrEmpty(resp)) return 0;
+                var matches = Regex.Matches(resp, @"(?:0x)?([0-9a-fA-F]{2})\b");
+                int n = 0;
+                foreach (Match m in matches)
+                {
+                    if (n >= len) break;
+                    buf[n] = Convert.ToByte(m.Groups[1].Value, 16);
+                    n++;
+                }
+                return n;
+            }
+            catch { return 0; }
+        }
+
+        /// <summary>
+        /// TWI 单次页写 (private)。单次I2C事务，最多写8字节，避免len>=10时十进制字符串与十六进制混淆。
+        /// </summary>
+        private int TWI_WritePageRaw(int deviceAddr, int regAddr, byte[] buf, int len)
+        {
+            try
+            {
+                string dA = $"{(deviceAddr & 0xFF):X2}";
+                string rA = $"{(regAddr & 0xFF):X2}";
+                var sb = new System.Text.StringBuilder();
+                for (int i = 0; i < len; i++)
+                {
+                    if (i > 0) sb.Append(",");
+                    sb.Append($"{buf[i]:X2}");
+                }
+                bool ok = i2c.IIC_Set(dA, rA, len.ToString(), sb.ToString(), _slot);
+                return ok ? len : 0;
+            }
+            catch { return 0; }
+        }
+
+        /// <summary>
+        /// TWI 多字节读 (public)。自动分页，每次最多读8字节，支持任意长度。deviceAddr/regAddr 支持0xA2或162等int字面量。
+        /// </summary>
+        public int TWI_ReadPage(int deviceAddr, int regAddr, byte[] buf, int len)
+        {
+            const int pageSize = 8;
+            int totalRead = 0;
+            int offset = 0;
+            int curReg = regAddr & 0xFF;
+
+            while (offset < len)
+            {
+                int chunkLen = len - offset;
+                if (chunkLen > pageSize) chunkLen = pageSize;
+
+                byte[] chunkBuf = new byte[chunkLen];
+                int n = TWI_ReadPageRaw(deviceAddr, curReg, chunkBuf, chunkLen);
+                if (n <= 0) break;
+
+                Array.Copy(chunkBuf, 0, buf, offset, n);
+                totalRead += n;
+                offset += n;
+                curReg = (curReg + n) & 0xFF;
+
+                if (n < chunkLen) break;
+            }
+            return totalRead;
+        }
+
+        /// <summary>
+        /// TWI 多字节写 - byte[]版本 (public)。自动分页，每次最多写8字节，支持任意长度。数据字节用逗号分隔，不带0x前缀。
+        /// </summary>
+        public int TWI_WritePage(int deviceAddr, int regAddr, byte[] buf, int len)
+        {
+            const int pageSize = 8;
+            int totalWritten = 0;
+            int offset = 0;
+            int curReg = regAddr & 0xFF;
+
+            while (offset < len)
+            {
+                int chunkLen = len - offset;
+                if (chunkLen > pageSize) chunkLen = pageSize;
+
+                byte[] chunkBuf = new byte[chunkLen];
+                Array.Copy(buf, offset, chunkBuf, 0, chunkLen);
+
+                int n = TWI_WritePageRaw(deviceAddr, curReg, chunkBuf, chunkLen);
+                if (n <= 0) break;
+
+                totalWritten += n;
+                offset += n;
+                curReg = (curReg + n) & 0xFF;
+
+                if (n < chunkLen) break;
+                Thread.Sleep(5);
+            }
+            return totalWritten;
+        }
+
+        /// <summary>
+        /// TWI 单字节写 - int值便捷重载 (public)。等效于new byte[1]{(byte)value}，len=1。
+        /// </summary>
+        public int TWI_WritePage(int deviceAddr, int regAddr, int value, int length)
+        {
+            byte[] data = new byte[1] { (byte)value };
+            return TWI_WritePageRaw(deviceAddr, regAddr, data, 1);
+        }
+
+        /// <summary>
+        /// TWI 读单字节 (public)
+        /// </summary>
+        public byte TWI_ReadByte(int deviceAddr, int regAddr)
+        {
+            byte[] b = new byte[1];
+            if (TWI_ReadPageRaw(deviceAddr, regAddr, b, 1) == 1) return b[0];
+            return 0;
+        }
+
+        /// <summary>
+        /// TWI 写单字节 (public)。val支持传入0x03或3等int/byte字面量。
+        /// </summary>
+        public bool TWI_WriteByte(int deviceAddr, int regAddr, int val)
+        {
+            byte[] b = new byte[] { (byte)val };
+            return TWI_WritePageRaw(deviceAddr, regAddr, b, 1) == 1;
+        }
+        #endregion*/
+
+
+
         #region TWI底层通信方法(适配SFP_EVB_Heater，支持十六进制/十进制参数，public可外部调用)
+        /// <summary>
+        /// I2C分页写，按maxPerPage=8拆分
+        /// </summary>
+        /// <param name="devAddr">器件地址</param>
+        /// <param name="startAddr">起始寄存器地址</param>
+        /// <param name="buf">待写缓冲区</param>
+        /// <param name="len">总长度</param>
+        /// <param name="maxPerPage">单页最大字节，这里填8</param>
+        /// <returns>true全部成功</returns>
+        public bool I2C_WriteSplit(byte devAddr, byte startAddr, byte[] buf, int len, int maxPerPage = 8)
+        {
+            int offset = 0;
+            while (offset < len)
+            {
+                int currLen = Math.Min(maxPerPage, len - offset);
+                byte[] temp = new byte[currLen];
+                Array.Copy(buf, offset, temp, 0, currLen);
+
+                if (TWI_WritePage(devAddr, (byte)(startAddr + offset), temp, currLen) != currLen)
+                {
+                    MessageBox.Show($"写失败，偏移:{offset}");
+                    return false;
+                }
+                Thread.Sleep(100);
+                offset += currLen;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// I2C分页读
+        /// </summary>
+        public bool I2C_ReadSplit(byte devAddr, byte startAddr, byte[] dstBuf, int len, int maxPerPage = 8)
+        {
+            int offset = 0;
+            while (offset < len)
+            {
+                int currLen = Math.Min(maxPerPage, len - offset);
+                byte[] temp = new byte[currLen];
+                if (TWI_ReadPage(devAddr, (byte)(startAddr + offset), temp, currLen) != currLen)
+                {
+                    MessageBox.Show($"读失败，偏移:{offset}");
+                    return false;
+                }
+                Thread.Sleep(50);
+                Array.Copy(temp, 0, dstBuf, offset, currLen);
+                offset += currLen;
+            }
+            return true;
+        }
+
 
         /// <summary>
         /// TWI 多字节读 (public)。deviceAddr/regAddr 支持0xA2或162等int字面量。

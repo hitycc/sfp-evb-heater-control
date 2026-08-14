@@ -1,1 +1,0 @@
-F:\myproject\QSFP自动测试软件版本\QSFP模块自动测试软件2024.06.20\SFP模块终测检查软件\obj\Debug\SFP模块终测检查软件.csproj.ResolveComReference.cache

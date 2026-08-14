@@ -42,7 +42,7 @@ namespace SFPXFP自动测试软件多端口
         //I2C i2c;// = new TWI() as I2C;
         EVB i2c;
         ModuleTest test = new SFPUX3320T();
-        
+
         //Rx ADC
         UInt16[] rxAdc = new UInt16[6];
         float rxPwrMaxErr = 1; // 接收DDM校准检查精度
@@ -61,7 +61,7 @@ namespace SFPXFP自动测试软件多端口
         private static readonly SemaphoreSlim dcaSemaphore = new SemaphoreSlim(1, 1);
         private static readonly SemaphoreSlim switchSemaphore = new SemaphoreSlim(1, 1);
         //异步等待延时
-        private static int waittimes = 2;
+        private static int waittimes = 10;
         byte Dut = 1;
         int meter_ch = 0;
         //日志
@@ -89,7 +89,7 @@ namespace SFPXFP自动测试软件多端口
         #endregion
 
         #region  //参数变量初始化
-       
+
         public TestControl(byte dut_num)
         {
             //设置初始化
@@ -115,10 +115,10 @@ namespace SFPXFP自动测试软件多端口
             GlobalVarFun.setup.dca_gpib = "";
             GlobalVarFun.setup.dca_n1092x = false;
             GlobalVarFun.setup.doa_com = "";
-            
+
             GlobalVarFun.setup.doa_delay = 10;
             GlobalVarFun.setup.electrical_module = false;
-            
+
             GlobalVarFun.setup.flash_check = true;
             GlobalVarFun.setup.image_save = false;
             GlobalVarFun.setup.init_module = false;
@@ -136,7 +136,7 @@ namespace SFPXFP自动测试软件多端口
             GlobalVarFun.setup.ms9710x_com = "";
             GlobalVarFun.setup.ms9710x_connect = false;
 
-            
+
             GlobalVarFun.setup.rx_apd_test = false;
             GlobalVarFun.setup.rx_ddm_test = false;
             GlobalVarFun.setup.rx_hardware_los = true;
@@ -149,7 +149,7 @@ namespace SFPXFP自动测试软件多端口
             GlobalVarFun.setup.spectral_wideth = 0;
             GlobalVarFun.setup.threshold_check = true;
 
-           
+
             GlobalVarFun.setup.tx_eml_test = false;
             GlobalVarFun.setup.tx_hardware_disable = true;
             GlobalVarFun.setup.tx_jitter_test = false;
@@ -198,7 +198,7 @@ namespace SFPXFP自动测试软件多端口
                     GlobalVarFun.setup.txpwr_cal = TestSet3.txpwr_cal;
                     GlobalVarFun.setup.doa_connect3 = false;
                     break;
-                case 4: 
+                case 4:
                     test = GlobalVarFun.mTest4;
                     meter_ch = TestSet4.meter_ch;
                     meter_err = TestSet4.meter_pwr_err;
@@ -223,13 +223,13 @@ namespace SFPXFP自动测试软件多端口
         }
         #endregion
 
-        public byte TWI_ReadByte(int deviceAddr, int regAddr,byte dut)
+        public byte TWI_ReadByte(int deviceAddr, int regAddr, byte dut)
         {
             byte[] b = new byte[1];
             if (TWI_ReadPage(deviceAddr, regAddr, b, 1, dut) == 1) return b[0];
             return 0;
         }
-        public int TWI_ReadPage(int deviceAddr, int regAddr, byte[] buf, int len,byte dut)
+        public int TWI_ReadPage(int deviceAddr, int regAddr, byte[] buf, int len, byte dut)
         {
             try
             {
@@ -250,13 +250,13 @@ namespace SFPXFP自动测试软件多端口
             catch { return 0; }
         }
 
-        public bool TWI_WriteByte(int deviceAddr, int regAddr, int val,byte dut)
+        public bool TWI_WriteByte(int deviceAddr, int regAddr, int val, byte dut)
         {
             byte[] b = new byte[] { (byte)val };
             return TWI_WritePage(deviceAddr, regAddr, b, 1, dut) == 1;
         }
 
-        public int TWI_WritePage(int deviceAddr, int regAddr, byte[] buf, int len,byte dut)
+        public int TWI_WritePage(int deviceAddr, int regAddr, byte[] buf, int len, byte dut)
         {
             try
             {
@@ -292,9 +292,9 @@ namespace SFPXFP自动测试软件多端口
             return test.GetFlashInfo();
         }
 
-        public async void  Read_moduleInfo_Async()
+        public async void Read_moduleInfo_Async()
         {
-           
+
             // 将耗时的硬件读取操作放到后台线程
             try
             {
@@ -319,9 +319,9 @@ namespace SFPXFP自动测试软件多端口
             return test.GetDDMThresholds();
         }
 
-        public async void  Read_AlarmWarn_Thresholds_Async()
+        public async void Read_AlarmWarn_Thresholds_Async()
         {
-           
+
             // 将耗时的硬件读取操作放到后台线程
             try
             {
@@ -335,7 +335,7 @@ namespace SFPXFP自动测试软件多端口
             finally
             {
                 // 无论如何都要释放信号量
-               // GlobalVarFun.BusSemaphore.Release();
+                // GlobalVarFun.BusSemaphore.Release();
             }
 
         }
@@ -413,13 +413,13 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-           
+
             return true;
         }
 
         public async void Converted_analog_values_Async()
         {
-           
+
             try
             {
                 // 将耗时的硬件读取操作放到后台线程
@@ -459,7 +459,7 @@ namespace SFPXFP自动测试软件多端口
             finally
             {
                 // 无论如何都要释放信号量
-               // GlobalVarFun.BusSemaphore.Release();
+                // GlobalVarFun.BusSemaphore.Release();
             }
         }
         #endregion
@@ -717,7 +717,7 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-            
+
             //////////////////////////////////////////////////////////////////////////
 
             return rtn_flag;
@@ -749,7 +749,7 @@ namespace SFPXFP自动测试软件多端口
                 {
                     retutntxrxresult.ErrorMessage += "Auto debug Los range errors!";
                 }
-                result.message = "接收LOS自动调试 : " +  " min:" +min.ToString()+"max" + max.ToString()+ "自动调试Los范围错误！";
+                result.message = "接收LOS自动调试 : " + " min:" + min.ToString() + "max" + max.ToString() + "自动调试Los范围错误！";
                 ModListBoxShow(this, result);
                 return false;
             }
@@ -774,7 +774,7 @@ namespace SFPXFP自动测试软件多端口
                     result.message = "rxDLosAtt : " + " att:" + DOA2.rxDLosAtt.ToString();
                     break;
             }
-            
+
             ModListBoxShow(this, result);
 
             // 1. 检查最小点是否可以产生DELOS 去告警
@@ -809,8 +809,8 @@ namespace SFPXFP自动测试软件多端口
                     result.message = "rxALosAtt : " + " att:" + DOA2.rxALosAtt.ToString();
                     break;
             }
-            
-            
+
+
             ModListBoxShow(this, result);
 
             // 2. 检查最大点是否可以产生LOS
@@ -869,7 +869,7 @@ namespace SFPXFP自动测试软件多端口
                             opticaldoaatt.SetAttenuation(DOA2.rxDLosAtt);
                             break;
                     }
-                   
+
                     // DELOS 去告警
                     if (test.CheckRxLOS() == false) // 去告警OK
                     {
@@ -893,17 +893,22 @@ namespace SFPXFP自动测试软件多端口
             return false;
         }
 
-        public async Task <bool> RxLosAutoSet_Async()
+        public async Task<bool> RxLosAutoSet_Async()
         {
+            //DUT编号→OTP板卡槽位映射（如DUT1→槽位"09"）
             string slotStr = GlobalVarFun.VOArxDutToSlot[Dut];
+            //DUT编号→VOA通道映射（1→1, 2→2, 3→3, 4→4）
             int VoaChannel = GlobalVarFun.DutToVoaCh[Dut];
 
+            //打开光输出
             otp12.VOA_SetOutputState(VoaChannel, "ON");
             UInt16 min = TestSet.rxlos_Min;
             UInt16 max = TestSet.rxlos_Max;
             UInt16 los_val = 0;
             ReturnReuslt result = new ReturnReuslt();
 
+            //模块内部通过一个寄存器（`rx_los`，0~255范围的DAC值）来设定LOS判定的阈值。
+            //这个函数的目的就是自动找到一个合适的寄存器值__
             otp12.SetSlot(slotStr);
             //先关闭ALC自动功率跟踪（ALC开启时会自动调节衰减，手动设置会被覆盖）
             otp12.VOA_SetAlcState(Dut, "OFF");
@@ -935,11 +940,14 @@ namespace SFPXFP自动测试软件多端口
                 ModListBoxShow(this, result);
                 return test.SetRxLos(los_val);
             }
+            //此时的Los的值是去告警光功率
             retutntxrxresult.los = los_val;
-            // 收光调整到去告警点 DLOS
+            //收光调整到去告警点 DLOS
             switch (Dut)
             {
                 case 1:
+                    //验证最小值(min)在"去告警光功率"下是否正确
+                    //VOA设到 rxDLosAtt（低衰减=高光功率）
                     otp12.VOA_SetAttenuation(Dut, DOA.rxDLosAtt);
                     result.message = "rxDLosAtt : " + " att:" + DOA.rxDLosAtt.ToString();
                     break;
@@ -956,10 +964,10 @@ namespace SFPXFP自动测试软件多端口
                     result.message = "rxDLosAtt : " + " att:" + DOA4.rxDLosAtt.ToString();
                     break;
             }
-            
+
             ModListBoxShow(this, result);
             await Task.Delay(waittimes);
-            // 1. 检查最小点是否可以产生DELOS 去告警
+            // 1. 检查最小点是否可以产生DELOS 去告警 los_val表示的这个是los的值
             los_val = min;
             if (test.SetRxLos(los_val) == false) return false;
 
@@ -982,6 +990,8 @@ namespace SFPXFP自动测试软件多端口
             // 收光调整到告警点 LOS
             switch (Dut)
             {
+                //验证最大值(max)在"告警光功率"下是否正确          
+                //VOA设到 rxALosAtt（高衰减 = 低光功率）  
                 case 1:
                     otp12.VOA_SetAttenuation(Dut, DOA.rxALosAtt);
                     result.message = "rxALosAtt : " + " att:" + DOA.rxALosAtt.ToString();
@@ -999,7 +1009,7 @@ namespace SFPXFP自动测试软件多端口
                     result.message = "rxALosAtt : " + " att:" + DOA4.rxALosAtt.ToString();
                     break;
             }
-            
+
             ModListBoxShow(this, result);
 
             // 2. 检查最大点是否可以产生LOS
@@ -1481,10 +1491,10 @@ namespace SFPXFP自动测试软件多端口
                     opticaldoaatt.SetAttenuation(DOA2.rxCalAtt[0]);
                     break;
             }
-           
+
             rxAdc[0] = test.GetRxADC();
             retutntxrxresult.RxddmPowers[0] = rxAdc[0];
-            result.message = "设置TXSFP光源1：Success"+ " AttVal"+ DOA.rxCalAtt[0].ToString() +" rxAdc:"+ rxAdc[0].ToString();
+            result.message = "设置TXSFP光源1：Success" + " AttVal" + DOA.rxCalAtt[0].ToString() + " rxAdc:" + rxAdc[0].ToString();
             ModListBoxShow(this, result);
 
             //设置TXSFP光源2
@@ -1497,7 +1507,7 @@ namespace SFPXFP自动测试软件多端口
                     opticaldoaatt.SetAttenuation(DOA2.rxCalAtt[1]);
                     break;
             }
-            
+
             rxAdc[1] = test.GetRxADC();
             retutntxrxresult.RxddmPowers[1] = rxAdc[1];
             retutntxrxresult.RxRealPowers[1] = TestSet.rxPwr_Cal[1];
@@ -1514,7 +1524,7 @@ namespace SFPXFP自动测试软件多端口
                     opticaldoaatt.SetAttenuation(DOA2.rxCalAtt[2]);
                     break;
             }
-            
+
             rxAdc[2] = test.GetRxADC();
             retutntxrxresult.RxddmPowers[2] = rxAdc[2];
             result.message = "设置TXSFP光源3：Success" + " AttVal" + DOA.rxCalAtt[2].ToString() + " rxAdc:" + rxAdc[2].ToString();
@@ -1532,7 +1542,7 @@ namespace SFPXFP自动测试软件多端口
                         opticaldoaatt.SetAttenuation(DOA2.rxCalAtt[3]);
                         break;
                 }
-               
+
                 rxAdc[3] = test.GetRxADC();
                 retutntxrxresult.RxddmPowers[3] = rxAdc[3];
 
@@ -1560,7 +1570,7 @@ namespace SFPXFP自动测试软件多端口
             if (rxAdc[5] > 63) // 最大63
             {
                 rxAdc[5] = 63;
-                retutntxrxresult.ErrorMessage += "++"+"无光采样值超出最大限制";
+                retutntxrxresult.ErrorMessage += "++" + "无光采样值超出最大限制";
                 retutntxrxresult.RxddmPowers[0] = rxAdc[5];
                 result.message = "设置TXSFP光源 为无光状态：Fail " + retutntxrxresult.ErrorMessage;
             }
@@ -1592,31 +1602,38 @@ namespace SFPXFP自动测试软件多端口
             }
             return true;
         }
+        #endregion
 
+        #region 接收光功率DDM（数字诊断监控）自动校准
         private async Task<bool> RxPwrDDMAutoCal_Async()
         {
+            //创建一个结果对象，用于封装日志消息，传递给UI列表框显示
             ReturnReuslt result = new ReturnReuslt();
 
+            //根据当前待测端口号Dut（1~4），从全局映射表中获取该端口接收方向对应的OTP-12槽位号的字符串。
             string slotStr = GlobalVarFun.VOArxDutToSlot[Dut];
+            //根据当前端口号Dut，获取对应的VOA（可调光衰减器）通道号
             int VoaChannel = GlobalVarFun.DutToVoaCh[Dut];
-           
+            //让OTP-12驱动切换到当前端口对应的槽位，后续所有VOA/BERT/OPM操作都在该槽位执行
             otp12.SetSlot(slotStr);
             //先关闭ALC自动功率跟踪（ALC开启时会自动调节衰减，手动设置会被覆盖）
             otp12.VOA_SetAlcState(Dut, "OFF");
-            //设置工作模式为衰减模式（而非功率模式POWer）
+            //设置工作模式为衰减模式（而非功率模式POWer）,而非功率模式（POWer模式会自动调节到目标功率）
             otp12.VOA_SetMode(Dut, "ATTenuation");
-            //设置操作模式为绝对值模式ABSolute（而非参考值模式REFerence）
+            //设置操作模式为绝对值模式ABSolute（而非参考值模式REFerence）,而非相对于参考值的增量（REFerence模式）
             otp12.VOA_SetApMode(Dut, "ABSolute");
-            //打开输出光路（确保光路上有输出）
+            //打开输出光路（确保光路上有输出）,确保光信号能通过衰减器输出到待测模块
             otp12.VOA_SetOutputState(VoaChannel, "ON");
-            //设置TXSFP光源1
+            //设置TXSFP光源1 异步等待waittimes毫秒（默认值为2ms，但实际OTP设备操作可能需要更长时间），让硬件设置生效稳定。
             await Task.Delay(waittimes);
             switch (Dut)
             {
                 case 1:
-                    //设置衰减值DOA.rxCalAtt[0]
+                    //如果是端口1，设置VOA衰减值为DOA.rxCalAtt[0]（端口1的第0个校准衰减值，单位dB）。DOA是端口1的衰减参数配置对象
                     otp12.VOA_SetAttenuation(Dut, DOA.rxCalAtt[0]);
+                    //构建日志消息字符串，包含"设置TXSFP光源1成功"、衰减值和当前ADC值。注意：这里rxAdc[0]还没读取，显示的是旧值，这是一个小问题，后面Fix Bug1修复了
                     result.message = "设置TXSFP光源1：Success" + " AttVal" + DOA.rxCalAtt[0].ToString() + " rxAdc:" + rxAdc[0].ToString();
+                    //记录第0个校准点实际光功率值（来自TestSet配置，单位0.1dBm，例如-50表示-5.0dBm），存入结果对象。break跳出switch。
                     retutntxrxresult.RxRealPowers[0] = TestSet.rxPwr_Cal[0];
                     break;
                 case 2:
@@ -1637,10 +1654,14 @@ namespace SFPXFP自动测试软件多端口
                     retutntxrxresult.RxRealPowers[0] = TestSet4.rxPwr_Cal[0];
                     break;
             }
-
+            //通过test对象（具体模块驱动，如SFP-UX3320T）读取待测模块接收端DC原始采样值。这个值是模块内部RSSI（接收信号强度指示）电路的数字量，范围通常是0~63（6位ADC）
             rxAdc[0] = test.GetRxADC();
+            //将读取到的ADC值存入结果对象的 `RxddmPowers[0]`，这是模块DDM监控上报的原始功率ADC值
             retutntxrxresult.RxddmPowers[0] = rxAdc[0];
-
+            // Fix Bug1: 根据Dut选择正确的Att值用于日志显示
+            float calAtt0 = 0;
+            switch (Dut) { case 1: calAtt0 = DOA.rxCalAtt[0]; break; case 2: calAtt0 = DOA2.rxCalAtt[0]; break; case 3: calAtt0 = DOA3.rxCalAtt[0]; break; case 4: calAtt0 = DOA4.rxCalAtt[0]; break; }
+            result.message = "设置TXSFP光源1：Success" + " AttVal" + calAtt0.ToString() + " rxAdc:" + rxAdc[0].ToString();
             ModListBoxShow(this, result);
             await Task.Delay(waittimes);
             //设置TXSFP光源2
@@ -1663,6 +1684,7 @@ namespace SFPXFP自动测试软件多端口
                     break;
                 case 4:
                     otp12.VOA_SetAttenuation(Dut, DOA4.rxCalAtt[1]);
+                    //设置第二个校准点的衰减值 `rxCalAtt[1]`，记录期望光功率 `rxPwr_Cal[1]`，构建日志
                     retutntxrxresult.RxRealPowers[1] = TestSet4.rxPwr_Cal[1];
                     result.message = "设置TXSFP光源2：Success" + " AttVal" + DOA4.rxCalAtt[1].ToString() + " rxAdc:" + rxAdc[1].ToString();
                     break;
@@ -1670,8 +1692,11 @@ namespace SFPXFP自动测试软件多端口
 
             rxAdc[1] = test.GetRxADC();
             retutntxrxresult.RxddmPowers[1] = rxAdc[1];
-            retutntxrxresult.RxRealPowers[1] = TestSet.rxPwr_Cal[1];
-            result.message = "设置TXSFP光源2：Success" + " AttVal" + DOA.rxCalAtt[1].ToString() + " rxAdc:" + rxAdc[1].ToString();
+            // Fix Bug2: 删除硬编码TestSet2覆盖行，switch中已正确设置RxRealPowers[1]
+            float calAtt1 = 0;
+            switch (Dut) { case 1: calAtt1 = DOA.rxCalAtt[1]; break; case 2: calAtt1 = DOA2.rxCalAtt[1]; break; case 3: calAtt1 = DOA3.rxCalAtt[1]; break; case 4: calAtt1 = DOA4.rxCalAtt[1]; break; }
+            result.message = "设置TXSFP光源2：Success" + " AttVal" + calAtt1.ToString() + " rxAdc:" + rxAdc[1].ToString();
+            //通过委托调用UI线程，将日志消息显示到界面列表框中
             ModListBoxShow(this, result);
 
             //设置TXSFP光源3
@@ -1680,27 +1705,32 @@ namespace SFPXFP自动测试软件多端口
             {
                 case 1:
                     otp12.VOA_SetAttenuation(Dut, DOA.rxCalAtt[2]);
-                    result.message = "设置TXSFP光源3：Success" + " AttVal" + DOA.rxCalAtt[2].ToString() + " rxAdc:" + rxAdc[2].ToString();
+                    retutntxrxresult.RxRealPowers[2] = TestSet.rxPwr_Cal[2];  // Fix Bug3: [1]→[2]
                     break;
                 case 2:
                     otp12.VOA_SetAttenuation(Dut, DOA2.rxCalAtt[2]);
-                    result.message = "设置TXSFP光源3：Success" + " AttVal" + DOA2.rxCalAtt[2].ToString() + " rxAdc:" + rxAdc[2].ToString();
+                    retutntxrxresult.RxRealPowers[2] = TestSet2.rxPwr_Cal[2];  // Fix Bug3: [1]→[2]
                     break;
                 case 3:
                     otp12.VOA_SetAttenuation(Dut, DOA3.rxCalAtt[2]);
-                    result.message = "设置TXSFP光源3：Success" + " AttVal" + DOA.rxCalAtt[2].ToString() + " rxAdc:" + rxAdc[2].ToString();
+                    retutntxrxresult.RxRealPowers[2] = TestSet3.rxPwr_Cal[2];  // Fix Bug3: [1]→[2]
                     break;
                 case 4:
                     otp12.VOA_SetAttenuation(Dut, DOA4.rxCalAtt[2]);
-                    result.message = "设置TXSFP光源3：Success" + " AttVal" + DOA.rxCalAtt[2].ToString() + " rxAdc:" + rxAdc[2].ToString();
+                    retutntxrxresult.RxRealPowers[2] = TestSet4.rxPwr_Cal[2];  // Fix Bug3: [1]→[2]
                     break;
             }
-            otp12.VOA_SetAttenuation(Dut, DOA.rxCalAtt[2]);
             rxAdc[2] = test.GetRxADC();
             retutntxrxresult.RxddmPowers[2] = rxAdc[2];
-
+            // Fix Bug4: 删除硬编码TestSet3覆盖行，switch中已正确设置
+            // Fix Bug5: 修正日志消息标题、Att值和rxAdc索引
+            float calAtt2 = 0;
+            switch (Dut) { case 1: calAtt2 = DOA.rxCalAtt[2]; break; case 2: calAtt2 = DOA2.rxCalAtt[2]; break; case 3: calAtt2 = DOA3.rxCalAtt[2]; break; case 4: calAtt2 = DOA4.rxCalAtt[2]; break; }
+            result.message = "设置TXSFP光源3：Success" + " AttVal" + calAtt2.ToString() + " rxAdc:" + rxAdc[2].ToString();
             ModListBoxShow(this, result);
             await Task.Delay(waittimes);
+            //判断是否启用了APD校准模式。PIN光电二极管只需要3个校准点，
+            //APD雪崩光电二极管需要5个点（因为APD在高功率端有更复杂的非线性响应）
             if (GlobalVarFun.setup.rx_apd_cal) // APD 检查后面2个点
             {
                 //设置TXSFP光源4
@@ -1708,18 +1738,22 @@ namespace SFPXFP自动测试软件多端口
                 {
                     case 1:
                         otp12.VOA_SetAttenuation(Dut, DOA.rxCalAtt[3]);
+                        retutntxrxresult.RxRealPowers[3] = TestSet.rxPwr_Cal[3];
                         break;
                     case 2:
                         otp12.VOA_SetAttenuation(Dut, DOA2.rxCalAtt[3]);
+                        retutntxrxresult.RxRealPowers[3] = TestSet2.rxPwr_Cal[3];
                         break;
                     case 3:
                         otp12.VOA_SetAttenuation(Dut, DOA3.rxCalAtt[3]);
+                        retutntxrxresult.RxRealPowers[3] = TestSet3.rxPwr_Cal[3];
                         break;
                     case 4:
                         otp12.VOA_SetAttenuation(Dut, DOA4.rxCalAtt[3]);
+                        retutntxrxresult.RxRealPowers[3] = TestSet4.rxPwr_Cal[3];
                         break;
                 }
-
+                await Task.Delay(waittimes); // Fix Bug6: APD点4等待光功率稳定
                 rxAdc[3] = test.GetRxADC();
                 retutntxrxresult.RxddmPowers[3] = rxAdc[3];
 
@@ -1728,37 +1762,46 @@ namespace SFPXFP自动测试软件多端口
                 {
                     case 1:
                         otp12.VOA_SetAttenuation(Dut, DOA.rxCalAtt[4]);
+                        retutntxrxresult.RxRealPowers[4] = TestSet.rxPwr_Cal[4];
                         break;
                     case 2:
                         otp12.VOA_SetAttenuation(Dut, DOA2.rxCalAtt[4]);
+                        retutntxrxresult.RxRealPowers[4] = TestSet2.rxPwr_Cal[4];
                         break;
                     case 3:
                         otp12.VOA_SetAttenuation(Dut, DOA3.rxCalAtt[4]);
+                        retutntxrxresult.RxRealPowers[4] = TestSet3.rxPwr_Cal[4];
                         break;
                     case 4:
                         otp12.VOA_SetAttenuation(Dut, DOA4.rxCalAtt[4]);
+                        retutntxrxresult.RxRealPowers[4] = TestSet4.rxPwr_Cal[4];
                         break;
                 }
-
+                await Task.Delay(waittimes); // Fix Bug6: APD点5等待光功率稳定
                 rxAdc[4] = test.GetRxADC();
                 retutntxrxresult.RxddmPowers[4] = rxAdc[4];
             }
 
             //设置TXSFP光源 为无光状态
             await Task.Delay(waittimes);
+            //将VOA衰减设置到60dB，这是一个非常大的衰减值，相当于光路完全阻断，
+            //待测模块接收端几乎收不到光（无光状态）。
+            //读取无光状态下的ADC值，然后加3为余量。因为无光时ADC值可能跳动，加3是为了留出裕量，避免因噪声导致误判为有光。
             otp12.VOA_SetAttenuation(Dut, 60);
             rxAdc[5] = test.GetRxADC();
             rxAdc[5] += 3; //加大 预防跳动问题
             retutntxrxresult.RxddmPowers[5] = rxAdc[5];
             result.message = "设置TXSFP光源 为无光状态：Success" + " AttVal" + "60" + " rxAdc:" + rxAdc[5].ToString();
-
+            //ADC值范围是0~63（6位ADC）。如果加3后超过63，钳位到63，并记录错误信息"无光采样值超出最大限制"。
+            //Fix Bug7：原来错误地写入了 `RxddmPowers[0]`（覆盖了第1个校准点），修正为 `[5]`。
             if (rxAdc[5] > 63) // 最大63
             {
                 rxAdc[5] = 63;
                 retutntxrxresult.ErrorMessage += "++" + "无光采样值超出最大限制";
-                retutntxrxresult.RxddmPowers[0] = rxAdc[5];
+                retutntxrxresult.RxddmPowers[5] = rxAdc[5];  // Fix Bug7: [0]→[5]
                 result.message = "设置TXSFP光源 为无光状态：Fail " + retutntxrxresult.ErrorMessage;
             }
+            //将无光ADC值保存到对应端口的TestResult对象中（`rxNoPwrVal`），后续用于LOS（信号丢失）告警判定阈值。
             switch (Dut)
             {
                 case 1:
@@ -1776,8 +1819,15 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
+            //等待异步线程稳定
             await Task.Delay(waittimes);//等待，以使其异步线程进入测试
-            //计算校准参数
+                                        //计算校准参数
+                                        //调用CulRxCalPar()方法，根据采集到的rxAdc[]（ADC原始值）和rxPwr_Cal[]（期望光功率dBm*10）进行多项式曲线拟合。
+                                        //内部使用Bit.iapcir()做最小二乘拟合：
+                                        //PIN管：3个点做2次多项式拟合（y = a0 + a1 * x + a2 * x²）
+                                        //APD管：5个点做3次多项式拟合（y = a0 + a1 * x + a2 * x² +a3 * x³）
+                                        //写入校准参数到模块 拟合得到的系数存入TestResult.rxPwrCal_c[]，用于模块内部将ADC值转换为光功率值
+                                        //如果计算失败（如系数过大|a|>1000），返回false
             if (CulRxCalPar() == false)
             {
                 result.message = "计算校准参数：Fail";
@@ -1785,7 +1835,8 @@ namespace SFPXFP自动测试软件多端口
                 return false;
             }
             await Task.Delay(waittimes);//等待，以使其异步线程进入测试
-            // 写入校准参数到模块
+            //调用模块驱动的 WriteRxCalData() 方法，将计算好的校准系数通过I2C总线写入待测模块的寄存器/Flash中。
+            //模块上电后会使用这些系数将ADC原始值转换为实际的光功率dBm值，实现DDM监控功能
             if (test.WriteRxCalData() == false)
             {
                 result.message = "写入校准参数到模块：Fail";
@@ -1827,7 +1878,7 @@ namespace SFPXFP自动测试软件多端口
                 retutntxrxresult.RxddmPowers[5] = rxpow;
                 if (rxpow > -40)
                 {
-                    result.message = "Rx无光检查：Fail"+ rxpow.ToString();
+                    result.message = "Rx无光检查：Fail" + rxpow.ToString();
                     ModListBoxShow(this, result);
                     return false;
                 }
@@ -1857,7 +1908,7 @@ namespace SFPXFP自动测试软件多端口
                 ModListBoxShow(this, result);
 
                 //设置TXSFP光源4
-               
+
                 switch (Dut)
                 {
                     case 1:
@@ -1875,7 +1926,7 @@ namespace SFPXFP自动测试软件多端口
                     default:
                         break;
                 }
-                
+
                 result.message = "检查点4：PASS";
                 ModListBoxShow(this, result);
                 switch (Dut)
@@ -1949,7 +2000,7 @@ namespace SFPXFP自动测试软件多端口
             ModListBoxShow(this, result);
 
             //设置TXSFP光源2
-            
+
             switch (Dut)
             {
                 case 1:
@@ -1972,7 +2023,7 @@ namespace SFPXFP自动测试软件多端口
             ModListBoxShow(this, result);
 
             //设置TXSFP光源1
-            
+
             switch (Dut)
             {
                 case 1:
@@ -2075,7 +2126,7 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-            
+
             return true;
         }
 
@@ -2369,7 +2420,7 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-           
+
 
             result.message = "检查点2：PASS";
             ModListBoxShow(this, result);
@@ -2959,7 +3010,7 @@ namespace SFPXFP自动测试软件多端口
                     opticaldoaatt.SetAttenuation(DOA2.rxDLosAtt);
                     break;
             }
-            
+
             // LOS 去告警
             if (test.CheckRxLOS() == true)
             {
@@ -2988,7 +3039,7 @@ namespace SFPXFP自动测试软件多端口
                 //}
             }
             // 逐步+2dB逼近 设置
-            
+
             switch (Dut)
             {
                 case 1:
@@ -3003,7 +3054,7 @@ namespace SFPXFP自动测试软件多端口
             {
                 result.message = "att_val : " + att_val.ToString();
                 ModListBoxShow(this, result);
-               
+
                 opticaldoaatt.SetAttenuation(att_val);
                 att_val = att_val + 2.0f;
             }
@@ -3020,7 +3071,7 @@ namespace SFPXFP自动测试软件多端口
                         opticaldoaatt.SetAttenuation(DOA2.rxALosAtt + 0.8f); // 后置0.8dB
                         break;
                 }
-               
+
             }
             else
             {
@@ -3033,7 +3084,7 @@ namespace SFPXFP自动测试软件多端口
                         opticaldoaatt.SetAttenuation(DOA2.rxALosAtt);
                         break;
                 }
-               
+
             }
             // LOS 告警
             if (test.CheckRxLOS() == false)
@@ -3064,7 +3115,7 @@ namespace SFPXFP自动测试软件多端口
                 //}
             }
             // 逐步-1dB逼近 设置
-            
+
             switch (Dut)
             {
                 case 1:
@@ -3093,7 +3144,7 @@ namespace SFPXFP自动测试软件多端口
                     opticaldoaatt.SetAttenuation(DOA2.rxDLosAtt);
                     break;
             }
-           
+
             // LOS 去告警
             if (test.CheckRxLOS() == true)
             {
@@ -3158,7 +3209,7 @@ namespace SFPXFP自动测试软件多端口
                     otp12.VOA_SetAttenuation(Dut, DOA4.rxSenAtt);
                     break;
             }
-           
+
             await Task.Delay(waittimes);
             //de los  去告警
             switch (Dut)
@@ -3206,7 +3257,7 @@ namespace SFPXFP自动测试软件多端口
                 //}
             }
             // 逐步+2dB逼近 设置
-            
+
             switch (Dut)
             {
                 case 1:
@@ -3282,7 +3333,7 @@ namespace SFPXFP自动测试软件多端口
                         otp12.VOA_SetAttenuation(Dut, DOA4.rxALosAtt + 0.8f);
                         break;
                 }
-               
+
             }
             else
             {
@@ -3301,7 +3352,7 @@ namespace SFPXFP自动测试软件多端口
                         otp12.VOA_SetAttenuation(Dut, DOA4.rxALosAtt);
                         break;
                 }
-               
+
             }
             // LOS 告警
             if (test.CheckRxLOS() == false)
@@ -3401,7 +3452,7 @@ namespace SFPXFP自动测试软件多端口
                     otp12.VOA_SetAttenuation(Dut, DOA4.rxDLosAtt);
                     break;
             }
-           
+
             // LOS 去告警
             if (test.CheckRxLOS() == true)
             {
@@ -4295,8 +4346,8 @@ namespace SFPXFP自动测试软件多端口
 
                                     }
                                     else
-                                    { 
-                                        
+                                    {
+
                                     }
                                 }
                             }
@@ -4460,109 +4511,109 @@ namespace SFPXFP自动测试软件多端口
                     }
                 }
 
-                    if (GlobalVarFun.Language == "Chinese")
+                if (GlobalVarFun.Language == "Chinese")
+                {
+                    switch (Dut)
                     {
-                        switch (Dut)
-                        {
-                            case 1:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
-                                if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
-                                //
-                                //if (tx_cr > TestSet.txCr_Max) errmsg += "交叉点超过最大值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Max:" + TestSet.txCr_Max.ToString() + "\r\n";
-                                //if (tx_cr < TestSet.txCr_Min) errmsg += "交叉点超过最小值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Min:" + TestSet.txCr_Min.ToString() + "\r\n";
-                                ////
-                                ////Jitter Total 检查功能
-                                //if (GlobalVarFun.setup.tx_jitter_test)
-                                //{
-                                //    if (tx_jt >= TestSet.txJt_Max) errmsg += "抖动Jt超过最大值！\r\n" + "tx_jt:" + tx_jt.ToString() + " txJt_Max:" + TestSet.txJt_Max.ToString() + "\r\n";
-                                //}
-                                break;
-                            case 2:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
-                                if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
-                                //
-                                //if (tx_cr > TestSet.txCr_Max) errmsg += "交叉点超过最大值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Max:" + TestSet.txCr_Max.ToString() + "\r\n";
-                                //if (tx_cr < TestSet.txCr_Min) errmsg += "交叉点超过最小值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Min:" + TestSet.txCr_Min.ToString() + "\r\n";
-                                ////
-                                ////Jitter Total 检查功能
-                                //if (GlobalVarFun.setup.tx_jitter_test)
-                                //{
-                                //    if (tx_jt >= TestSet.txJt_Max) errmsg += "抖动Jt超过最大值！\r\n" + "tx_jt:" + tx_jt.ToString() + " txJt_Max:" + TestSet.txJt_Max.ToString() + "\r\n";
-                                //}
-                                break;
-                            case 3:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
-                                if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
-                                break;
-                            case 4:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
-                                if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        switch (Dut)
-                        {
-                            case 1:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
-                                if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
-                                                                                                                                                                                                 //
-                                //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
-                                //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
-                                //                                                                                      //
-                                //                                                                                      //Jitter Total 检查功能
-                                //if (GlobalVarFun.setup.tx_jitter_test)
-                                //{
-                                //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
-                                //}
-                                break;
-                            case 2:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
-                                if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
-                                                                                                                                                                                                 //
-                                //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
-                                //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
-                                //                                                                                      //
-                                //                                                                                      //Jitter Total 检查功能
-                                //if (GlobalVarFun.setup.tx_jitter_test)
-                                //{
-                                //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
-                                //}
-                                break;
-                            case 3:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
-                                if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
-                                                                                                                                                                                                 //
-                                //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
-                                //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
-                                //                                                                                      //
-                                //                                                                                      //Jitter Total 检查功能
-                                //if (GlobalVarFun.setup.tx_jitter_test)
-                                //{
-                                //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
-                                //}
-                                break;
-                            case 4:
-                                if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
-                                if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
-                                                                                                                                                                                                 //
-                                //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
-                                //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
-                                //                                                                                      //
-                                //                                                                                      //Jitter Total 检查功能
-                                //if (GlobalVarFun.setup.tx_jitter_test)
-                                //{
-                                //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
-                                //}
-                                break;
+                        case 1:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
+                            if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
+                            //
+                            //if (tx_cr > TestSet.txCr_Max) errmsg += "交叉点超过最大值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Max:" + TestSet.txCr_Max.ToString() + "\r\n";
+                            //if (tx_cr < TestSet.txCr_Min) errmsg += "交叉点超过最小值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Min:" + TestSet.txCr_Min.ToString() + "\r\n";
+                            ////
+                            ////Jitter Total 检查功能
+                            //if (GlobalVarFun.setup.tx_jitter_test)
+                            //{
+                            //    if (tx_jt >= TestSet.txJt_Max) errmsg += "抖动Jt超过最大值！\r\n" + "tx_jt:" + tx_jt.ToString() + " txJt_Max:" + TestSet.txJt_Max.ToString() + "\r\n";
+                            //}
+                            break;
+                        case 2:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
+                            if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
+                            //
+                            //if (tx_cr > TestSet.txCr_Max) errmsg += "交叉点超过最大值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Max:" + TestSet.txCr_Max.ToString() + "\r\n";
+                            //if (tx_cr < TestSet.txCr_Min) errmsg += "交叉点超过最小值！\r\n" + "tx_cr:" + tx_cr.ToString() + " txCr_Min:" + TestSet.txCr_Min.ToString() + "\r\n";
+                            ////
+                            ////Jitter Total 检查功能
+                            //if (GlobalVarFun.setup.tx_jitter_test)
+                            //{
+                            //    if (tx_jt >= TestSet.txJt_Max) errmsg += "抖动Jt超过最大值！\r\n" + "tx_jt:" + tx_jt.ToString() + " txJt_Max:" + TestSet.txJt_Max.ToString() + "\r\n";
+                            //}
+                            break;
+                        case 3:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
+                            if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
+                            break;
+                        case 4:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "消光比超过最大值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString() + "\r\n";
+                            if (tx_er < TestSet.txEr_Min) errmsg += "消光比超过最小值！\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString() + "\r\n";
+                            break;
                         default:
-                                break;
-                        }
+                            break;
                     }
-                
+                }
+                else
+                {
+                    switch (Dut)
+                    {
+                        case 1:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
+                            if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
+                                                                                                                                                                                             //
+                                                                                                                                                                                             //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
+                                                                                                                                                                                             //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
+                                                                                                                                                                                             //                                                                                      //
+                                                                                                                                                                                             //                                                                                      //Jitter Total 检查功能
+                                                                                                                                                                                             //if (GlobalVarFun.setup.tx_jitter_test)
+                                                                                                                                                                                             //{
+                                                                                                                                                                                             //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
+                                                                                                                                                                                             //}
+                            break;
+                        case 2:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
+                            if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
+                                                                                                                                                                                             //
+                                                                                                                                                                                             //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
+                                                                                                                                                                                             //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
+                                                                                                                                                                                             //                                                                                      //
+                                                                                                                                                                                             //                                                                                      //Jitter Total 检查功能
+                                                                                                                                                                                             //if (GlobalVarFun.setup.tx_jitter_test)
+                                                                                                                                                                                             //{
+                                                                                                                                                                                             //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
+                                                                                                                                                                                             //}
+                            break;
+                        case 3:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
+                            if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
+                                                                                                                                                                                             //
+                                                                                                                                                                                             //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
+                                                                                                                                                                                             //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
+                                                                                                                                                                                             //                                                                                      //
+                                                                                                                                                                                             //                                                                                      //Jitter Total 检查功能
+                                                                                                                                                                                             //if (GlobalVarFun.setup.tx_jitter_test)
+                                                                                                                                                                                             //{
+                                                                                                                                                                                             //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
+                                                                                                                                                                                             //}
+                            break;
+                        case 4:
+                            if (tx_er > TestSet.txEr_Max) errmsg += "Extinction ratio exceeds maximum!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Max:" + TestSet.txEr_Max.ToString();//消光比超过最大值！
+                            if (tx_er < TestSet.txEr_Min) errmsg += "Extinction ratio exceeds minimum value!\r\n" + "tx_er:" + tx_er.ToString() + " txEr_Min:" + TestSet.txEr_Min.ToString();//消光比超过最小值！
+                                                                                                                                                                                             //
+                                                                                                                                                                                             //if (tx_cr > TestSet.txCr_Max) errmsg += "Crossing point exceeds maximum!\r\n";//交叉点超过最大值！
+                                                                                                                                                                                             //if (tx_cr < TestSet.txCr_Min) errmsg += "The crossing point exceeds the minimum!\r\n";//交叉点超过最小值！
+                                                                                                                                                                                             //                                                                                      //
+                                                                                                                                                                                             //                                                                                      //Jitter Total 检查功能
+                                                                                                                                                                                             //if (GlobalVarFun.setup.tx_jitter_test)
+                                                                                                                                                                                             //{
+                                                                                                                                                                                             //    if (tx_jt >= TestSet.txJt_Max) errmsg += "Jitter Jt exceeds the maximum!\r\n";//抖动Jt超过最大值！
+                                                                                                                                                                                             //}
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
 
             }
             //}
@@ -4846,7 +4897,7 @@ namespace SFPXFP自动测试软件多端口
             }
         }
 
-        private async Task <bool> Get_ERatio_DCA_Async(bool autoScale)
+        private async Task<bool> Get_ERatio_DCA_Async(bool autoScale)
         {
             float tx_er = 0;
             await dcaSemaphore.WaitAsync();
@@ -4857,9 +4908,9 @@ namespace SFPXFP自动测试软件多端口
                 // 设置到ERM消光比模块槽位
                 otp12.SetSlot("06");
                 // 设置ERM信号速率（10G模块）
-                otp12.ERM_SetRate(Dut, "10G");
+                otp12.ERM_SetRate(Dut, "1.25G");
                 // 等待信号稳定
-                await Task.Delay(2000);
+                await Task.Delay(1000);
 
                 // 多次读取消光比，取有效值
                 for (int i = 0; i < 5; i++)
@@ -5033,9 +5084,9 @@ namespace SFPXFP自动测试软件多端口
                                 TestResult2.txCrossing = scope_86100d.GetCrossing(gpibAddress);
                                 // Jitter RMS                   
                                 TestResult2.txJiterRMS = (float)(scope_86100d.GetJitterRMS(gpibAddress));// 单位 ps
-                                                                                                        // Jitter PP
+                                                                                                         // Jitter PP
                                 TestResult2.txJiterPP = (float)(scope_86100d.GetJitterPP(gpibAddress));// 单位 ps
-                                                                                                      //Jitter Total //2019.2.15 add
+                                                                                                       //Jitter Total //2019.2.15 add
                                 if (GlobalVarFun.moduleType == "SFP+" || GlobalVarFun.moduleType == "XFP")
                                 {
                                     TestResult2.txJiterTT = TestResult2.txJiterRMS + TestResult2.txJiterPP;
@@ -5184,9 +5235,9 @@ namespace SFPXFP自动测试软件多端口
                                 TestResult2.txCrossing = scope_86100d.GetCrossing(gpibAddress);
                                 // Jitter RMS                   
                                 TestResult2.txJiterRMS = (float)(scope_86100d.GetJitterRMS(gpibAddress));// 单位 ps
-                                                                                                        // Jitter PP
+                                                                                                         // Jitter PP
                                 TestResult2.txJiterPP = (float)(scope_86100d.GetJitterPP(gpibAddress));// 单位 ps
-                                                                                                      //Jitter Total //2019.2.15 add
+                                                                                                       //Jitter Total //2019.2.15 add
                                 if (GlobalVarFun.moduleType == "SFP+" || GlobalVarFun.moduleType == "XFP")
                                 {
                                     TestResult2.txJiterTT = TestResult.txJiterRMS + TestResult.txJiterPP;
@@ -5203,7 +5254,7 @@ namespace SFPXFP自动测试软件多端口
                                 TestResult2.txESN = scope_86100d.GetEyeSNR(gpibAddress);
                                 //Eye Amp
                                 TestResult2.TxEyeAmp = (float)(scope_86100d.GetAmplitude(gpibAddress)) * 1000000;//uw 2025.09.12
-                                                                                                                // 终测  从示波器86100 截取眼图gif
+                                                                                                                 // 终测  从示波器86100 截取眼图gif
                                 TestResult2.bimage_len = 0;
                                 if ((GlobalVarFun.testType == "finalTest") && (GlobalVarFun.setup.image_save))// && (TestResult.waveforms_count >= 100))
                                 {
@@ -5294,7 +5345,7 @@ namespace SFPXFP自动测试软件多端口
                     //MessageBox.Show(exp.Message);
                     if (GlobalVarFun.Language == "Chinese")
                     {
-                        AddTestLog("从示波器86100D读取ER/CP/Jitter等参数错误！"+ ex.ToString());
+                        AddTestLog("从示波器86100D读取ER/CP/Jitter等参数错误！" + ex.ToString());
                     }
                     else
                     {
@@ -5581,7 +5632,7 @@ namespace SFPXFP自动测试软件多端口
                         default:
                             break;
                     }
-                    
+
                     // 终测  从示波器86100 截取眼图gif
                     if ((GlobalVarFun.testType == "finalTest") && (GlobalVarFun.setup.image_save))// && (TestResult.waveforms_count >= 100))
                     {
@@ -5599,7 +5650,7 @@ namespace SFPXFP自动测试软件多端口
                             byteArray = ms.GetBuffer();
                         }
 
-                        
+
                         switch (Dut)
                         {
                             case 1:
@@ -5730,7 +5781,7 @@ namespace SFPXFP自动测试软件多端口
                     //MessageBox.Show(exp.Message);
                     if (GlobalVarFun.Language == "Chinese")
                     {
-                        AddTestLog("从示波器86100读取ER/CP/Jitter等参数错误！"+ ex.ToString());
+                        AddTestLog("从示波器86100读取ER/CP/Jitter等参数错误！" + ex.ToString());
                     }
                     else
                     {
@@ -5762,32 +5813,32 @@ namespace SFPXFP自动测试软件多端口
             }
             if (GlobalVarFun.moduleType == "SFP-GN25L96")
             {
-                retutntxrxresult.ModuleSchemeShow  = " SFP-GN25L96" + str;
+                retutntxrxresult.ModuleSchemeShow = " SFP-GN25L96" + str;
                 return true;
             }
             if (GlobalVarFun.moduleType == "SFP-UX3320C")
             {
-                retutntxrxresult.ModuleSchemeShow  = " SFP-UX3320C" + str;
+                retutntxrxresult.ModuleSchemeShow = " SFP-UX3320C" + str;
                 return true;
             }
             if (GlobalVarFun.moduleType == "SFP-UX3320T")
             {
-                retutntxrxresult.ModuleSchemeShow  = " SFP-UX3320T" + str;
+                retutntxrxresult.ModuleSchemeShow = " SFP-UX3320T" + str;
                 return true;
             }
             if (GlobalVarFun.moduleType == "SFPP-GN1196")
             {
-                retutntxrxresult.ModuleSchemeShow  = " SFPP-GN1196" + str;
+                retutntxrxresult.ModuleSchemeShow = " SFPP-GN1196" + str;
                 return true;
             }
             if (GlobalVarFun.moduleType == "SFPP-UX3261S")
             {
-                retutntxrxresult.ModuleSchemeShow  = "SFPPUX3261S" + str;
+                retutntxrxresult.ModuleSchemeShow = "SFPPUX3261S" + str;
                 return true;
             }
             if (GlobalVarFun.moduleType == "SFPP-UX2270+2072")
             {
-                retutntxrxresult.ModuleSchemeShow  = "SFPP-UX2270+2072" + str;
+                retutntxrxresult.ModuleSchemeShow = "SFPP-UX2270+2072" + str;
                 return true;
             }
             // MCU方案的模块支持如下判断  SFP-MCU  SFP+  XFP
@@ -5967,7 +6018,7 @@ namespace SFPXFP自动测试软件多端口
                     opticaldoaatt.SetAttenuation(DOA2.rxDLosAtt + 3); //切换到去告警功率
                     break;
             }
-            
+
 
             for (int x = 0; x <= 255; x++)
             {
@@ -6070,131 +6121,131 @@ namespace SFPXFP自动测试软件多端口
             return true;
         }
 
-        private async Task <bool> AutoTestRxAPD_Async(byte dutNo)
+        private async Task<bool> AutoTestRxAPD_Async(byte dutNo)
         {
-           // // 从全局映射读取当前DUT对应的槽位、VOA通道、BERT通道
-           // string targetSlot = GlobalVarFun.VOArxDutToSlot[dutNo];
-           // int voaCh = GlobalVarFun.DutToVoaCh[dutNo];
-           // int bertCh = GlobalVarFun.DutToBertCh[dutNo];
+            // // 从全局映射读取当前DUT对应的槽位、VOA通道、BERT通道
+            // string targetSlot = GlobalVarFun.VOArxDutToSlot[dutNo];
+            // int voaCh = GlobalVarFun.DutToVoaCh[dutNo];
+            // int bertCh = GlobalVarFun.DutToBertCh[dutNo];
 
-           // double[] psspertbuf = new double[256];
-           // double valmin = double.MaxValue;
-           // byte valminindex = 0;
-           // string statusRaw = "";
-           // int i = 0;
-           // string strErr = "";
-           // byte min = (byte)TestSet.rxapd_min;
-           // byte max = (byte)TestSet.rxapd_max;
+            // double[] psspertbuf = new double[256];
+            // double valmin = double.MaxValue;
+            // byte valminindex = 0;
+            // string statusRaw = "";
+            // int i = 0;
+            // string strErr = "";
+            // byte min = (byte)TestSet.rxapd_min;
+            // byte max = (byte)TestSet.rxapd_max;
 
-           // // ========== 原独立衰减器逻辑替换为OTP VOA ==========
-           // double losAtt = 0;
-           // switch (Dut)
-           // {
-           //     case 1: losAtt = DOA.rxDLosAtt + 3; break;
-           //     case 2: losAtt = DOA2.rxDLosAtt + 3; break;
-           //     case 3: losAtt = DOA3.rxDLosAtt + 3; break;
-           //     case 4: losAtt = DOA4.rxDLosAtt + 3; break;
-           // }
-           // // OTP指定槽位+通道设置衰减
-           //otp12.VOA_SetAttenuationToSlot(targetSlot, voaCh, losAtt);
-           // await Task.Delay(300); // OTP光衰调节稳定延时
+            // // ========== 原独立衰减器逻辑替换为OTP VOA ==========
+            // double losAtt = 0;
+            // switch (Dut)
+            // {
+            //     case 1: losAtt = DOA.rxDLosAtt + 3; break;
+            //     case 2: losAtt = DOA2.rxDLosAtt + 3; break;
+            //     case 3: losAtt = DOA3.rxDLosAtt + 3; break;
+            //     case 4: losAtt = DOA4.rxDLosAtt + 3; break;
+            // }
+            // // OTP指定槽位+通道设置衰减
+            //otp12.VOA_SetAttenuationToSlot(targetSlot, voaCh, losAtt);
+            // await Task.Delay(300); // OTP光衰调节稳定延时
 
-           // // 数组初始化
-           // for (int x = 0; x <= 255; x++)
-           //     psspertbuf[x] = 100.0;
-           // valmin = 100;
+            // // 数组初始化
+            // for (int x = 0; x <= 255; x++)
+            //     psspertbuf[x] = 100.0;
+            // valmin = 100;
 
-           // // 清空当前BERT通道误码计数（替换原pssbert.ClearChannelError）
-           // otp12.BERT_ClearAllErr();
-           // await Task.Delay(100);
+            // // 清空当前BERT通道误码计数（替换原pssbert.ClearChannelError）
+            // otp12.BERT_ClearAllErr();
+            // await Task.Delay(100);
 
-           // // 遍历APD调节区间 min ~ max，步长+2
-           // for (i = min; i <= max; i += 2)
-           // {
-           //     if (i > max) i = max;
-           //     await Task.Delay(waittimes);
+            // // 遍历APD调节区间 min ~ max，步长+2
+            // for (i = min; i <= max; i += 2)
+            // {
+            //     if (i > max) i = max;
+            //     await Task.Delay(waittimes);
 
-           //     // 设置当前模块APD值（原有test对象逻辑不变）
-           //     test.setAPD((byte)i);
+            //     // 设置当前模块APD值（原有test对象逻辑不变）
+            //     test.setAPD((byte)i);
 
-           //     // ========== 替换原pssbert.GetChannelStatus ==========
-           //     // OTP读取BERT通道误码数据：返回 误码数,总比特,锁定标记
-           //     statusRaw = GlobalVarFun.OTP_12.BERT_GetErrData(bertCh);
-           //     if (string.IsNullOrEmpty(statusRaw))
-           //     {
-           //         psspertbuf[i] = 100;
-           //         continue;
-           //     }
-           //     // 拆分OTP返回数据
-           //     string[] dataArr = statusRaw.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-           //     double errBit = 0;
-           //     if (double.TryParse(dataArr[0], out errBit))
-           //         psspertbuf[i] = err;
+            //     // ========== 替换原pssbert.GetChannelStatus ==========
+            //     // OTP读取BERT通道误码数据：返回 误码数,总比特,锁定标记
+            //     statusRaw = GlobalVarFun.OTP_12.BERT_GetErrData(bertCh);
+            //     if (string.IsNullOrEmpty(statusRaw))
+            //     {
+            //         psspertbuf[i] = 100;
+            //         continue;
+            //     }
+            //     // 拆分OTP返回数据
+            //     string[] dataArr = statusRaw.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            //     double errBit = 0;
+            //     if (double.TryParse(dataArr[0], out errBit))
+            //         psspertbuf[i] = err;
 
-           //     // 原有业务判断逻辑完全保留
-           //     if ((psspertbuf[i] == 0) && statusRaw.Contains("1")) // 锁定标记=1（同步）
-           //     {
-           //         statusRaw = GlobalVarFun.OTP_12.BERT_GetErr(bertCh);
-           //         dataArr = statusRaw.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-           //         double.TryParse(dataArr[0], out psspertbuf[i]);
-           //     }
-           //     else if (psspertbuf[i] == 0 && !statusRaw.Contains("1"))
-           //     {
-           //         psspertbuf[i] = 100; // 失步赋值大值
-           //     }
+            //     // 原有业务判断逻辑完全保留
+            //     if ((psspertbuf[i] == 0) && statusRaw.Contains("1")) // 锁定标记=1（同步）
+            //     {
+            //         statusRaw = GlobalVarFun.OTP_12.BERT_GetErr(bertCh);
+            //         dataArr = statusRaw.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            //         double.TryParse(dataArr[0], out psspertbuf[i]);
+            //     }
+            //     else if (psspertbuf[i] == 0 && !statusRaw.Contains("1"))
+            //     {
+            //         psspertbuf[i] = 100; // 失步赋值大值
+            //     }
 
-           //     // 清空误码计数器
-           //     GlobalVarFun.OTP_12.BERT_ClearAllErr();
+            //     // 清空误码计数器
+            //     GlobalVarFun.OTP_12.BERT_ClearAllErr();
 
-           //     // 判断同步标记，寻找最小误码点
-           //     if (statusRaw.Contains("1"))
-           //     {
-           //         if (psspertbuf[i] < valmin)
-           //         {
-           //             valmin = psspertbuf[i];
-           //             valminindex = (byte)i;
-           //         }
-           //     }
-           //     else
-           //     {
-           //         psspertbuf[i] = 100;
-           //         i += 5;
-           //         if (i > max) i = max;
-           //         continue;
-           //     }
+            //     // 判断同步标记，寻找最小误码点
+            //     if (statusRaw.Contains("1"))
+            //     {
+            //         if (psspertbuf[i] < valmin)
+            //         {
+            //             valmin = psspertbuf[i];
+            //             valminindex = (byte)i;
+            //         }
+            //     }
+            //     else
+            //     {
+            //         psspertbuf[i] = 100;
+            //         i += 5;
+            //         if (i > max) i = max;
+            //         continue;
+            //     }
 
-           //     if (i == max) break;
-           // }
+            //     if (i == max) break;
+            // }
 
-           // // 多相同最小值取中间索引逻辑不变
-           // byte[] bufminindex = new byte[255];
-           // int y = 0;
-           // for (byte x = 0; x < 255; x++)
-           // {
-           //     if (Math.Abs(psspert[x] - valmin) < 0.0001)
-           //     {
-           //         bufminindex[y++] = x;
-           //     }
-           // }
-           // if (y != 1)
-           // {
-           //     y = (int)(y / 1.2);
-           //     valminindex = bufminindex[y];
-           // }
+            // // 多相同最小值取中间索引逻辑不变
+            // byte[] bufminindex = new byte[255];
+            // int y = 0;
+            // for (byte x = 0; x < 255; x++)
+            // {
+            //     if (Math.Abs(psspert[x] - valmin) < 0.0001)
+            //     {
+            //         bufminindex[y++] = x;
+            //     }
+            // }
+            // if (y != 1)
+            // {
+            //     y = (int)(y / 1.2);
+            //     valminindex = bufminindex[y];
+            // }
 
-           // // 校验最小误码是否合格
-           // if (psspertbuf[valminindex] > 1 || valminindex < min || valminindex > max)
-           //     return false;
+            // // 校验最小误码是否合格
+            // if (psspertbuf[valminindex] > 1 || valminindex < min || valminindex > max)
+            //     return false;
 
-           // // 写入最优APD值到对应DUT结果
-           // test.setAPD(valminindex);
-           // switch (dutNo)
-           // {
-           //     case 1: TestResult.rxapdVal = valminindex; break;
-           //     case 2: TestResult2.rxapdVal = valminindex; break;
-           //     case 3: TestResult3.rxapdVal = valminindex; break;
-           //     case 4: TestResult4.rxapdVal = valminindex; break;
-           // }
+            // // 写入最优APD值到对应DUT结果
+            // test.setAPD(valminindex);
+            // switch (dutNo)
+            // {
+            //     case 1: TestResult.rxapdVal = valminindex; break;
+            //     case 2: TestResult2.rxapdVal = valminindex; break;
+            //     case 3: TestResult3.rxapdVal = valminindex; break;
+            //     case 4: TestResult4.rxapdVal = valminindex; break;
+            // }
             return true;
         }
         #endregion
@@ -6245,7 +6296,7 @@ namespace SFPXFP自动测试软件多端口
             }
         }
 
-        private async Task <bool> TxPowerAutoSet_Async()
+        private async Task<bool> TxPowerAutoSet_Async()
         {
             UInt16 mod = TestSet.txmod_Min;
             mod += 10;
@@ -6448,7 +6499,7 @@ namespace SFPXFP自动测试软件多端口
             // min
             if (test.SetTxApcBias(min) == false) return false;
             Thread.Sleep(100); // 延时 保证精度
-            pwr = pwr_min = opticalmeter.ReadPower(meter_ch,GlobalVarFun.setup.meter_delay) + meter_err;
+            pwr = pwr_min = opticalmeter.ReadPower(meter_ch, GlobalVarFun.setup.meter_delay) + meter_err;
             uw_min = ConvertdBmtouW(pwr_min);
             bias = bias_min = test.GetTxBias();
             if ((bias <= 0) || (pwr_min <= -60)) return false;
@@ -6457,7 +6508,7 @@ namespace SFPXFP自动测试软件多端口
             // mid
             if (test.SetTxApcBias(mid) == false) return false;
             Thread.Sleep(100); // 延时 保证精度
-            pwr = pwr_mid = opticalmeter.ReadPower(meter_ch,GlobalVarFun.setup.meter_delay) + meter_err;
+            pwr = pwr_mid = opticalmeter.ReadPower(meter_ch, GlobalVarFun.setup.meter_delay) + meter_err;
             uw_mid = ConvertdBmtouW(pwr_mid);
             bias = bias_mid = test.GetTxBias();
             if ((bias <= 0) || (pwr_mid <= -60)) return false;
@@ -6493,7 +6544,7 @@ namespace SFPXFP自动测试软件多端口
                     meter_err = TestSet4.meter_pwr_err;
                     break;
             }
-            pwr = opticalmeter.ReadPower(meter_ch,GlobalVarFun.setup.meter_delay) + meter_err;
+            pwr = opticalmeter.ReadPower(meter_ch, GlobalVarFun.setup.meter_delay) + meter_err;
             if (Math.Abs(pwr - pwr_target) > 0.35f) //
             {
                 apc_uw = AutoSetTxPWR_MethodDic(min, max, pwr_target, 0.35f);
@@ -6617,7 +6668,7 @@ namespace SFPXFP自动测试软件多端口
                 } while (((bias <= Bias_Min) || (pwr <= TxPwr_Min)) && (pwr < TxPwr_Max) && (apc < TestSet.txapc_Max));
             }
 
-            //////
+        //////
         CHECK_POS:
             switch (Dut)
             {
@@ -6694,14 +6745,14 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-           
+
             //
             return false;
         }
         #endregion
 
         #region // 待测模块发光功率自动调试  // 方法A  apc-->uW & bias_mA 线性关系 异步
-        private async Task <bool> AutoSetTxPower_MethodA_Async()
+        private async Task<bool> AutoSetTxPower_MethodA_Async()
         {
             UInt16 min = TestSet.txapc_Min;
             UInt16 max = TestSet.txapc_Max;
@@ -6916,7 +6967,7 @@ namespace SFPXFP自动测试软件多端口
                 } while (((bias <= Bias_Min) || (pwr <= TxPwr_Min)) && (pwr < TxPwr_Max) && (apc < TestSet.txapc_Max));
             }
 
-            //////
+        //////
         CHECK_POS:
             switch (Dut)
             {
@@ -7023,7 +7074,7 @@ namespace SFPXFP自动测试软件多端口
             TxPwr_Min += 0.2f;
             TxPwr_Max -= 0.2f;
 
-            pwr_maxErr = 0.35f; // 0.35dB  二分法查找精度
+            pwr_maxErr = 0.5f; // 0.5dB  二分法查找精度
 
             string slotStr = GlobalVarFun.OpmDutToOtpSlot[Dut];
             int opmCh = GlobalVarFun.DutToOpmCh[Dut];
@@ -7127,7 +7178,7 @@ namespace SFPXFP自动测试软件多端口
             switch (Dut)
             {
                 case 1:
-                    AddTestLog("txpwer:" + TestResult.txPower.ToString() + " bias:" + bias.ToString()+" APC:" + apc.ToString());
+                    AddTestLog("txpwer:" + TestResult.txPower.ToString() + " bias:" + bias.ToString() + " APC:" + apc.ToString());
                     break;
                 case 2:
                     AddTestLog("txpwer2:" + TestResult2.txPower.ToString() + " bias2:" + bias.ToString() + " APC:" + apc.ToString());
@@ -7314,13 +7365,13 @@ namespace SFPXFP自动测试软件多端口
                         default:
                             break;
                     }
-                    
+
                     bias = test.GetTxBias();
                     if ((bias <= 0) || (pwr <= -60)) return false;
                 } while ((bias <= Bias_Min) && (pwr < TxPwr_Max) && (apc < TestSet.txapc_Max));
             }
-           
-            //////
+
+        //////
         CHECK_POS:
             switch (Dut)
             {
@@ -7477,7 +7528,7 @@ namespace SFPXFP自动测试软件多端口
             }
 
             //
-            AddTestLog("bias :"+bias.ToString()+ " bias_Max:" + TestSet.bias_Max.ToString() + " bias_Min:" + TestSet.bias_Min.ToString());
+            AddTestLog("bias :" + bias.ToString() + " bias_Max:" + TestSet.bias_Max.ToString() + " bias_Min:" + TestSet.bias_Min.ToString());
             AddTestLog("pwr :" + pwr.ToString() + " txPwr_Max:" + TestSet.txPwr_Max.ToString() + " txPwr_Min:" + TestSet.txPwr_Min.ToString());
 
             AddTestLog(retutntxrxresult.TxpwrResultShow.ToString());
@@ -7569,7 +7620,7 @@ namespace SFPXFP自动测试软件多端口
             // bias电流偏大
             if (bias >= Bias_Max)
             {
-                AddTestLog("bias:" + bias.ToString()+" bias电流偏大,微调");
+                AddTestLog("bias:" + bias.ToString() + " bias电流偏大,微调");
                 do
                 {
                     if (apc < 3) return false;
@@ -7626,7 +7677,7 @@ namespace SFPXFP自动测试软件多端口
                 } while ((bias <= Bias_Min) && (pwr < TxPwr_Max) && (apc < TestSet.txapc_Max));
             }
 
-            //////
+        //////
         CHECK_POS:
             retutntxrxresult.apc = apc;
             switch (Dut)
@@ -7719,7 +7770,7 @@ namespace SFPXFP自动测试软件多端口
         }
 
         #endregion
-       
+
         #region// 待测模块发光功率自动调试  // 方法C  用差值二分法 apc-->uW
         private bool AutoSetTxPower_MethodC()
         {
@@ -7759,14 +7810,14 @@ namespace SFPXFP自动测试软件多端口
                     meter_err = TestSet2.meter_pwr_err;
                     break;
             }
-            pwr = pwr_min = opticalmeter.ReadPower(meter_ch,GlobalVarFun.setup.meter_delay) + meter_err;
+            pwr = pwr_min = opticalmeter.ReadPower(meter_ch, GlobalVarFun.setup.meter_delay) + meter_err;
             if ((pwr_min <= -60) || (pwr_min >= TestSet.txPwr_Max)) return false;
             uw_min = ConvertdBmtouW(pwr_min);
 
             // max
             if (test.SetTxApcBias(max) == false) return false;
             Thread.Sleep(1000); // 延时 保证精度
-            pwr = pwr_max = opticalmeter.ReadPower(meter_ch,GlobalVarFun.setup.meter_delay) + meter_err;
+            pwr = pwr_max = opticalmeter.ReadPower(meter_ch, GlobalVarFun.setup.meter_delay) + meter_err;
             if ((pwr_max <= -60) || (pwr_max <= TestSet.txPwr_Min)) return false;
             uw_max = ConvertdBmtouW(pwr_max);
 
@@ -7796,7 +7847,7 @@ namespace SFPXFP自动测试软件多端口
                     default:
                         break;
                 }
-                
+
                 if (pwr <= -60) return false;
                 uwpwr = ConvertdBmtouW(pwr);
                 result_err = pwr - TestSet.txPwr_target;
@@ -7877,7 +7928,7 @@ namespace SFPXFP自动测试软件多端口
                 } while ((bias <= Bias_Min) && (pwr < TxPwr_Max) && (apc < TestSet.txapc_Max));
             }
 
-            //////
+        //////
         CHECK_POS:
             switch (Dut)
             {
@@ -8121,7 +8172,7 @@ namespace SFPXFP自动测试软件多端口
                 } while ((bias <= Bias_Min) && (pwr < TxPwr_Max) && (apc < TestSet.txapc_Max));
             }
 
-            //////
+        //////
         CHECK_POS:
             switch (Dut)
             {
@@ -8208,9 +8259,9 @@ namespace SFPXFP自动测试软件多端口
         #region  // 待测模块发光功率自动调试  // 方法B  根据dBm  用普通二分法
         private bool AutoSetTxPower_MethodE()
         {
-            float bias=0, pwr = 0;
+            float bias = 0, pwr = 0;
             UInt16 apc = 0, mod = 0;
-           
+
             switch (Dut)
             {
                 case 1:
@@ -8315,14 +8366,14 @@ namespace SFPXFP自动测试软件多端口
                 else
                 {
                     AddTestLog("txpwr_debug_method:其他，AutoSetTxEr_MethodA");
-                   
+
                     return AutoSetTxEr_MethodA(); // 普通二分法
                 }
             }
             //return AutoSetTxEr_MethodB(); // 差值二分法
         }
 
-        private async Task <bool> TxErAutoSet_Async()
+        private async Task<bool> TxErAutoSet_Async()
         {
             // lock (tx_lock)
             //{
@@ -8583,7 +8634,7 @@ namespace SFPXFP自动测试软件多端口
             }
         }
         #endregion
-       
+
         #region // 待测模块消光比自动调试  普通二分法
         private bool AutoSetTxEr_MethodE()
         {
@@ -8591,7 +8642,7 @@ namespace SFPXFP自动测试软件多端口
             UInt16 apc_max = 0;
             UInt16 mod_min = 0;
             UInt16 mod_max = 0;
-            float er_err=0, er_target, bias, pwr;
+            float er_err = 0, er_target, bias, pwr;
             int looptime = 0;
             //int ch = TestSet.ch;
             bool b_rtn = true;
@@ -8603,10 +8654,10 @@ namespace SFPXFP自动测试软件多端口
             switch (Dut)
             {
                 case 1:
-                     apc_min = TestSet.txapc_Min;
-                     apc_max = TestSet.txapc_Max;
-                     mod_min = TestSet.txmod_Min;
-                     mod_max = TestSet.txmod_Max;
+                    apc_min = TestSet.txapc_Min;
+                    apc_max = TestSet.txapc_Max;
+                    mod_min = TestSet.txmod_Min;
+                    mod_max = TestSet.txmod_Max;
                     er_target = TestSet.txEr_target;
                     break;
                 case 2:
@@ -8619,7 +8670,7 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-            
+
 
             mod = (UInt16)((mod_min + mod_max) / 2);
             if (test.SetTxModBias(mod) == false) return false;
@@ -8683,7 +8734,7 @@ namespace SFPXFP自动测试软件多端口
                     meter_err = TestSet2.meter_pwr_err;
                     break;
             }
-            pwr = opticalmeter.ReadPower(meter_ch,GlobalVarFun.setup.meter_delay) + meter_err;
+            pwr = opticalmeter.ReadPower(meter_ch, GlobalVarFun.setup.meter_delay) + meter_err;
             bias = test.GetTxBias();
 
             if (Math.Abs(er_err) > erValMaxErr)
@@ -9270,8 +9321,8 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-           
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         RTN_POS:
             switch (Dut)
@@ -9369,7 +9420,7 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-            
+
             return b_rtn;
         }
         #endregion
@@ -9389,7 +9440,7 @@ namespace SFPXFP自动测试软件多端口
             float fk_apc = 0.6f;//0.06f;
             float fk_mod = 0.5f;//0.05
             UInt16 apc, mod;
-           
+
             switch (Dut)
             {
                 case 1:
@@ -10080,7 +10131,7 @@ namespace SFPXFP自动测试软件多端口
             {
                 switchSemaphore.Release();
             }
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         RTN_POS:
             switch (Dut)
@@ -10327,7 +10378,7 @@ namespace SFPXFP自动测试软件多端口
                     {
                         return true;
                     }
-                    //break;
+                //break;
                 case 2:
                     if ((TestResult2.txCrossing > TestSet2.txCr_Max) && (TestSet2.txcpa_Min < val))
                     {
@@ -10337,12 +10388,12 @@ namespace SFPXFP自动测试软件多端口
                     {
                         return true;
                     }
-                   // break;
+                // break;
                 default:
                     return false;
-                   // break;
+                    // break;
             }
-           
+
         }
 
         private async Task<bool> CPAAutoSet_Async()
@@ -10488,11 +10539,11 @@ namespace SFPXFP自动测试软件多端口
             Double wavelenth = 0;       // 波长计读取的实际波长
             Double result_err = 0;      // 实际波长与目标波长的误差
                                         // OTP12初始化 - 切换光开关到发射方向（模块→波长计）
-            
+
             string slotStr = GlobalVarFun.OpmDutToOtpSlot[Dut];
             int opmCh = GlobalVarFun.DutToOpmCh[Dut];
             otp12.SetSlot(slotStr);
-           
+
             // 普通二分法查找
             //如果没有外接波长计（kt86120c），直接取 `(最小值+最大值)/2` 的中间值设置，__不做反馈调节__。
             if (GlobalVarFun.setup.otp12_connect == false)
@@ -10539,7 +10590,7 @@ namespace SFPXFP自动测试软件多端口
                     Thread.Sleep(20);// 计算误差
                     if (wavelenth <= 0) return false;
                     result_err = wavelenth - TestSet.wLength_target; //wLengthTarget目标波长
-                                                            //
+                                                                     //
                     if (result_err < 0)
                     {
                         emlvalmax = (UInt16)(emlval - 1); // 波长偏短 → 需要降低温度值，下调上界
@@ -10713,7 +10764,7 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-            
+
             if (Math.Abs(result_err) > wLengthMaxErr)
             {
                 if (GlobalVarFun.Language == "Chinese")
@@ -10749,7 +10800,7 @@ namespace SFPXFP自动测试软件多端口
             }
         }
 
-        private async Task <bool> wLengthAutoCheck_Async()
+        private async Task<bool> wLengthAutoCheck_Async()
         {
             Double wavelenth = 0;
             Double result_err = 0;
@@ -10831,16 +10882,18 @@ namespace SFPXFP自动测试软件多端口
         public async Task<bool> FirstTestProcessAsync(
          IProgress<ReturnTxRxResult> progress)// 参数类型改为 IProgress<T>   
         {
+            //设置测试结果颜色为白色（中性/进行中），立即向UI报告初始状态。
             retutntxrxresult.TestResultColor = Color.White;
+            //根据当前端口号Dut（1~4），从对应端口的配置对象（`TestSet`/`TestSet2`/`TestSet3`/`TestSet4`）加载校准精度参数：
             progress.Report(retutntxrxresult);
             switch (Dut)
             {
                 case 1:
-                    GlobalVarFun.setup.er_cal = TestSet.txer_cal;
-                    GlobalVarFun.setup.rxpwr_cal = TestSet.rxpwr_cal;
-                    GlobalVarFun.setup.txpwr_cal = TestSet.txpwr_cal;
-                    meter_ch = TestSet.meter_ch;
-                    meter_err = TestSet.meter_pwr_err;
+                    GlobalVarFun.setup.er_cal = TestSet.txer_cal;//消光比允许误差（dB）
+                    GlobalVarFun.setup.rxpwr_cal = TestSet.rxpwr_cal;//接收光功率允许误差（dB）
+                    GlobalVarFun.setup.txpwr_cal = TestSet.txpwr_cal;//发射光功率允许误差（dB）
+                    meter_ch = TestSet.meter_ch;//光功率计通道号
+                    meter_err = TestSet.meter_pwr_err;//光功率计偏差修正值
                     break;
                 case 2:
                     GlobalVarFun.setup.er_cal = TestSet2.txer_cal;
@@ -10864,11 +10917,14 @@ namespace SFPXFP自动测试软件多端口
                     meter_err = TestSet4.meter_pwr_err;
                     break;
             }
+
+            //将全局设置中的误差阈值赋给类成员变量，后续检查时直接使用
             txPwrMaxErr = GlobalVarFun.setup.txpwr_cal;
             rxPwrMaxErr = GlobalVarFun.setup.rxpwr_cal;
             erValMaxErr = GlobalVarFun.setup.er_cal;
             wLengthMaxErr = GlobalVarFun.setup.wlgth_cal;
 
+            //更新进度条5%，显示"调试中..."
             retutntxrxresult.Testprogress = 5;
             progress.Report(new ReturnTxRxResult { Percentage = 5, StatusText = "调试中..." });
             // 判断是否进行初始化
@@ -10877,8 +10933,11 @@ namespace SFPXFP自动测试软件多端口
                 // 方案进行初始化操作
                 AddTestLog("方案进行初始化操作");
                 await Task.Delay(waittimes);
+                //如果配置了"初始化模块"选项，则调用test.InitModule() 对模块芯片进行初始化（如写入默认寄存器值、复位等）。
+                //test.InitModule()：模块驱动接口方法，对当前DUT的芯片执行初始化序列（不同芯片方案初始化内容不同）
                 if (test.InitModule() == false)
                 {
+                    //失败时：设置结果为红色，设置 `test_status=3`（测试失败状态），返回 `false`
                     retutntxrxresult.TestResultColor = Color.Red;
                     if (GlobalVarFun.Language == "Chinese")
                     {
@@ -10918,12 +10977,14 @@ namespace SFPXFP自动测试软件多端口
                 }
             }
             await Task.Delay(waittimes);//等待，以使其异步线程进入测试
-            // 0、判断是否进行关闭TxRxCDR //2020.4.8
+            // 0、判断是否进行关闭TxRxCDR
+            //2020.4.8 CDR（Clock and Data Recovery，时钟数据恢复）某些模块在测试时需要关闭CDR以避免干扰调试。
             if (GlobalVarFun.setup.tx_rx_cdr_dis)
             {
                 // TxRxCDR 控制操作
                 AddTestLog("TxRxCDR 控制操作");
                 await Task.Delay(waittimes);
+                //test.DisTxRxCDR(true)：通过I2C写入寄存器，禁用TX/RX的CDR功能
                 if (test.DisTxRxCDR(true) == false)
                 {
                     retutntxrxresult.TestResultColor = Color.Red;
@@ -10974,6 +11035,7 @@ namespace SFPXFP自动测试软件多端口
             //
             // 进入调试模式
             AddTestLog("进入调试模式");
+            //向模块写入调试密码（厂商特定寄存器序列），使模块进入调试/测试模式。只有进入调试模式后，才能修改APC、MOD、LOS等校准寄存器
             if (test.SetDebugPWD() == false)
             {
                 retutntxrxresult.TestResultColor = Color.Red;
@@ -11010,6 +11072,7 @@ namespace SFPXFP自动测试软件多端口
             //
             /////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 千兆电口和10G电口 特殊操作 //2021.3.13
+            // 获取fibertop_pn
             string strPN = "";
             switch (Dut)
             {
@@ -11028,11 +11091,15 @@ namespace SFPXFP自动测试软件多端口
                 default:
                     break;
             }
-            
+
+            //电口模块（SFP-GE=千兆电口，SFP-TG=万兆电口）的调试流程完全不同于光口模块
             if (strPN.Contains("SFP-GE") || strPN.Contains("SFP-TG"))
             {
                 switch (Dut)
                 {
+                    // 电口模块：设置固定APC=10, MOD=30
+                    // 调用test.SaveTxDataAfterDebug()保存
+                    // 直接goto CHECK_POS跳转到收尾阶段
                     case 1:
                         TestResult.txapcVal = 10;
                         TestResult.txmodVal = 30;
@@ -11052,6 +11119,7 @@ namespace SFPXFP自动测试软件多端口
                     default:
                         break;
                 }
+                //没
                 AddTestLog("SaveTxDataAfterDebug");
                 if (test.SaveTxDataAfterDebug() == false)
                 {
@@ -11075,29 +11143,35 @@ namespace SFPXFP自动测试软件多端口
                             TestResult2.test_status = 3;
                             break;
                         case 3:
-                            TestResult2.test_status = 3;
+                            TestResult3.test_status = 3;
                             break;
                         case 4:
-                            TestResult2.test_status = 3;
+                            TestResult4.test_status = 3;
                             break;
                         default:
                             break;
                     }
                     return false;
                 }
+                //设置GlobalVarFun.record_need_save = true标记需要存数据库
                 GlobalVarFun.record_need_save = true;
                 progress.Report(new ReturnTxRxResult { Percentage = 80, StatusText = "电口模块保存调试参数中..." });
                 retutntxrxresult.Testprogress = 80;
+                //使用goto CHECK_POS直接跳转到收尾阶段（跳过光口的收发调试）
                 goto CHECK_POS;
             }
             /////////////////////////////////////////////////////////////////////////////////////////////////////////
             //
             // 0、写入TX-PE等调试参数   // 2017.8.21
+            //写入TX-PE等默认调试参数
+            //没
             if (GlobalVarFun.setup.tx_pe_test)
             {
                 progress.Report(new ReturnTxRxResult { Percentage = 13, StatusText = "发射调试中..." });
                 retutntxrxresult.Testprogress = 13;
                 AddTestLog("写入TX-PE等调试参数");
+                //test.WriteTxRxDefaultVal()：写入TX预加重/去加重（PE，Pre-Emphasis）等默认参数值到模块寄存器，为后续高速信号调试做准备
+                //函数默认返回true
                 if (test.WriteTxRxDefaultVal() == false)
                 {
                     if (GlobalVarFun.Language == "Chinese")
@@ -11132,18 +11206,20 @@ namespace SFPXFP自动测试软件多端口
                     return false;
                 }
             }
-            
-            
+
+            //APD接收自动调试（仅APD类型模块）
+            //没
             if (GlobalVarFun.setup.rx_apd_test)
             {
                 progress.Report(new ReturnTxRxResult { Percentage = 15, StatusText = "APD Rx调试中..." });
-                //Tx EN
+                //使能TX（通过I2C写寄存器0xA2/0x79 bit1）
                 AddTestLog("rx_apd_test");
                 await Task.Delay(waittimes);
                 byte TX_EN_byte = TWI_ReadByte(0xa2, 0x79, Dut);
                 TX_EN_byte = Bit.SetBit(TX_EN_byte, 1);
-                TWI_WriteByte(0xA2, 0x79, TX_EN_byte,Dut);
+                TWI_WriteByte(0xA2, 0x79, TX_EN_byte, Dut);
                 Converted_analog_values(); // 更新界面DDM信息
+                //// 2. 检查误码仪是否连接
                 if (GlobalVarFun.setup.bert_connect == false)
                 {
                     if (GlobalVarFun.Language == "Chinese")
@@ -11161,7 +11237,7 @@ namespace SFPXFP自动测试软件多端口
                         return false;
                     }
                 }
-
+                //没
                 AddTestLog("AutoTestRxAPD");
                 Task<bool> autoapd = AutoTestRxAPD_Async(Dut);
                 bool res = await autoapd;
@@ -11204,25 +11280,25 @@ namespace SFPXFP自动测试软件多端口
                 }
                 switch (Dut)
                 {
-                     case 1:
-                            retutntxrxresult.apd = TestResult.rxapdVal;
-                            break;
-                     case 2:
-                            retutntxrxresult.apd = TestResult2.rxapdVal;
-                            break;
-                     case 3:
-                            retutntxrxresult.apd = TestResult3.rxapdVal;
-                            break;
-                     case 4:
-                            retutntxrxresult.apd = TestResult4.rxapdVal;
-                            break;
+                    case 1:
+                        retutntxrxresult.apd = TestResult.rxapdVal;
+                        break;
+                    case 2:
+                        retutntxrxresult.apd = TestResult2.rxapdVal;
+                        break;
+                    case 3:
+                        retutntxrxresult.apd = TestResult3.rxapdVal;
+                        break;
+                    case 4:
+                        retutntxrxresult.apd = TestResult4.rxapdVal;
+                        break;
 
                     default:
-                            break;
+                        break;
                 }
 
-
-                //保存APD调试参数
+                //没
+                //保存APD调试参数 本次
                 AddTestLog("保存APD调试参数");
                 await Task.Delay(waittimes);
                 if (test.SaveRxDataAfterDebug() == false)
@@ -11260,7 +11336,7 @@ namespace SFPXFP自动测试软件多端口
             }
             //
             // 1、接收DDM 及 LOS 告警项目调试及功能检查 //2021.4.27调整顺序
-            //
+            // 没
             if (GlobalVarFun.setup.rx_test)
             {
                 progress.Report(new ReturnTxRxResult { Percentage = 20, StatusText = "接收调试中..." });
@@ -11299,7 +11375,7 @@ namespace SFPXFP自动测试软件多端口
                 AddTestLog("RxPwrDDMAutoCal");
                 Task<bool> rxpwrcal = RxPwrDDMAutoCal_Async();
                 bool res = await rxpwrcal;
-                if(res == false)
+                if (res == false)
                 {
                     if ((GlobalVarFun.moduleType == "SFP-UX3320T") || (GlobalVarFun.moduleType == "SFPP-UX3261S") || (GlobalVarFun.moduleType == "SFPP-UX2270+2072"))
                     {
@@ -11355,7 +11431,7 @@ namespace SFPXFP自动测试软件多端口
                 progress.Report(retutntxrxresult);
                 //
                 await Task.Delay(waittimes);//等待，以使其异步线程进入测试
-                
+
                 retutntxrxresult.Testprogress = 35;
                 retutntxrxresult.TestResultColor = Color.White;//
                 progress.Report(new ReturnTxRxResult { Percentage = 35, StatusText = "LOS告警功能自动调试..." });
@@ -11404,7 +11480,7 @@ namespace SFPXFP自动测试软件多端口
                         default:
                             break;
                     }
-                   
+
                     //
                     retutntxrxresult.TestResultColor = Color.Red;
 
@@ -11431,7 +11507,7 @@ namespace SFPXFP自动测试软件多端口
                 retutntxrxresult.Testprogress = 40;
 
                 await Task.Delay(waittimes);//等待，以使其异步线程进入测试
-                
+
                 retutntxrxresult.Testprogress = 43;
                 progress.Report(new ReturnTxRxResult { Percentage = 43, StatusText = "保存Rx接收调试参数..." });
                 retutntxrxresult.StatusText = "保存Rx接收调试参数...";
@@ -11528,7 +11604,7 @@ namespace SFPXFP自动测试软件多端口
             }
             retutntxrxresult.Testprogress = 45;
             progress.Report(new ReturnTxRxResult { Percentage = 45, StatusText = "调试中..." });
-            
+
             //
             /////////////////////////////////////////////////////////////////////////////////////////////////////////
             //
@@ -11545,9 +11621,9 @@ namespace SFPXFP自动测试软件多端口
                 try
                 {
                     //Tx EN
-                    byte TX_EN_byte = TWI_ReadByte(0xa2, 0x79,Dut);
+                    byte TX_EN_byte = TWI_ReadByte(0xa2, 0x79, Dut);
                     TX_EN_byte = Bit.SetBit(TX_EN_byte, 1);
-                   TWI_WriteByte(0xa2, 0x79, TX_EN_byte,Dut);
+                    TWI_WriteByte(0xa2, 0x79, TX_EN_byte, Dut);
                     Converted_analog_values(); // 更新界面DDM信息
 
                     //VON
@@ -11975,7 +12051,7 @@ namespace SFPXFP自动测试软件多端口
                         retutntxrxresult.TestResultColor = Color.Red;
                         return false;
                     }
-                    
+
                 }
                 // 写入发射校准参数到模块
                 //Thread.Sleep(200);
@@ -12077,14 +12153,14 @@ namespace SFPXFP自动测试软件多端口
                 //{
                 //Tx发射参数检查
                 AddTestLog("TxFinalTestCheck");
-                
+
             }
             GlobalVarFun.record_need_save = true;
-           // }
+            // }
             retutntxrxresult.Testprogress = 85;
             progress.Report(new ReturnTxRxResult { Percentage = 85, StatusText = "调试中..." });
-            //
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
         CHECK_POS:
             //
             // 3. 读取模块flash调试信息
@@ -12172,7 +12248,7 @@ namespace SFPXFP自动测试软件多端口
                 }
 
                 if (Dut == 1) GlobalVarFun.record_need_save = false;
-                if(Dut == 2) GlobalVarFun.record_need_save_2 = false;
+                if (Dut == 2) GlobalVarFun.record_need_save_2 = false;
                 if (Dut == 3) GlobalVarFun.record_need_save_3 = false;
                 if (Dut == 4) GlobalVarFun.record_need_save_4 = false;
 
@@ -12367,17 +12443,17 @@ namespace SFPXFP自动测试软件多端口
                         break;
                 }
             }
-            
+
             retutntxrxresult.Testprogress = 100;
             retutntxrxresult.TestResultColor = Color.Green;
             retutntxrxresult.StatusText = retutntxrxresult.TestResultMessage.Trim();
             progress.Report(retutntxrxresult);//测试完成
-            //progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage.Trim() });//测试完成
-          
+                                              //progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage.Trim() });//测试完成
+
             return true;
         }
         #endregion
-   
+
         #region // 终测处理函数
         //private bool FinalTestProcess()
         public async Task<bool> FinalTestProcessAsync(
@@ -12475,20 +12551,20 @@ namespace SFPXFP自动测试软件多端口
             {
                 await Task.Delay(waittimes);
                 AddTestLog("RxLosAlarmCheck");
-                Task<bool> loscheck =  RxLosAlarmCheck_Async();
+                Task<bool> loscheck = RxLosAlarmCheck_Async();
                 bool res = await loscheck;
-                if(res == false)
-               // if (RxLosAlarmCheck() == false)
+                if (res == false)
+                // if (RxLosAlarmCheck() == false)
                 {
                     retutntxrxresult.TestResultColor = Color.Red;
                     if (GlobalVarFun.Language == "Chinese")
                     {
-                         retutntxrxresult.TestResultMessage = "模块接收LOS或告警功能 检查失败, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "模块接收LOS或告警功能 检查失败, 请插入下一只模块......";
                         progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
                     }
                     else
                     {
-                         retutntxrxresult.TestResultMessage = "The module fails to receive the LOS or alarm function check. Please insert the next module......";
+                        retutntxrxresult.TestResultMessage = "The module fails to receive the LOS or alarm function check. Please insert the next module......";
                         progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
                     }
                     switch (Dut)
@@ -12519,12 +12595,12 @@ namespace SFPXFP自动测试软件多端口
                     if (GlobalVarFun.Language == "Chinese")
                     {
                         AddTestLog("接收DDM检测精度超出设定范围！");
-                         retutntxrxresult.TestResultMessage = "模块接收校准 DDM精度检查失败, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "模块接收校准 DDM精度检查失败, 请插入下一只模块......";
                     }
                     else
                     {
                         AddTestLog("Receive DDM detection accuracy beyond the set range!");
-                         retutntxrxresult.TestResultMessage = "Module failed to receive calibration DDM accuracy check, please insert next module......";
+                        retutntxrxresult.TestResultMessage = "Module failed to receive calibration DDM accuracy check, please insert next module......";
                     }
                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
                     //
@@ -12558,19 +12634,19 @@ namespace SFPXFP自动测试软件多端口
                     if (res == false)
                     //if (RxSenBitErrorCheck() == false)
                     {
-                            if (GlobalVarFun.Language == "Chinese")
-                            {
-                                AddTestLog("接收RxSen检测出现误码！");
-                                retutntxrxresult.TestResultMessage = "模块接收灵敏度RxSen检查失败, 请插入下一只模块......";
-                            }
-                            else
-                            {
-                                AddTestLog("Received Rx Sen detection error!");
-                                retutntxrxresult.TestResultMessage = "Module receiving sensitivity RxSen check failed, please insert the next module......";
-                            }
-                            progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
-                            //
-                            retutntxrxresult.TestResultColor = Color.Red;
+                        if (GlobalVarFun.Language == "Chinese")
+                        {
+                            AddTestLog("接收RxSen检测出现误码！");
+                            retutntxrxresult.TestResultMessage = "模块接收灵敏度RxSen检查失败, 请插入下一只模块......";
+                        }
+                        else
+                        {
+                            AddTestLog("Received Rx Sen detection error!");
+                            retutntxrxresult.TestResultMessage = "Module receiving sensitivity RxSen check failed, please insert the next module......";
+                        }
+                        progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
+                        //
+                        retutntxrxresult.TestResultColor = Color.Red;
                         switch (Dut)
                         {
                             case 1:
@@ -12588,7 +12664,7 @@ namespace SFPXFP自动测试软件多端口
 
                         }
                         return false;
-                        }
+                    }
                     //}
                 }
                 //
@@ -12641,21 +12717,21 @@ namespace SFPXFP自动测试软件多端口
 
                 Task<bool> finalcheck = TxFinalTestCheck_Async(true);
                 bool res = await finalcheck;
-                if(res == false)
+                if (res == false)
                 //if (TxFinalTestCheck(true) == false)
-                { 
-                     if (GlobalVarFun.Language == "Chinese")
-                     {
-                          AddTestLog("模块发射光功率和消光比参数异常！");
-                          retutntxrxresult.TestResultMessage = "模块发射光功率和消光比 检查失败, 请插入下一只模块......";
-                     }
-                     else
-                     {
-                          AddTestLog("Module transmit optical power and extinction ratio parameters are abnormal!");
-                          retutntxrxresult.TestResultMessage = "Module transmit light power and extinction ratio check failed, please insert the next module......";
-                     }
-                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
-                     retutntxrxresult.TestResultColor = Color.Red;
+                {
+                    if (GlobalVarFun.Language == "Chinese")
+                    {
+                        AddTestLog("模块发射光功率和消光比参数异常！");
+                        retutntxrxresult.TestResultMessage = "模块发射光功率和消光比 检查失败, 请插入下一只模块......";
+                    }
+                    else
+                    {
+                        AddTestLog("Module transmit optical power and extinction ratio parameters are abnormal!");
+                        retutntxrxresult.TestResultMessage = "Module transmit light power and extinction ratio check failed, please insert the next module......";
+                    }
+                    progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
+                    retutntxrxresult.TestResultColor = Color.Red;
                     switch (Dut)
                     {
                         case 1:
@@ -12690,12 +12766,12 @@ namespace SFPXFP自动测试软件多端口
                     retutntxrxresult.TestResultColor = Color.Red;
                     if (GlobalVarFun.Language == "Chinese")
                     {
-                         retutntxrxresult.TestResultMessage = "待测模块告警门限检查错误, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "待测模块告警门限检查错误, 请插入下一只模块......";
                         AddTestLog("告警门限检查错误: " + errMsg);
                     }
                     else
                     {
-                         retutntxrxresult.TestResultMessage = "The alarm threshold of the module under test is incorrect. Insert the next module......";//待测模块告警门限检查错误, 请插入下一只模块
+                        retutntxrxresult.TestResultMessage = "The alarm threshold of the module under test is incorrect. Insert the next module......";//待测模块告警门限检查错误, 请插入下一只模块
                         AddTestLog("The alarm threshold check is incorrect: " + errMsg);
                     }
                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
@@ -12733,12 +12809,12 @@ namespace SFPXFP自动测试软件多端口
                     retutntxrxresult.TestResultColor = Color.Red;
                     if (GlobalVarFun.Language == "Chinese")
                     {
-                         retutntxrxresult.TestResultMessage = "待测模块进入调试模式失败, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "待测模块进入调试模式失败, 请插入下一只模块......";
                         AddTestLog("模块进入调试模式失败！");
                     }
                     else
                     {
-                         retutntxrxresult.TestResultMessage = "The module under test fails to enter debugging mode. Please insert the next module......";//待测模块进入调试模式失败, 请插入下一只模块
+                        retutntxrxresult.TestResultMessage = "The module under test fails to enter debugging mode. Please insert the next module......";//待测模块进入调试模式失败, 请插入下一只模块
                         AddTestLog("Module failed to enter debug mode!");
                     }
                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
@@ -12764,9 +12840,9 @@ namespace SFPXFP自动测试软件多端口
                 {
                     AddTestLog("Tx EN");
                     //Tx EN
-                    byte TX_EN_byte = TWI_ReadByte(0xa2, 0x79,Dut);
+                    byte TX_EN_byte = TWI_ReadByte(0xa2, 0x79, Dut);
                     TX_EN_byte = Bit.SetBit(TX_EN_byte, 1);
-                    TWI_WriteByte(0xa2, 0x79, TX_EN_byte,Dut);
+                    TWI_WriteByte(0xa2, 0x79, TX_EN_byte, Dut);
                     //Thread.Sleep(200);
                     await Task.Delay(200);
                     Converted_analog_values(); // 更新界面DDM信息
@@ -12779,12 +12855,12 @@ namespace SFPXFP自动测试软件多端口
                     retutntxrxresult.TestResultColor = Color.Red;
                     if (GlobalVarFun.Language == "Chinese")
                     {
-                         retutntxrxresult.TestResultMessage = "待测模块调试信息读取失败, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "待测模块调试信息读取失败, 请插入下一只模块......";
                         AddTestLog("读取模块调试信息失败！");
                     }
                     else
                     {
-                         retutntxrxresult.TestResultMessage = "The debugging information of the module under test fails to be read. Please insert the next module......";//待测模块调试信息读取失败, 请插入下一只模块
+                        retutntxrxresult.TestResultMessage = "The debugging information of the module under test fails to be read. Please insert the next module......";//待测模块调试信息读取失败, 请插入下一只模块
                         AddTestLog("Failed to read module debugging information!");//读取模块调试信息失败！
                     }
                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
@@ -12833,12 +12909,12 @@ namespace SFPXFP自动测试软件多端口
                     if (GlobalVarFun.Language == "Chinese")
                     {
                         AddTestLog("Falsh信息检查错误: " + errMsg);
-                         retutntxrxresult.TestResultMessage = "模块 flash_data 参数检查失败, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "模块 flash_data 参数检查失败, 请插入下一只模块......";
                     }
                     else
                     {
                         AddTestLog("Falsh information check error: " + errMsg);//Falsh信息检查错误
-                         retutntxrxresult.TestResultMessage = "Module flash_data parameter check failed, please insert the next module......";
+                        retutntxrxresult.TestResultMessage = "Module flash_data parameter check failed, please insert the next module......";
                     }
                     retutntxrxresult.TestResultColor = Color.Red;
                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
@@ -12872,12 +12948,12 @@ namespace SFPXFP自动测试软件多端口
                     if (GlobalVarFun.Language == "Chinese")
                     {
                         AddTestLog("电口调试信息检查错误: " + errMsg);
-                         retutntxrxresult.TestResultMessage = "模块 LOS/速率 参数检查失败, 请插入下一只模块......";
+                        retutntxrxresult.TestResultMessage = "模块 LOS/速率 参数检查失败, 请插入下一只模块......";
                     }
                     else
                     {
                         AddTestLog("The electrical debugging information is incorrect: " + errMsg);
-                         retutntxrxresult.TestResultMessage = "Module LOS/ rate parameter failed to be checked. Please insert the next module......";
+                        retutntxrxresult.TestResultMessage = "Module LOS/ rate parameter failed to be checked. Please insert the next module......";
                     }
                     retutntxrxresult.TestResultColor = Color.Red;
                     progress.Report(new ReturnTxRxResult { Percentage = 100, StatusText = retutntxrxresult.TestResultMessage });
@@ -12915,7 +12991,7 @@ namespace SFPXFP自动测试软件多端口
                     return false;
                 }
                 AddTestLog("保存到SQL数据库成功");
-               
+
             }
             else
             {
@@ -13012,12 +13088,12 @@ namespace SFPXFP自动测试软件多端口
                     default:
                         break;
                 }
-               
+
             }
 
             return true;
         }
         #endregion
-    
+
     }
 }

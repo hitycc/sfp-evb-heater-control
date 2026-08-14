@@ -62,7 +62,8 @@
             // 
             this.rBParallel2.AutoSize = true;
             this.rBParallel2.Enabled = false;
-            this.rBParallel2.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.rBParallel2.Font = new System.Drawing.Font("宋体", 1
+                , System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.rBParallel2.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             this.rBParallel2.Location = new System.Drawing.Point(21, 45);
             this.rBParallel2.Name = "rBParallel2";

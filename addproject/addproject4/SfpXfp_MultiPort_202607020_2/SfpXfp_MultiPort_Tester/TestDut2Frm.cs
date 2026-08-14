@@ -39,6 +39,12 @@ namespace SFPXFP自动测试软件多端口
         SimpleLogger simpleLogger2 = new SimpleLogger("D:\\SFPXFPTesTLogDUT2.txt");
         private CancellationTokenSource testCancellationSource;
 
+        // [TRACE] 临时调试跟踪方法 - 后续全局搜索 [TRACE] 即可批量删除
+        private void TraceLog(string msg)
+        {
+            try { simpleLogger2?.LogInfo("[TRACE] " + msg); } catch { }
+        }
+
         public void StopTimers()
         {
             _formClosing = true;
@@ -287,29 +293,43 @@ namespace SFPXFP自动测试软件多端口
                     testcontrol2.Converted_analog_values_Async();
                     testcontrol2.Read_AlarmWarn_Thresholds_Async();
 
+                    // [TRACE] DDM关键值
+                    TraceLog(string.Format("DDM: vcc={0:F3}V temp={1:F2}C bias={2:F2} txPwr={3:F2} rxPwr={4:F2}",
+                        TestResult2.vccDDM, TestResult2.tempDDM, TestResult2.txBiasDDM, TestResult2.txPowerDDM, TestResult2.rxPowerDDM));
+
                     // 使用vccDDM判断模块是否在线
                     if (TestResult2.vccDDM < 2.0)
                     {
+                        TraceLog("模块不在线: vccDDM < 2.0");
                         return; // moduleOnline默认false，让外层判断return
                     }
 
                     if (!GlobalVarFun.setup.scheme_check_dis)
                     {
                         typeCheckOk = testcontrol2.CheckTestTypeInfo();
+                        TraceLog(string.Format("CheckTestTypeInfo: typeCheckOk={0} pn={1} chipIsOK={2} moduleIsSR={3}",
+                            typeCheckOk, TestResult2.fibertop_pn, TestResult2.chipIsOK, TestResult2.moduleIsSR));
                     }
                     else
                     {
                         TestResult2.chipIsOK = true;
+                        TraceLog("scheme_check_dis=true, 跳过型号校验");
                     }
 
                     if (typeCheckOk && TestResult2.fibertop_pn != "SFP-SM31TG-10DIU")
                     {
                         statusCheckOk = testcontrol2.ShowCheckModuleStatus();
+                        TraceLog("ShowCheckModuleStatus: statusCheckOk=" + statusCheckOk);
+                    }
+                    else
+                    {
+                        TraceLog(string.Format("跳过状态检查: typeCheckOk={0} pn={1}", typeCheckOk, TestResult2.fibertop_pn));
                     }
 
                     if (autoTestCtrl && !moduleOnline)
                     {
                         debugPwd = GlobalVarFun.mycontrol_dut2.CheckDebugPWD();
+                        TraceLog(string.Format("CheckDebugPWD: debugPwd=0x{0:X2}", debugPwd));
                     }
                 });
 
@@ -320,26 +340,30 @@ namespace SFPXFP自动测试软件多端口
                 TxPWR_textBox.Text = (TestResult2.txPowerDDM).ToString("F2");
                 RxPWR_textBox.Text = (TestResult2.rxPowerDDM).ToString("F2");
 
-                // Task.Run返回后，在UI线程判断模块是否在线
+                // [TRACE] UI线程判断入口
+                TraceLog(string.Format("UI判断: vcc={0:F2} typeOk={1} statOk={2} autoCtrl={3} online={4} sqlConn={5} sqlRec={6} pwd=0x{7:X2} tType={8} mType={9}",
+                    TestResult2.vccDDM, typeCheckOk, statusCheckOk, autoTestCtrl, moduleOnline,
+                    GlobalVarFun.sql_connect_status_2, GlobalVarFun.sql_record_status_2, debugPwd,
+                    GlobalVarFun.testType, GlobalVarFun.moduleType));
+
                 if (TestResult2.vccDDM < 2.0)
                 {
+                    TraceLog("UI: 模块离线, 重置");
                     moduleOnline = false;
-                    SetLED(i2cok_pictureBox1, true);
-                    SetLED(i2cok_pictureBox2, true);
+                   /* SetLED(i2cok_pictureBox1, true);
+                    SetLED(i2cok_pictureBox2, true);*/
                     toolStripStatusLabel1.Text = "用做测试，端口2";
                     Startautoset_button.BackColor = Color.Orange;
                     return;
                 }
 
-                if (_formClosing || this.IsDisposed) return;
-
-               // if (!typeCheckOk) return;
-                if (!statusCheckOk) return;
-
-                if (autoTestCtrl == false) return;
+                if (_formClosing || this.IsDisposed) { TraceLog("UI: 窗体关闭中"); return; }
+                if (!statusCheckOk) { TraceLog("UI: statusCheckOk=false, 等待"); return; }
+                if (autoTestCtrl == false) { TraceLog("UI: autoTestCtrl=false"); return; }
 
                 if ((GlobalVarFun.sql_connect_status_2 == true) && (GlobalVarFun.sql_record_status_2 == false))
                 {
+                    TraceLog("UI: SQL记录异常, 阻止测试");
                     Startautoset_button.BackColor = Color.OrangeRed;
                     if (GlobalVarFun.Language == "Chinese")
                     {
@@ -354,6 +378,7 @@ namespace SFPXFP自动测试软件多端口
 
                 if (moduleOnline == false)
                 {
+                    TraceLog("UI: 全部检查通过, 调用StartNewTestSequence");
                     TestResult2.test_status = 1;
                     StartNewTestSequence();
                 }
@@ -371,6 +396,7 @@ namespace SFPXFP自动测试软件多端口
 
         private async Task RunTestSequenceAsync(CancellationToken cancellationToken)
         {
+            TraceLog("RunTestSequenceAsync START");
             // Capture the UI control instance where the method is defined (usually the Form itself)
             Control uiControl = this; // Or any specific UI control on your form that's always created on the UI thread
 
@@ -390,7 +416,7 @@ namespace SFPXFP自动测试软件多端口
                 //}
 
                 // If we ARE on the UI thread, update directly
-                 UpdateUIControls(result);
+                UpdateUIControls(result);
 
                 // Note: Removed Refresh() as it's usually unnecessary for Text property changes.
                 // The controls should repaint automatically.
@@ -400,8 +426,10 @@ namespace SFPXFP自动测试软件多端口
             TestResult2.test_status = 1;
             if (GlobalVarFun.testType == "firstTest")
             {
+                TraceLog("RunTestSequenceAsync: calling FirstTestProcessAsync");
                 Task<bool> dut2first = testcontrol2.FirstTestProcessAsync(uiUpdateProgressForRxPwr as IProgress<ReturnTxRxResult>);
                 bool firstTestResult = await dut2first;
+                TraceLog("RunTestSequenceAsync: FirstTestProcessAsync returned " + firstTestResult);
                 //bool firstTestResult = await  testcontrol2.FirstTestProcessAsync(uiUpdateProgressForRxPwr as IProgress<ReturnTxRxResult>);
                 if (firstTestResult)
                 {
@@ -415,8 +443,10 @@ namespace SFPXFP自动测试软件多端口
             }
             else // (GlobalVarFun.testType == "finalTest")
             {
-                Task <bool> dut2final = testcontrol2.FinalTestProcessAsync(uiUpdateProgressForRxPwr as IProgress<ReturnTxRxResult>);
+                TraceLog("RunTestSequenceAsync: calling FinalTestProcessAsync");
+                Task<bool> dut2final = testcontrol2.FinalTestProcessAsync(uiUpdateProgressForRxPwr as IProgress<ReturnTxRxResult>);
                 bool finalTestResult = await dut2final;
+                TraceLog("RunTestSequenceAsync: FinalTestProcessAsync returned " + finalTestResult);
                 //bool finalTestResult = await testcontrol2.FinalTestProcessAsync(uiUpdateProgressForRxPwr as IProgress<ReturnTxRxResult>);
                 if (finalTestResult)
                 {
@@ -440,19 +470,19 @@ namespace SFPXFP自动测试软件多端口
                 //Rx UI Updates
                 //指示灯
                 // 实时更新数据库连接状态
-                SetLED(sqlrecord_pictureBox, !GlobalVarFun.sql_record_status_2);
+                /*SetLED(sqlrecord_pictureBox, !GlobalVarFun.sql_record_status_2);
                 SetLED(sqlconnt_pictureBox, !GlobalVarFun.sql_connect_status_2);
                 SetLED(accessconnt_pictureBox, !GlobalVarFun.access_connect_status_2);
                 SetLED(accessupdated_pictureBox, !GlobalVarFun.access_updated_status_2);
 
                 SetLED(i2cok_pictureBox1, false);
-                SetLED(i2cok_pictureBox2, false);
+                SetLED(i2cok_pictureBox2, false);*/
 
                 //SetLED(typeok_pictureBox1, true);
 
                 //SetLED(sr850_pictureBox1, TestResult2.moduleIsSR);
                 //SetLED(chipok_pictureBox1, TestResult2.chipIsOK);
-               
+
                 //SetLED(typeok_pictureBox1, false);
 
                 //Tx UI Updates
@@ -463,7 +493,7 @@ namespace SFPXFP自动测试软件多端口
                 {
                     Startautoset_button.Text = result.StatusText.ToString();
                 }
-               // testLog_textBox.Text = result.ErrorMessage;
+                // testLog_textBox.Text = result.ErrorMessage;
                 if (TestResult2.Test_ok)
                 {
                     Startautoset_button.BackColor = Color.Green;
@@ -477,7 +507,7 @@ namespace SFPXFP自动测试软件多端口
 
                     if (GlobalVarFun.setup.rx_apd_cal)
                     {
-                        
+
                         //ddm_rxpower4_textbox.Text = result.RxddmPowers[3].ToString("F2"); // Ensure index 4 exists
                         //real_rxpower4_textbox.Text = result.RxRealPowers[3].ToString("F2"); // Ensure index 4 exists
                         //ddm_rxpower5_textbox.Text = result.RxddmPowers[4].ToString("F2"); // Ensure index 5 exists
@@ -577,13 +607,16 @@ namespace SFPXFP自动测试软件多端口
             // this.Refresh(); // Uncomment only if absolutely necessary after Text changes.
         }
 
-        private async void  StartNewTestSequence()
+        private async void StartNewTestSequence()
         {
+            TraceLog("StartNewTestSequence called, isTestRunning=" + isTestRunning);
             if (isTestRunning)
             {
+                TraceLog("StartNewTestSequence: already running, exit");
                 return;
             }
-
+            TraceLog(string.Format("StartNewTestSequence: START testType={0} modType={1} vcc={2:F3} temp={3:F2} pn={4}",
+                GlobalVarFun.testType, GlobalVarFun.moduleType, TestResult2.vccDDM, TestResult2.tempDDM, TestResult2.fibertop_pn));
             isTestRunning = true; // Mark test as running
 
             timer.Reset();
@@ -603,8 +636,8 @@ namespace SFPXFP自动测试软件多端口
             }
             TestResult2.test_status = 1;//开始测试
             pnshow_textBox.Text = TestResult2.fibertop_pn;
-            SetLED(i2cok_pictureBox1, false);
-            SetLED(i2cok_pictureBox2, false);
+            /*SetLED(i2cok_pictureBox1, false);
+            SetLED(i2cok_pictureBox2, false);*/
 
             simpleLogger2.FileDelete();
             simpleLogger2 = new SimpleLogger("D:\\SFPXFPTesTLogDUT2.txt");
@@ -645,9 +678,9 @@ namespace SFPXFP自动测试软件多端口
                     return;
                 }
             }
-            
+
             GlobalVarFun.record_need_save = false;
-           
+
             Startautoset_button.BackColor = Color.Honeydew;
             if (GlobalVarFun.Language == "Chinese")
             {
@@ -668,11 +701,15 @@ namespace SFPXFP自动测试软件多端口
             try
             {
                 //调用核心测试逻辑的异步方法
+                TraceLog("StartNewTestSequence: about to await RunTestSequenceAsync");
                 await RunTestSequenceAsync(testCancellationSource.Token);
+                TraceLog(string.Format("StartNewTestSequence: RunTestSequenceAsync done, Test_ok={0} status={1}",
+                    TestResult2.Test_ok, TestResult2.test_status));
                 ShowModuleDdmInfo();//DDM刷新
             }
             catch (OperationCanceledException)
             {
+                TraceLog("StartNewTestSequence: OperationCanceledException");
                 // 测试被取消
                 Startautoset_button.Text = "测试已被取消。";
                 Startautoset_button.BackColor = Color.Yellow;

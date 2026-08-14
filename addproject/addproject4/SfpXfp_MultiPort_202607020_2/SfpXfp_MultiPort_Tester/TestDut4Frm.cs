@@ -304,8 +304,8 @@ namespace SFPXFP自动测试软件多端口
                 if (TestResult4.vccDDM < 2.0)
                 {
                     moduleOnline = false;
-                    SetLED(i2cok_pictureBox1, true);
-                    SetLED(i2cok_pictureBox2, true);
+                    /*SetLED(i2cok_pictureBox1, true);
+                    SetLED(i2cok_pictureBox2, true);*/
                     toolStripStatusLabel1.Text = "用做测试，端口4";
                     Startautoset_button.BackColor = Color.Orange;
                     return;
@@ -373,8 +373,8 @@ namespace SFPXFP自动测试软件多端口
             }
             TestResult4.test_status = 1;//开始测试
             //pnshow_textBox.Text = TestResult2.fibertop_pn;
-            SetLED(i2cok_pictureBox1, false);
-            SetLED(i2cok_pictureBox2, false);
+           /* SetLED(i2cok_pictureBox1, false);
+            SetLED(i2cok_pictureBox2, false);*/
 
             simpleLogger4.FileDelete();
             simpleLogger4 = new SimpleLogger("D:\\SFPXFPTesTLogDUT4.txt");
@@ -547,13 +547,13 @@ namespace SFPXFP自动测试软件多端口
                 //Rx UI Updates
                 //指示灯
                 // 实时更新数据库连接状态
-                SetLED(sqlrecord_pictureBox, !GlobalVarFun.sql_record_status_4);
+                /*SetLED(sqlrecord_pictureBox, !GlobalVarFun.sql_record_status_4);
                 SetLED(sqlconnt_pictureBox, !GlobalVarFun.sql_connect_status_4);
                 SetLED(accessconnt_pictureBox, !GlobalVarFun.access_connect_status_4);
                 SetLED(accessupdated_pictureBox, !GlobalVarFun.access_updated_status_4);
 
                 SetLED(i2cok_pictureBox1, false);
-                SetLED(i2cok_pictureBox2, false);
+                SetLED(i2cok_pictureBox2, false);*/
 
                 //SetLED(typeok_pictureBox1, true);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace FibertopTest_Common
 {
@@ -36,7 +37,13 @@ namespace FibertopTest_Common
             if (b1 == null || b2 == null) return false;
             for (int i = 0; i < b1.Length; i++)
                 if (b1[i] != b2[i])
+                {
+                    MessageBox.Show($"b1[i] != b2[i]",
+                "通信故障",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
                     return false;
+                }
             return true;
         }
 
