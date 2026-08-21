@@ -1,0 +1,15 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\bin\CodexVerify\QSFPER1模块测试程序 V1.07.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\bin\CodexVerify\QSFPER1模块测试程序 V1.07.pdb
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\QSFPER1模块测试程序.csprojResolveAssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.Cal_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.DSPCFGFrm.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.DSPRegDebugForm.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.EEPROM_MAP_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.Ex_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.I2C_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.Main_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\QSFP模块测试程序.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\XFP模块测试程序.SOACal_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\QSFPER1模块测试程序.csproj.GenerateResource.Cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\QSFPER1模块测试程序 V1.07.exe
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFPER1模块测试程序2026.01.15\QSFPER1模块测试程序\QSFP模块测试程序\obj\CodexVerify\QSFPER1模块测试程序 V1.07.pdb

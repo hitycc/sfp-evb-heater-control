@@ -1,0 +1,48 @@
+2026-08-17 19:46:45.475 [INFO] 进入调试模式
+2026-08-17 19:46:45.751 [INFO] rx_test
+2026-08-17 19:46:45.767 [INFO] RxPwrDDMAutoCal
+2026-08-17 19:46:47.075 [INFO] 设置TXSFP光源1：Success AttVal10.855 rxAdc:3712
+2026-08-17 19:46:47.911 [INFO] 设置TXSFP光源2：Success AttVal25.035 rxAdc:150
+2026-08-17 19:46:48.805 [INFO] 设置TXSFP光源3：Success AttVal32.825 rxAdc:24
+2026-08-17 19:46:54.281 [INFO] RxLosAutoSet
+2026-08-17 19:46:54.580 [INFO] rxDLosAtt :  att:29.85
+2026-08-17 19:46:55.985 [INFO] los_val : 70
+2026-08-17 19:46:56.267 [INFO] rxALosAtt :  att:36.839
+2026-08-17 19:46:56.390 [INFO] los_val : 80
+2026-08-17 19:46:56.545 [INFO] los_val : 75
+2026-08-17 19:46:56.699 [INFO] los_val : 70
+2026-08-17 19:46:57.647 [INFO] SaveRxDataAfterDebug
+2026-08-17 19:47:03.393 [INFO] rx_sen_test
+2026-08-17 19:47:03.393 [INFO] RxSenBitErrorCheck
+2026-08-17 19:47:09.160 [INFO] tx_test
+2026-08-17 19:47:09.161 [INFO] 关闭发射自动温补功能 TxTempLookupTableCtrl
+2026-08-17 19:47:09.439 [INFO] TxPowerAutoSet
+2026-08-17 19:47:09.653 [INFO] txpwr_debug_method:0x11
+2026-08-17 19:47:10.320 [INFO] txpwer2:-5.708621 APC:37 meter_err:11.2
+2026-08-17 19:47:10.351 [INFO] txpwer2:-5.708621 bias2:18.53 APC:37
+2026-08-17 19:47:10.351 [INFO] 判断：光功率达到目标值 并且 bias在合理范围内
+2026-08-17 19:47:10.941 [INFO] TxErAutoSet
+2026-08-17 19:47:10.942 [INFO] txpwr_debug_method:其他，AutoSetTxEr_MethodA
+2026-08-17 19:47:10.942 [INFO] [DUT2] erValMaxErr:0.5 er_target:12 MOdmin:80 Modmax:250
+2026-08-17 19:47:13.482 [INFO] [DUT2] mod:165 txEr:12.7502 txEr_target:12
+2026-08-17 19:47:13.867 [INFO] [DUT2] mod:122 txEr:15.6409 txEr_target:12
+2026-08-17 19:47:14.254 [INFO] [DUT2] mod:100 txEr:14.6895 txEr_target:12
+2026-08-17 19:47:14.643 [INFO] [DUT2] mod:89 txEr:13.1476 txEr_target:12
+2026-08-17 19:47:15.029 [INFO] [DUT2] mod:84 txEr:12.4869 txEr_target:12
+2026-08-17 19:47:15.044 [INFO] txPower:-6.19686
+2026-08-17 19:47:15.045 [INFO] WriteTxCalData
+2026-08-17 19:47:15.638 [INFO] txPower:-6.19686
+2026-08-17 19:47:15.638 [INFO] SaveTxDataAfterDebug
+2026-08-17 19:47:28.930 [INFO] TxFinalTestCheck
+2026-08-17 19:47:28.931 [INFO] GetFlashInfoDebug
+2026-08-17 19:47:36.676 [INFO] sql_connect_status : false
+2026-08-17 19:47:36.676 [INFO] record_need_save : true
+2026-08-17 19:47:36.676 [INFO] sql_connect_status_2 : false
+2026-08-17 19:47:36.677 [INFO] record_need_save_2 : false
+2026-08-17 19:47:36.677 [INFO] sql_connect_status_3 : false
+2026-08-17 19:47:36.677 [INFO] record_need_save_3 : false
+2026-08-17 19:47:36.678 [INFO] sql_connect_status_4 : false
+2026-08-17 19:47:36.678 [INFO] record_need_save_4 : false
+2026-08-17 19:47:36.678 [INFO] 初测记录未保存到SQL数据库！
+2026-08-17 19:47:36.679 [INFO] 初测调试完成！
+2026-08-17 19:47:36.679 [INFO] 初测完成, 请插入下一只模块......

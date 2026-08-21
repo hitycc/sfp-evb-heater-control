@@ -1,0 +1,183 @@
+QSFPER1 收发分离自动校准开发文档
+
+一、总体架构说明
+接口问题已按规范处理：
+1. ModuleTest接口新增 SetRxVagc()、SaveER1Calibration()；
+2. 基类QSFP提供virtual默认空实现，普通QSFP直接返回false，兼容原有业务；
+3. QSFPER1 : QSFP 使用override重写两个方法，实现ER1专属寄存器逻辑。
+
+功能拆分方案：不再使用单一FirstTestProcess()一次性跑完完整收发校准，拆分为两个互相独立、互不调用的测试入口：
+- RxOnly：仅执行接收通道校准
+- TxOnly：仅执行发射通道校准
+
+UI界面新增两个功能按钮：
+- 接收校准
+- 发射校准
+
+约束：两个按钮各自调用独立流程，禁止流程内部互相嵌套调用。
+
+二、接收校准流程 RunRxCalibration
+使用仪器
+仅使用：BER仪、光衰减器、光功率计；不调用任何发射相关（APC、眼图、TDECQ）逻辑
+private bool RunRxCalibration()
+{
+    if (!test.SetDebugPWD())
+        return false;
+
+    //4通道轮询校准
+    for (int ch = 0; ch < 4; ch++)
+    {
+        TestSet.ch = ch;
+        UInt16 vagc = 140;
+        bool berPass = false;
+
+        //Rx Vagc闭环调节，寻找满足BER的阈值
+        while (vagc <= 255)
+        {
+            if (!test.SetRxVagc(vagc))
+                return false;
+
+            Thread.Sleep(100);
+            double ber = ReadBer(ch); //复用现有BER仪表接口
+            if (ber < 1e-4)
+            {
+                berPass = true;
+                break;
+            }
+            vagc += 10;
+        }
+
+        //当前通道未找到合格Vagc，整体流程失败
+        if (!berPass)
+            return false;
+
+        //两点光功率采集，用于Rx ADC校准计算
+        SetAttenuator(6);
+        double power6 = ReadPower();
+        double rxAdc6 = test.GetRxADC();
+
+        SetAttenuator(8);
+        double power8 = ReadPower();
+        double rxAdc8 = test.GetRxADC();
+
+        //调用Rx校准运算、寄存器写入逻辑
+        //CalculateAndWriteRxCalibration(power6, rxAdc6, power8, rxAdc8);
+    }
+
+    //【重要】确认硬件手册：SaveER1Calibration是仅保存Rx，还是保存全部校准数据
+    return test.SaveER1Calibration();
+}
+
+三、发射校准流程 RunTxCalibration
+使用仪器
+仅使用：眼图仪、光功率计；不读取BER、不执行接收衰减点校准
+private bool RunTxCalibration()
+{
+    if (!test.SetDebugPWD())
+        return false;
+
+    //Tx软开关重启
+    test.SoftTxDis(true);
+    Thread.Sleep(100);
+    test.SoftTxDis(false);
+
+    //4通道轮询校准
+    for (int ch = 0; ch < 4; ch++)
+    {
+        TestSet.ch = ch;
+        UInt16 apc = 160;
+        bool eyePass = false;
+
+        //APC Bias闭环调节，判定眼图指标
+        while (apc <= 255)
+        {
+            if (!test.SetTxApcBias(apc))
+                return false;
+
+            Thread.Sleep(100);
+            double tdecq = ReadTDECQ(ch);
+            double outerEr = ReadOuterER(ch);
+
+            if (tdecq < 3.5 && outerEr > 4.0)
+            {
+                eyePass = true;
+                break;
+            }
+            apc += 1;
+        }
+
+        //通道眼图指标不达标，流程失败
+        if (!eyePass)
+            return false;
+
+        //采集Tx功率与ADC数据
+        double txPower = ReadPower();
+        double txAdc = test.GetTxADC();
+        //调用Tx校准运算、寄存器写入逻辑
+        //CalculateAndWriteTxCalibration(txPower, txAdc);
+    }
+
+    return test.SaveER1Calibration();
+}
+
+四、单功能分步调试方案（整套硬件环境可用）
+开发原则：先底层寄存器，再闭环算法，最后Flash保存；Flash操作尽量后置，避免频繁擦写模块。
+调试顺序：
+1. SetDebugPWD()
+调用写入密码进入调试模式，成功后读取CheckDebugPWD()确认状态。
+
+2. SetRxVagc() 寄存器读写验证
+固定单通道（TestSet.ch = 0），依次写入140、160、180；回读对应寄存器确认硬件数值真实变化。
+禁止一开始直接跑完整BER闭环流程。
+
+3. SetTxApcBias() 寄存器读写验证
+固定单通道，写入160、170；读取APC寄存器或者观测眼图变化验证生效。
+
+4. BER闭环调试
+界面只启动【接收校准】，临时注释SaveER1Calibration()，不写入Flash。
+
+5. 眼图闭环调试
+界面只启动【发射校准】，临时注释SaveER1Calibration()，不写入Flash。
+
+6. SaveER1Calibration() Flash保存
+最后单独测试，尽量减少执行次数；开发前查阅硬件手册，确认该指令作用范围：仅保存Rx / 仅保存Tx / 全部校准数据。
+
+推荐新增简易调试按钮（辅助底层验证）
+- 测试RxVagc寄存器
+- 测试TxAPC寄存器
+按钮逻辑只做：写入 → 延时 → 寄存器回读 → UI显示结果，不启动完整校准流程。
+
+五、类继承实现规范（解决编译报错）
+基类 QSFP
+public virtual bool SetRxVagc(UInt16 setVal)
+{
+    //普通QSFP无该功能，默认返回false
+    return false;
+}
+
+public virtual bool SaveER1Calibration()
+{
+    return false;
+}
+
+子类 QSFPER1
+public override bool SetRxVagc(UInt16 setVal)
+{
+    //ER1专属寄存器读写逻辑
+}
+
+public override bool SaveER1Calibration()
+{
+    //ER1 Flash保存指令逻辑
+}
+
+编译报错补充排查点
+若依旧报接口未实现错误：
+检查工程内所有直接实现ModuleTest接口的类，全部必须实现新增的两个接口方法。
+
+六、开发注意事项
+1. 收发两个校准流程资源隔离：接收流程不操作眼图仪；发射流程不操作BER、衰减器接收光路；
+2. 通道切换必须保证TestSet.ch正确赋值，4通道轮询不能遗漏；
+3. Thread.Sleep延时根据仪表响应速度微调，防止下发指令过快读取无效数据；
+4. Flash写入放在最后联调，前期调试注释保存代码，保护光模块存储介质；
+5. 闭环步长（Vagc +=10、apc +=1）可后续根据量产需求优化收敛速度。

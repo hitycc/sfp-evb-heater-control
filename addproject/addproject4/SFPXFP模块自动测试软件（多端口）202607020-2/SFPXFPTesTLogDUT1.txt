@@ -1,0 +1,51 @@
+2026-08-17 19:46:48.835 [INFO] 进入调试模式
+2026-08-17 19:46:50.184 [INFO] rx_test
+2026-08-17 19:46:50.199 [INFO] RxPwrDDMAutoCal
+2026-08-17 19:46:51.696 [INFO] 设置TXSFP光源1：Success AttVal10.855 rxAdc:3568
+2026-08-17 19:46:53.182 [INFO] 设置TXSFP光源2：Success AttVal25.035 rxAdc:140
+2026-08-17 19:46:54.281 [INFO] 设置TXSFP光源3：Success AttVal32.825 rxAdc:22
+2026-08-17 19:47:03.394 [INFO] RxLosAutoSet
+2026-08-17 19:47:03.703 [INFO] rxDLosAtt :  att:30.065
+2026-08-17 19:47:04.472 [INFO] los_val : 70
+2026-08-17 19:47:04.766 [INFO] rxALosAtt :  att:37.039
+2026-08-17 19:47:04.890 [INFO] los_val : 80
+2026-08-17 19:47:05.044 [INFO] los_val : 75
+2026-08-17 19:47:05.200 [INFO] los_val : 70
+2026-08-17 19:47:05.757 [INFO] SaveRxDataAfterDebug
+2026-08-17 19:47:15.639 [INFO] rx_sen_test
+2026-08-17 19:47:15.639 [INFO] RxSenBitErrorCheck
+2026-08-17 19:47:38.299 [INFO] tx_test
+2026-08-17 19:47:38.300 [INFO] 关闭发射自动温补功能 TxTempLookupTableCtrl
+2026-08-17 19:47:39.496 [INFO] TxPowerAutoSet
+2026-08-17 19:47:39.713 [INFO] txpwr_debug_method:0x11
+2026-08-17 19:47:40.379 [INFO] txpwer:-9.38026 APC:37 meter_ch:1 meter_err:11.2
+2026-08-17 19:47:41.074 [INFO] txpwer:-7.703641 APC:54 meter_ch:1 meter_err:11.2
+2026-08-17 19:47:41.772 [INFO] txpwer:-7.1246 APC:62 meter_ch:1 meter_err:11.2
+2026-08-17 19:47:42.479 [INFO] txpwer:-6.85221 APC:66 meter_ch:1 meter_err:11.2
+2026-08-17 19:47:43.188 [INFO] txpwer:-6.69716 APC:68 meter_ch:1 meter_err:11.2
+2026-08-17 19:47:43.888 [INFO] txpwer:-6.638301 APC:69 meter_ch:1 meter_err:11.2
+2026-08-17 19:47:43.919 [INFO] txpwer:-6.638301 bias:22.89 APC:69
+2026-08-17 19:47:44.507 [INFO] TxErAutoSet
+2026-08-17 19:47:44.507 [INFO] txpwr_debug_method:其他，AutoSetTxEr_MethodA
+2026-08-17 19:47:44.507 [INFO] [DUT1] erValMaxErr:0.5 er_target:12 MOdmin:80 Modmax:250
+2026-08-17 19:47:47.044 [INFO] [DUT1] mod:165 txEr:1.75677 txEr_target:12
+2026-08-17 19:47:47.431 [INFO] [DUT1] mod:208 txEr:6.50613 txEr_target:12
+2026-08-17 19:47:47.817 [INFO] [DUT1] mod:229 txEr:9.7 txEr_target:12
+2026-08-17 19:47:48.202 [INFO] [DUT1] mod:240 txEr:11.9014 txEr_target:12
+2026-08-17 19:47:48.218 [INFO] txPower:-6.638301
+2026-08-17 19:47:48.218 [INFO] WriteTxCalData
+2026-08-17 19:47:48.806 [INFO] txPower:-6.638301
+2026-08-17 19:47:48.806 [INFO] SaveTxDataAfterDebug
+2026-08-17 19:47:55.441 [INFO] TxFinalTestCheck
+2026-08-17 19:47:55.441 [INFO] GetFlashInfoDebug
+2026-08-17 19:47:59.826 [INFO] sql_connect_status : false
+2026-08-17 19:47:59.827 [INFO] record_need_save : true
+2026-08-17 19:47:59.827 [INFO] sql_connect_status_2 : false
+2026-08-17 19:47:59.828 [INFO] record_need_save_2 : false
+2026-08-17 19:47:59.828 [INFO] sql_connect_status_3 : false
+2026-08-17 19:47:59.828 [INFO] record_need_save_3 : false
+2026-08-17 19:47:59.829 [INFO] sql_connect_status_4 : false
+2026-08-17 19:47:59.829 [INFO] record_need_save_4 : false
+2026-08-17 19:47:59.829 [INFO] 初测记录未保存到SQL数据库！
+2026-08-17 19:47:59.830 [INFO] 初测调试完成！
+2026-08-17 19:47:59.830 [INFO] 初测完成, 请插入下一只模块......

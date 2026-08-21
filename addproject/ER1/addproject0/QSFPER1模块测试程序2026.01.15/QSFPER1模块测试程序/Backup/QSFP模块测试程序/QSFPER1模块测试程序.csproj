@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E9E55D2F-CDDA-462A-AF4C-A05DC833A134}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>QSFP模块测试程序</RootNamespace>
+    <AssemblyName>QSFPER1模块测试程序 V1.07</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>SFPtest.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bit.cs" />
+    <Compile Include="Cal_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Cal_Form.Designer.cs">
+      <DependentUpon>Cal_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DSPCFGFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DSPCFGFrm.Designer.cs">
+      <DependentUpon>DSPCFGFrm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DSPRegDebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DSPRegDebugForm.Designer.cs">
+      <DependentUpon>DSPRegDebugForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EEPROM_MAP_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EEPROM_MAP_Form.Designer.cs">
+      <DependentUpon>EEPROM_MAP_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Ex_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Ex_Form.designer.cs">
+      <DependentUpon>Ex_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="I2C.cs" />
+    <Compile Include="I2C_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="I2C_Form.Designer.cs">
+      <DependentUpon>I2C_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main_Form.Designer.cs">
+      <DependentUpon>Main_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Cal_Form.resx">
+      <DependentUpon>Cal_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DSPCFGFrm.resx">
+      <DependentUpon>DSPCFGFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DSPRegDebugForm.resx">
+      <DependentUpon>DSPRegDebugForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EEPROM_MAP_Form.resx">
+      <DependentUpon>EEPROM_MAP_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ex_Form.resx">
+      <DependentUpon>Ex_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="I2C_Form.resx">
+      <DependentUpon>I2C_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main_Form.resx">
+      <DependentUpon>Main_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SOACal_Form.resx">
+      <DependentUpon>SOACal_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SLABCP2112.cs" />
+    <Compile Include="SOACal_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SOACal_Form.Designer.cs">
+      <DependentUpon>SOACal_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TWI.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SFPtest.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

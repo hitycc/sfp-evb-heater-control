@@ -1,342 +1,305 @@
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
-using FibertopTest_Common;
 using LastEVBControlDemoApp;
 
-namespace OTP_AllQuery_Test
+namespace LastEVBControlDemoApp
 {
     class Program
     {
-        private static SFP_EVB_Heater heater;
+        private static OTP12Driver _otp12;
+        private static readonly object _consoleLock = new object();
+
+        // 4个模块的TX路由配置: (slot板号, inCh, outCh, 模块名)
+        // 来自 SW_SetRouteForModule: 模块1/3→IN1→OUT2, 模块2/4→IN3→OUT4
+        private static readonly (string slot, int inCh, int outCh, string name)[] TxRoutes = new[]
+        {
+            ("11", 1, 2, "模块1 TX (SLOT11: IN1→OUT2)"),
+            ("11", 3, 4, "模块2 TX (SLOT11: IN3→OUT4)"),
+            ("12", 1, 2, "模块3 TX (SLOT12: IN1→OUT2)"),
+            ("12", 3, 4, "模块4 TX (SLOT12: IN3→OUT4)"),
+        };
+
+        // RX路由配置(用于"关闭"TX): 模块1/3→IN2→OUT1, 模块2/4→IN4→OUT3
+        private static readonly (string slot, int inCh, int outCh, string name)[] RxRoutes = new[]
+        {
+            ("11", 2, 1, "模块1 RX (SLOT11: IN2→OUT1)"),
+            ("11", 4, 3, "模块2 RX (SLOT11: IN4→OUT3)"),
+            ("12", 2, 1, "模块3 RX (SLOT12: IN2→OUT1)"),
+            ("12", 4, 3, "模块4 RX (SLOT12: IN4→OUT3)"),
+        };
 
         static void Main(string[] args)
         {
-            Console.WriteLine("====== SFP EVB Heater TWI 通信 & 消光比测试 ======");
-            Console.WriteLine("测试内容: 1. 写密码 + 分页写/读16字节验证(每页8字节)  2. 小于8字节写/读验证  3. OTP-12 消光比读取");
+            Console.Title = "OTP-12 光开关并发切换测试";
+            Console.WriteLine("====== OTP-12 光开关并发打开测试 ======");
+            Console.WriteLine("测试目的: 验证同时打开4个发射(TX)光开关时，供应商网页是否显示同步切换");
+            Console.WriteLine("TX路由: 模块1/3 IN1→OUT2, 模块2/4 IN3→OUT4");
+            Console.WriteLine("RX路由: 模块1/3 IN2→OUT1, 模块2/4 IN4→OUT3");
             Console.WriteLine();
 
-            // ========== 第一部分：SFP EVB Heater TWI 测试 ==========
-            heater = new SFP_EVB_Heater();
+            _otp12 = new OTP12Driver();
 
-            Console.Write($"请输入加热台IP地址 (直接回车使用默认 {heater.DefaultIP}): ");
-            string ip = Console.ReadLine().Trim();
-            if (string.IsNullOrEmpty(ip)) ip = heater.DefaultIP;
+            Console.Write($"请输入OTP-12设备IP地址 (直接回车使用默认 {_otp12.DefaultIp}): ");
+            string ip = Console.ReadLine()?.Trim();
+            if (string.IsNullOrEmpty(ip)) ip = _otp12.DefaultIp;
 
-            Console.WriteLine($"正在连接加热台 {ip}:{heater.DefaultPort} ...");
-            if (!heater.Open(ip))
+            Console.WriteLine($"正在连接OTP-12 {ip}:{_otp12.DefaultPort} ...");
+            if (!_otp12.Connect(ip))
             {
-                Console.WriteLine("加热台连接失败！请检查IP地址和网络连接。");
+                Console.WriteLine("OTP-12连接失败！请检查IP地址和网络连接。");
+                Console.WriteLine("按任意键退出...");
                 Console.ReadKey();
                 return;
             }
-            Console.WriteLine("加热台连接成功！");
+            Console.WriteLine("OTP-12连接成功！");
             Console.WriteLine();
 
-            // 选择Slot
-            int slot = 1;
-            Console.Write("请输入要测试的Slot号 (1-4, 默认1): ");
-            string slotInput = Console.ReadLine().Trim();
-            if (!string.IsNullOrEmpty(slotInput))
-            {
-                if (!int.TryParse(slotInput, out slot) || slot < 1 || slot > 4)
-                {
-                    Console.WriteLine("无效的Slot号，使用默认值1。");
-                    slot = 1;
-                }
-            }
-            Console.WriteLine($"测试槽位: Slot {slot}");
-            Console.WriteLine();
-
-            // ========== 上电 ==========
-            Console.WriteLine($"[Slot {slot}] ----- 模块上电 -----");
-            Console.WriteLine($"发送: IO{slot}:setPowerEN 1");
-            bool powerOk = heater.SetPowerEN(1, slot);
-            Console.WriteLine($"PowerEN结果: {(powerOk ? "成功" : "未收到确认，继续...")}");
-            Thread.Sleep(500);
-
-            // 查询ABS引脚确认模块是否插入
-            string absStatus = heater.GetABS(slot);
-            Console.WriteLine($"[Slot {slot}] ABS引脚状态: {absStatus ?? "null"} (0=模块已插入, 1=模块未插入)");
-            Console.WriteLine();
-
-            int passCount = 0;
-            int failCount = 0;
-
-            // ========== 测试1: 写密码 + 分页写/读16字节验证 ==========
-            Console.WriteLine($"[Slot {slot}] ====== 测试1: 写密码 + 分页写/读16字节(0x01)验证 ======");
-            bool test1Pass = TestWritePasswordAnd16Bytes(slot);
-            if (test1Pass) passCount++; else failCount++;
-            Console.WriteLine();
-
-            // ========== 测试2: 小于8字节写/读验证 - 写2个0x02到0xA2,0xC0 ==========
-            Console.WriteLine($"[Slot {slot}] ====== 测试2: 小于8字节写/读验证 - 写2个0x02到0xA2,0xC0并读回 ======");
-            bool test2Pass = TestWriteRead2Bytes(slot);
-            if (test2Pass) passCount++; else failCount++;
-            Console.WriteLine();
-
-            // 关闭加热台连接
-            heater.Close();
-            Console.WriteLine("加热台已断开连接。");
-            Console.WriteLine();
-
-            // ========== 第三部分：OTP-12 消光比读取 ==========
-            Console.WriteLine($"====== 测试3: OTP-12 消光比读取 ======");
-
-            OTP12Driver otp12 = new OTP12Driver();
-            Console.Write($"请输入OTP-12设备IP地址 (直接回车使用默认 {otp12.DefaultIp}): ");
-            string otpIp = Console.ReadLine().Trim();
-            if (string.IsNullOrEmpty(otpIp)) otpIp = otp12.DefaultIp;
-
-            Console.WriteLine($"正在连接OTP-12 {otpIp}:{otp12.DefaultPort} ...");
-            if (!otp12.Connect(otpIp))
-            {
-                Console.WriteLine("OTP-12连接失败！跳过消光比测试。");
-                failCount++;
-            }
-            else
-            {
-                Console.WriteLine("OTP-12连接成功！");
-                Console.WriteLine();
-
-                bool test3Pass = TestReadER(otp12);
-                if (test3Pass) passCount++; else failCount++;
-
-                otp12.DisConnect();
-                Console.WriteLine("OTP-12已断开连接。");
-            }
-            Console.WriteLine();
-
-            // ========== 结果汇总 ==========
-            Console.WriteLine($"====== 测试结果汇总 ======");
-            Console.WriteLine($"通过: {passCount}  失败: {failCount}");
-            Console.WriteLine();
-
-            Console.WriteLine("按任意键退出...");
-            Console.ReadKey();
-        }
-
-        #region TWI 底层通信方法(分页，每页最多8字节，适配SFP_EVB_Heater)
-
-        /// <summary>
-        /// 从设备响应字符串中解析十六进制字节数组
-        /// </summary>
-        private static byte[] ParseHexBytes(string response)
-        {
-            if (string.IsNullOrEmpty(response)) return new byte[0];
-            MatchCollection matches = Regex.Matches(response, @"(?:0x)?([0-9a-fA-F]{2})\b");
-            byte[] bytes = new byte[matches.Count];
-            for (int i = 0; i < matches.Count; i++)
-            {
-                bytes[i] = Convert.ToByte(matches[i].Groups[1].Value, 16);
-            }
-            return bytes;
-        }
-
-        /// <summary>
-        /// TWI 单次页读 (private)。单次I2C事务，最多读8字节，避免len>=10时十进制字符串与十六进制混淆。
-        /// </summary>
-        private static int TWI_ReadPageRaw(int slot, int deviceAddr, int regAddr, byte[] buf, int len)
-        {
             try
             {
-                string dA = $"{(deviceAddr & 0xFF):X2}";
-                string rA = $"{(regAddr & 0xFF):X2}";
-                Console.WriteLine($"  [Slot {slot}] TWI_ReadPageRaw: dev=0x{dA}, reg=0x{rA}, len={len}");
-                string resp = heater.IIC_Get(dA, rA, len.ToString(), slot);
-                Console.WriteLine($"  [Slot {slot}] 响应: {resp ?? "(null)"}");
-                if (string.IsNullOrEmpty(resp)) return 0;
-                var matches = Regex.Matches(resp, @"(?:0x)?([0-9a-fA-F]{2})\b");
-                int n = 0;
-                foreach (Match m in matches)
+                while (true)
                 {
-                    if (n >= len) break;
-                    buf[n] = Convert.ToByte(m.Groups[1].Value, 16);
-                    n++;
+                    Console.WriteLine("====== 测试菜单 ======");
+                    Console.WriteLine("1. 查询所有光开关当前状态");
+                    Console.WriteLine("2. 先关闭所有TX(切RX) → 并发打开4个TX (推荐测试)");
+                    Console.WriteLine("3. 直接并发打开4个TX开关");
+                    Console.WriteLine("4. 顺序打开4个TX开关(对比基准)");
+                    Console.WriteLine("5. 关闭所有TX(切到RX方向)");
+                    Console.WriteLine("0. 退出");
+                    Console.Write("请选择操作: ");
+
+                    string choice = Console.ReadLine()?.Trim();
+                    Console.WriteLine();
+
+                    switch (choice)
+                    {
+                        case "1":
+                            QueryAllSwitchStates();
+                            break;
+                        case "2":
+                            TestConcurrentOpenWithReset();
+                            break;
+                        case "3":
+                            TestConcurrentOpen();
+                            break;
+                        case "4":
+                            TestSequentialOpen();
+                            break;
+                        case "5":
+                            CloseAllTxSwitches();
+                            break;
+                        case "0":
+                            _otp12.DisConnect();
+                            Console.WriteLine("已断开连接。");
+                            return;
+                        default:
+                            Console.WriteLine("无效选择，请重新输入。");
+                            break;
+                    }
+                    Console.WriteLine();
                 }
-                return n;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"  [Slot {slot}] TWI_ReadPageRaw异常: {ex.Message}");
-                return 0;
+                Console.WriteLine($"异常: {ex.Message}");
+                Console.WriteLine("按任意键退出...");
+                Console.ReadKey();
+                _otp12?.DisConnect();
             }
         }
 
+        #region 底层操作
+
         /// <summary>
-        /// TWI 单次页写 (private)。单次I2C事务，最多写8字节，避免len>=10时十进制字符串与十六进制混淆。
+        /// 查询指定slot板卡上指定输入通道的当前连接输出通道
         /// </summary>
-        private static int TWI_WritePageRaw(int slot, int deviceAddr, int regAddr, byte[] buf, int len)
+        private static string QuerySwitchChannel(string slot, int inCh)
         {
-            try
+            string resp = _otp12.SendScpiToSlot(slot, $":ROUTe{inCh}:SCAN?");
+            return resp?.Trim();
+        }
+
+        /// <summary>
+        /// 设置单路开关路由 (SCPI: :ROUTe{inCh}:SCAN {outCh})
+        /// </summary>
+        private static bool SetSwitchRoute(string slot, int inCh, int outCh)
+        {
+            string res = _otp12.SendScpiToSlot(slot, $":ROUTe{inCh}:SCAN {outCh}");
+            return res != null && res.Contains("Command execute successfully");
+        }
+
+        #endregion
+
+        #region 状态查询
+
+        /// <summary>
+        /// 查询并打印SLOT11/SLOT12上所有通道的开关状态
+        /// </summary>
+        private static void QueryAllSwitchStates()
+        {
+            Console.WriteLine("====== 当前光开关状态 ======");
+
+            var channelLabels = new Dictionary<int, string>
             {
-                string dA = $"{(deviceAddr & 0xFF):X2}";
-                string rA = $"{(regAddr & 0xFF):X2}";
-                var sb = new StringBuilder();
-                for (int i = 0; i < len; i++)
+                {1, "模块1 TX"},
+                {2, "模块1 RX"},
+                {3, "模块2 TX"},
+                {4, "模块2 RX"},
+            };
+
+            // SLOT11: 模块1和模块2
+            foreach (int ch in new[] { 1, 2, 3, 4 })
+            {
+                string state = QuerySwitchChannel("11", ch);
+                string label = channelLabels[ch];
+                bool isTx = (ch == 1 || ch == 3);
+                int expectedOut = isTx ? (ch == 1 ? 2 : 4) : (ch == 2 ? 1 : 3);
+                string mark = (state == expectedOut.ToString()) ? "✓" : " ";
+                Console.WriteLine($"  {mark} SLOT11 IN{ch} → OUT{state ?? "null"}  ({label})");
+                Thread.Sleep(30);
+            }
+
+            var channelLabels12 = new Dictionary<int, string>
+            {
+                {1, "模块3 TX"},
+                {2, "模块3 RX"},
+                {3, "模块4 TX"},
+                {4, "模块4 RX"},
+            };
+
+            // SLOT12: 模块3和模块4
+            foreach (int ch in new[] { 1, 2, 3, 4 })
+            {
+                string state = QuerySwitchChannel("12", ch);
+                string label = channelLabels12[ch];
+                bool isTx = (ch == 1 || ch == 3);
+                int expectedOut = isTx ? (ch == 1 ? 2 : 4) : (ch == 2 ? 1 : 3);
+                string mark = (state == expectedOut.ToString()) ? "✓" : " ";
+                Console.WriteLine($"  {mark} SLOT12 IN{ch} → OUT{state ?? "null"}  ({label})");
+                Thread.Sleep(30);
+            }
+
+            Console.WriteLine();
+
+            // TX总状态
+            int txOpenCount = 0;
+            Console.WriteLine("  TX开关状态汇总:");
+            foreach (var route in TxRoutes)
+            {
+                string state = QuerySwitchChannel(route.slot, route.inCh);
+                bool isOpen = (state == route.outCh.ToString());
+                if (isOpen) txOpenCount++;
+                Console.WriteLine($"    {(isOpen ? "✓" : "✗")} {route.name}: OUT{state ?? "null"}");
+                Thread.Sleep(30);
+            }
+            Console.WriteLine($"  TX打开: {txOpenCount}/4");
+        }
+
+        #endregion
+
+        #region 开关操作
+
+        /// <summary>
+        /// 关闭所有TX开关(切到RX方向)
+        /// </summary>
+        private static void CloseAllTxSwitches()
+        {
+            Console.WriteLine("====== 关闭所有TX开关(切换到RX方向) ======");
+
+            foreach (var route in RxRoutes)
+            {
+                Console.Write($"  设置 {route.name} ... ");
+                bool ok = SetSwitchRoute(route.slot, route.inCh, route.outCh);
+                Console.WriteLine(ok ? "OK" : "FAIL");
+                Thread.Sleep(100);
+            }
+
+            Console.WriteLine("RX方向切换完成。");
+            Thread.Sleep(200);
+            QueryAllSwitchStates();
+        }
+
+        /// <summary>
+        /// 使用4线程并发打开4个TX开关，返回精确计时结果
+        /// 注意: SendScpiToSlot内部有lock，多线程并发调用时命令会串行发送，
+        /// 但4个线程几乎同时进入lock等待队列，命令发送间隔最小化。
+        /// </summary>
+        private static List<(string name, double startMs, double endMs, bool success)> ConcurrentOpenTxSwitches()
+        {
+            var results = new List<(string name, double startMs, double endMs, bool success)>();
+            var resultsLock = new object();
+            var countdown = new CountdownEvent(TxRoutes.Length);
+            var sw = Stopwatch.StartNew();
+
+            var threads = new Thread[TxRoutes.Length];
+            for (int i = 0; i < TxRoutes.Length; i++)
+            {
+                var route = TxRoutes[i];
+                int moduleNum = i + 1; // 1,2,3,4
+
+                threads[i] = new Thread(() =>
                 {
-                    if (i > 0) sb.Append(",");
-                    sb.Append($"{buf[i]:X2}");
-                }
-                string dataStr = sb.ToString();
-                Console.WriteLine($"  [Slot {slot}] TWI_WritePageRaw: dev=0x{dA}, reg=0x{rA}, len={len}, data={dataStr}");
-                bool ok = heater.IIC_Set(dA, rA, len.ToString(), dataStr, slot);
-                Console.WriteLine($"  [Slot {slot}] 结果: {(ok ? "OK" : "FAIL")}");
-                return ok ? len : 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"  [Slot {slot}] TWI_WritePageRaw异常: {ex.Message}");
-                return 0;
-            }
-        }
+                    double startMs = sw.Elapsed.TotalMilliseconds;
+                    bool ok = false;
+                    try
+                    {
+                        ok = _otp12.SW_SetRouteForModule(moduleNum, isTxTest: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        lock (_consoleLock)
+                        {
+                            Console.WriteLine($"  [异常] {route.name}: {ex.Message}");
+                        }
+                    }
+                    double endMs = sw.Elapsed.TotalMilliseconds;
 
-        /// <summary>
-        /// TWI 多字节读 (public)。自动分页，每次最多读8字节，支持任意长度。
-        /// </summary>
-        private static int TWI_ReadPage(int slot, int deviceAddr, int regAddr, byte[] buf, int len)
-        {
-            const int pageSize = 8;
-            int totalRead = 0;
-            int offset = 0;
-            int curReg = regAddr & 0xFF;
-
-            Console.WriteLine($"[Slot {slot}] TWI_ReadPage: dev=0x{deviceAddr:X2}, reg=0x{regAddr:X2}, totalLen={len} (pageSize={pageSize})");
-
-            while (offset < len)
-            {
-                int chunkLen = len - offset;
-                if (chunkLen > pageSize) chunkLen = pageSize;
-
-                byte[] chunkBuf = new byte[chunkLen];
-                int n = TWI_ReadPageRaw(slot, deviceAddr, curReg, chunkBuf, chunkLen);
-                if (n <= 0) break;
-
-                Array.Copy(chunkBuf, 0, buf, offset, n);
-                totalRead += n;
-                offset += n;
-                curReg = (curReg + n) & 0xFF;
-
-                if (n < chunkLen) break;
-                Thread.Sleep(5);
+                    lock (resultsLock)
+                    {
+                        results.Add((route.name, startMs, endMs, ok));
+                    }
+                    countdown.Signal();
+                });
             }
 
-            Console.WriteLine($"[Slot {slot}] TWI_ReadPage完成: 实际读取{totalRead}字节");
-            return totalRead;
-        }
+            // 几乎同时启动所有4个线程
+            foreach (var t in threads) t.Start();
 
-        /// <summary>
-        /// TWI 多字节写 (private)。自动分页，每次最多写8字节，支持任意长度。
-        /// </summary>
-        private static int TWI_WritePage(int slot, int deviceAddr, int regAddr, byte[] buf, int len)
-        {
-            const int pageSize = 8;
-            int totalWritten = 0;
-            int offset = 0;
-            int curReg = regAddr & 0xFF;
-
-            Console.WriteLine($"[Slot {slot}] TWI_WritePage: dev=0x{deviceAddr:X2}, reg=0x{regAddr:X2}, totalLen={len} (pageSize={pageSize})");
-
-            while (offset < len)
-            {
-                int chunkLen = len - offset;
-                if (chunkLen > pageSize) chunkLen = pageSize;
-
-                byte[] chunkBuf = new byte[chunkLen];
-                Array.Copy(buf, offset, chunkBuf, 0, chunkLen);
-
-                int n = TWI_WritePageRaw(slot, deviceAddr, curReg, chunkBuf, chunkLen);
-                if (n <= 0) break;
-
-                totalWritten += n;
-                offset += n;
-                curReg = (curReg + n) & 0xFF;
-
-                if (n < chunkLen) break;
-                Thread.Sleep(5);
-            }
-
-            Console.WriteLine($"[Slot {slot}] TWI_WritePage完成: 实际写入{totalWritten}字节");
-            return totalWritten;
-        }
-
-        /// <summary>
-        /// TWI 读单字节
-        /// </summary>
-        private static byte TWI_ReadByte(int slot, int deviceAddr, int regAddr)
-        {
-            byte[] b = new byte[1];
-            if (TWI_ReadPageRaw(slot, deviceAddr, regAddr, b, 1) == 1) return b[0];
-            return 0;
-        }
-
-        /// <summary>
-        /// TWI 写单字节
-        /// </summary>
-        private static bool TWI_WriteByte(int slot, int deviceAddr, int regAddr, int val)
-        {
-            byte[] b = new byte[] { (byte)val };
-            return TWI_WritePageRaw(slot, deviceAddr, regAddr, b, 1) == 1;
-        }
-
-        /// <summary>
-        /// 选择寄存器页 (Table Select)
-        /// </summary>
-        private static bool SelectTable(int slot, byte table)
-        {
-            Console.WriteLine($"[Slot {slot}] SelectTable({table}): 开始切换页...");
-
-            // 先读当前页
-            byte curTable = TWI_ReadByte(slot, 0xA2, 127);
-            Console.WriteLine($"[Slot {slot}] SelectTable({table}): 当前页=0x{curTable:X2}");
-            if (curTable == table)
-            {
-                Console.WriteLine($"[Slot {slot}] SelectTable({table}): 当前已是目标页");
-                return true;
-            }
-
-            // 写入目标页
-            if (!TWI_WriteByte(slot, 0xA2, 127, table))
-            {
-                Console.WriteLine($"[Slot {slot}] SelectTable({table}): 写入页选择失败!");
-                return false;
-            }
+            // 给线程一点点时间全部启动并进入lock等待
             Thread.Sleep(5);
+            double dispatchMs = sw.Elapsed.TotalMilliseconds;
 
-            // 读回验证
-            byte verifyTable = TWI_ReadByte(slot, 0xA2, 127);
-            if (verifyTable != table)
+            countdown.Wait();
+            sw.Stop();
+
+            // ========== 输出时间分析 ==========
+            Console.WriteLine();
+            Console.WriteLine($"====== 并发切换时间分析 =====");
+            Console.WriteLine($"  线程全部启动时刻: {dispatchMs:F3} ms");
+            Console.WriteLine();
+
+            var sorted = results.OrderBy(r => r.startMs).ToList();
+            foreach (var r in sorted)
             {
-                Console.WriteLine($"[Slot {slot}] SelectTable({table}): 验证失败! 读回=0x{verifyTable:X2}");
-                return false;
+                Console.WriteLine($"  {r.name,-35} 开始={r.startMs,8:F3}ms  完成={r.endMs,8:F3}ms  耗时={r.endMs - r.startMs,6:F1}ms  {(r.success ? "OK" : "FAIL")}");
             }
 
-            Console.WriteLine($"[Slot {slot}] SelectTable({table}): 成功切换到Table {table}");
-            return true;
-        }
-
-        /// <summary>
-        /// 字节数组比较
-        /// </summary>
-        private static bool ByteEquals(byte[] a, byte[] b, int length)
-        {
-            for (int i = 0; i < length; i++)
+            if (sorted.Count > 0)
             {
-                if (a[i] != b[i]) return false;
-            }
-            return true;
-        }
+                double firstStart = sorted.Min(r => r.startMs);
+                double lastEnd = sorted.Max(r => r.endMs);
+                double firstEnd = sorted.Min(r => r.endMs);
 
-        private static string BytesToHexString(byte[] data, int length)
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < length; i++)
-            {
-                if (i > 0) sb.Append(",");
-                sb.Append($"{data[i]:X2}");
+                Console.WriteLine();
+                Console.WriteLine($"  ★ 第一条命令开始到最后一条完成 总耗时: {(lastEnd - firstStart):F1} ms");
+                Console.WriteLine($"  ★ 第一条完成到最后一条完成 时间差:   {(lastEnd - firstEnd):F1} ms");
+                Console.WriteLine($"    (此时间差即为供应商网页上4个开关状态变化的最大间隔)");
+                Console.WriteLine($"    (如果此值<100ms，人眼基本感知不到差异，看起来是同时的)");
             }
-            return sb.ToString();
+
+            return results;
         }
 
         #endregion
@@ -344,296 +307,91 @@ namespace OTP_AllQuery_Test
         #region 测试用例
 
         /// <summary>
-        /// 测试1: 写调试密码 {0xFF,0xFF,0xFF,0xFF} 到 0xA2,0x7B，
-        /// 然后切换表3，用分页写(每页8字节)写16字节0x01到0xA2,0xC0，
-        /// 再用分页读(每页8字节)读回16字节并验证。
+        /// 测试2: 先关闭所有TX(切RX) → 并发打开4个TX
         /// </summary>
-        private static bool TestWritePasswordAnd16Bytes(int slot)
+        private static void TestConcurrentOpenWithReset()
         {
-            // ---- 步骤1: 选择Table 0 ----
-            Console.WriteLine($"[Slot {slot}] 步骤1: 选择Table 0");
-            if (!SelectTable(slot, 0x00))
-            {
-                Console.WriteLine($"[Slot {slot}] WARN: 选择Table 0失败，尝试继续...");
-            }
-            Thread.Sleep(10);
-
-            // ---- 步骤2: 写入调试密码 {0xFF,0xFF,0xFF,0xFF} 到 0xA2,0x7B ----
-            byte[] debugPassword = new byte[4] { 0xFF, 0xFF, 0xFF, 0xFF };
-            Console.WriteLine($"[Slot {slot}] 步骤2: 写入调试密码到0xA2,0x7B");
-            Console.WriteLine($"[Slot {slot}] 写入数据: {BytesToHexString(debugPassword, 4)}");
-
-            // 写两次（确保写入成功）
-            int writeLen = TWI_WritePage(slot, 0xA2, 0x7B, debugPassword, 4);
-            if (writeLen != 4)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 第一次写入密码失败! 写入{writeLen}/4字节");
-                return false;
-            }
-            Thread.Sleep(10);
-
-            writeLen = TWI_WritePage(slot, 0xA2, 0x7B, debugPassword, 4);
-            if (writeLen != 4)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 第二次写入密码失败! 写入{writeLen}/4字节");
-                return false;
-            }
-            Thread.Sleep(100);
-
-            // 读回密码验证
-            byte[] readPwd = new byte[4];
-            int readPwdLen = TWI_ReadPage(slot, 0xA2, 0x7B, readPwd, 4);
-            if (readPwdLen != 4)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 读回密码长度错误! 期望4字节, 实际{readPwdLen}字节");
-                return false;
-            }
-            Console.WriteLine($"[Slot {slot}] 密码写入: {BytesToHexString(debugPassword, 4)}");
-            Console.WriteLine($"[Slot {slot}] 密码读回: {BytesToHexString(readPwd, 4)}");
-            if (!ByteEquals(readPwd, debugPassword, 4))
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 密码读回与写入不一致!");
-                return false;
-            }
-            Console.WriteLine($"[Slot {slot}] 密码验证通过 ✓");
+            Console.WriteLine("====== 测试: 先关闭所有TX(切RX) → 并发打开4个TX ======");
             Console.WriteLine();
 
-            // ---- 步骤3: 切换到Table 3 ----
-            Console.WriteLine($"[Slot {slot}] 步骤3: 选择Table 3");
-            if (!SelectTable(slot, 0x03))
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 无法选择Table 3!");
-                return false;
-            }
-            Thread.Sleep(10);
-
-            // ---- 步骤4: 用分页写(每页8字节)写16字节0x01到0xA2,0xC0 ----
-            byte[] writeData = new byte[16];
-            for (int i = 0; i < 16; i++) writeData[i] = 0x01;
-
-            Console.WriteLine($"[Slot {slot}] 步骤4: 分页写入16字节0x01到0xA2,0xC0 (每页8字节，分2页)");
-            Console.WriteLine($"[Slot {slot}] 写入数据: {BytesToHexString(writeData, 16)}");
-            writeLen = TWI_WritePage(slot, 0xA2, 0xC0, writeData, 16);
-            if (writeLen != 16)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 写入数据长度错误! 期望16字节, 实际写入{writeLen}字节");
-                return false;
-            }
-            Thread.Sleep(100);
-
-            // ---- 步骤5: 用分页读(每页8字节)从0xA2,0xC0读回16字节 ----
-            byte[] readData = new byte[16];
-            Console.WriteLine($"[Slot {slot}] 步骤5: 分页读取16字节从0xA2,0xC0 (每页8字节，分2页)");
-            int readLen = TWI_ReadPage(slot, 0xA2, 0xC0, readData, 16);
-            if (readLen != 16)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 读回数据长度错误! 期望16字节, 实际{readLen}字节");
-                return false;
-            }
-
-            // ---- 步骤6: 打印和比较 ----
+            // 1. 先切到RX
+            CloseAllTxSwitches();
             Console.WriteLine();
-            Console.WriteLine($"[Slot {slot}] 写入数据: {BytesToHexString(writeData, 16)}");
-            Console.WriteLine($"[Slot {slot}] 读回数据: {BytesToHexString(readData, 16)}");
 
-            if (ByteEquals(readData, writeData, 16))
-            {
-                Console.WriteLine($"[Slot {slot}] 结果: PASS ✓ - 分页写/读16字节验证成功!");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine($"[Slot {slot}] 结果: FAIL ✗ - 读回数据与写入不一致!");
-                for (int i = 0; i < 16; i++)
-                {
-                    if (readData[i] != writeData[i])
-                    {
-                        Console.WriteLine($"[Slot {slot}]   字节[{i}]: 期望0x{writeData[i]:X2}, 实际0x{readData[i]:X2}");
-                    }
-                }
-                return false;
-            }
+            Console.WriteLine(">>> 请在供应商网页上观察光开关状态，准备好后按回车开始并发切换 <<<");
+            Console.WriteLine("    (重点观察: 4个TX开关是否同时从关(RX侧)变开(TX侧))");
+            Console.ReadLine();
+
+            // 2. 并发打开
+            var swTotal = Stopwatch.StartNew();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ▶ 开始并发打开4个TX开关!");
+            Console.WriteLine();
+
+            ConcurrentOpenTxSwitches();
+
+            swTotal.Stop();
+            Console.WriteLine();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ■ 所有切换命令已完成，总耗时: {swTotal.ElapsedMilliseconds} ms");
+            Console.WriteLine();
+
+            // 3. 查询最终状态
+            Thread.Sleep(500);
+            Console.WriteLine("====== 切换后光开关状态 ======");
+            QueryAllSwitchStates();
         }
 
         /// <summary>
-        /// 测试2: 小于8字节写/读验证 - 写2个0x02到0xA2,0xC0，然后读回2字节验证。
-        /// 确保在Table 3下操作，测试少于8字节的数据能否正确读写。
+        /// 测试3: 直接并发打开4个TX(不先关闭)
         /// </summary>
-        private static bool TestWriteRead2Bytes(int slot)
+        private static void TestConcurrentOpen()
         {
-            // ---- 步骤1: 确保在Table 3 ----
-            Console.WriteLine($"[Slot {slot}] 步骤1: 确认选择Table 3");
-            if (!SelectTable(slot, 0x03))
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 无法选择Table 3!");
-                return false;
-            }
-            Thread.Sleep(10);
+            Console.WriteLine("====== 测试: 直接并发打开4个TX开关 ======");
+            Console.WriteLine(">>> 请在供应商网页上观察，按回车开始 <<<");
+            Console.ReadLine();
 
-            // ---- 步骤2: 先读0xA2,0xC0起始的16字节，记录原始数据 ----
-            Console.WriteLine($"[Slot {slot}] 步骤2: 先读取0xA2,0xC0起始16字节原始数据（用于对比）");
-            byte[] originalData = new byte[16];
-            int origReadLen = TWI_ReadPage(slot, 0xA2, 0xC0, originalData, 16);
-            if (origReadLen != 16)
-            {
-                Console.WriteLine($"[Slot {slot}] WARN: 读取原始数据长度不足! 实际{origReadLen}/16字节，继续测试...");
-            }
-            Console.WriteLine($"[Slot {slot}] 原始数据: {BytesToHexString(originalData, origReadLen)}");
+            var swTotal = Stopwatch.StartNew();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ▶ 开始并发打开4个TX开关!");
+
+            ConcurrentOpenTxSwitches();
+
+            swTotal.Stop();
             Console.WriteLine();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ■ 所有切换命令已完成，总耗时: {swTotal.ElapsedMilliseconds} ms");
 
-            // ---- 步骤3: 写入2个0x02到0xA2,0xC0 ----
-            byte[] writeData2 = new byte[2] { 0x02, 0x02 };
-            Console.WriteLine($"[Slot {slot}] 步骤3: 写入2字节0x02到0xA2,0xC0");
-            Console.WriteLine($"[Slot {slot}] 写入数据: {BytesToHexString(writeData2, 2)}");
-            int writeLen = TWI_WritePageRaw(slot, 0xA2, 0xC0, writeData2, 2);
-            if (writeLen != 2)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 写入2字节失败! 写入{writeLen}/2字节");
-                return false;
-            }
-            Thread.Sleep(100);
-
-            // ---- 步骤4: 从0xA2,0xC0读回2字节验证 ----
-            byte[] readData2 = new byte[2];
-            Console.WriteLine($"[Slot {slot}] 步骤4: 从0xA2,0xC0读回2字节");
-            int readLen = TWI_ReadPageRaw(slot, 0xA2, 0xC0, readData2, 2);
-            if (readLen != 2)
-            {
-                Console.WriteLine($"[Slot {slot}] FAIL: 读回2字节长度错误! 期望2字节, 实际{readLen}字节");
-                return false;
-            }
-
-            // ---- 步骤5: 再读16字节确认只有前2字节变化，后面字节不受影响 ----
-            Console.WriteLine($"[Slot {slot}] 步骤5: 读取0xA2,0xC0起始16字节，确认其他字节未被影响");
-            byte[] afterData = new byte[16];
-            int afterReadLen = TWI_ReadPage(slot, 0xA2, 0xC0, afterData, 16);
-            if (afterReadLen != 16)
-            {
-                Console.WriteLine($"[Slot {slot}] WARN: 读取写入后数据长度不足! 实际{afterReadLen}/16字节");
-            }
-
-            // ---- 步骤6: 打印和比较 ----
-            Console.WriteLine();
-            Console.WriteLine($"[Slot {slot}] 写入数据(2字节): {BytesToHexString(writeData2, 2)}");
-            Console.WriteLine($"[Slot {slot}] 读回数据(2字节): {BytesToHexString(readData2, 2)}");
-            Console.WriteLine($"[Slot {slot}] 写入前16字节:  {BytesToHexString(originalData, Math.Min(origReadLen, 16))}");
-            Console.WriteLine($"[Slot {slot}] 写入后16字节:  {BytesToHexString(afterData, Math.Min(afterReadLen, 16))}");
-
-            bool twoByteMatch = ByteEquals(readData2, writeData2, 2);
-
-            // 检查前2字节是否为0x02
-            bool firstTwoCorrect = (afterData[0] == 0x02 && afterData[1] == 0x02);
-
-            // 检查后面的字节(从索引2开始)是否与原始数据一致
-            bool restUnchanged = true;
-            int checkLen = Math.Min(Math.Min(origReadLen, afterReadLen), 16);
-            for (int i = 2; i < checkLen; i++)
-            {
-                if (afterData[i] != originalData[i])
-                {
-                    Console.WriteLine($"[Slot {slot}]   字节[{i}]变化: 写入前0x{originalData[i]:X2} -> 写入后0x{afterData[i]:X2}");
-                    restUnchanged = false;
-                }
-            }
-
-            if (twoByteMatch && firstTwoCorrect && restUnchanged)
-            {
-                Console.WriteLine($"[Slot {slot}] 结果: PASS ✓ - 小于8字节(2字节0x02)写/读验证成功! 其他字节未被影响。");
-                return true;
-            }
-            else if (twoByteMatch && firstTwoCorrect)
-            {
-                Console.WriteLine($"[Slot {slot}] 结果: PASS ✓ (有警告) - 2字节写/读验证成功，但后续部分字节有变化。");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine($"[Slot {slot}] 结果: FAIL ✗ - 2字节写/读验证失败!");
-                if (!twoByteMatch)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (readData2[i] != writeData2[i])
-                        {
-                            Console.WriteLine($"[Slot {slot}]   字节[{i}]: 期望0x{writeData2[i]:X2}, 实际0x{readData2[i]:X2}");
-                        }
-                    }
-                }
-                return false;
-            }
+            Thread.Sleep(500);
+            QueryAllSwitchStates();
         }
 
         /// <summary>
-        /// 测试3: OTP-12 消光比读取
-        /// 设置slot="06", 速率="1.25G", 读取通道2(ch=2)的消光比
+        /// 测试4: 顺序打开4个TX(对比基准)
         /// </summary>
-        private static bool TestReadER(OTP12Driver otp12)
+        private static void TestSequentialOpen()
         {
-            try
+            Console.WriteLine("====== 测试: 顺序打开4个TX开关(对比基准) ======");
+            Console.WriteLine(">>> 请在供应商网页上观察，按回车开始 <<<");
+            Console.ReadLine();
+
+            var sw = Stopwatch.StartNew();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ▶ 开始顺序打开4个TX开关...");
+            Console.WriteLine();
+
+            for (int module = 1; module <= 4; module++)
             {
-                int ermCh = 2;
-
-                // 步骤1: 设置槽位为"06"
-                Console.WriteLine($"步骤1: 设置ERM槽位为 06");
-                otp12.SetSlot("06");
-                Thread.Sleep(100);
-
-                // 步骤2: 设置信号速率为1.25G
-                Console.WriteLine($"步骤2: 设置通道{ermCh}信号速率为 1.25G");
-                bool rateOk = otp12.ERM_SetRate(ermCh, "1.25G");
-                Console.WriteLine($"  速率设置结果: {(rateOk ? "成功" : "未收到确认，继续...")}");
-                Thread.Sleep(500);
-
-                // 步骤3: 查询当前速率确认
-                string curRate = otp12.ERM_GetRate(ermCh);
-                Console.WriteLine($"  当前速率配置: {curRate ?? "(null)"}");
-                Thread.Sleep(100);
-
-                // 步骤4: 读取消光比数据
-                Console.WriteLine($"步骤3: 读取通道{ermCh}消光比数据 (格式: power,er)");
-                string erData = otp12.ERM_ReadERData(ermCh);
-                Console.WriteLine($"  原始返回: {erData ?? "(null)"}");
-
-                if (string.IsNullOrEmpty(erData))
-                {
-                    Console.WriteLine($"结果: FAIL ✗ - 读取消光比数据为空!");
-                    return false;
-                }
-
-                // 解析返回值: 格式为 "power,er"
-                string[] parts = erData.Split(',');
-                if (parts.Length >= 2)
-                {
-                    string powerStr = parts[0].Trim();
-                    string erStr = parts[1].Trim();
-                    Console.WriteLine();
-                    Console.WriteLine($"====== 消光比测试结果 ======");
-                    Console.WriteLine($"  光功率: {powerStr} dBm");
-                    Console.WriteLine($"  消光比: {erStr} dB");
-                    Console.WriteLine($"============================");
-
-                    if (double.TryParse(erStr, out double erValue))
-                    {
-                        Console.WriteLine($"结果: PASS ✓ - 消光比读取成功! ER={erValue:F3} dB");
-                        return true;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"结果: PASS ✓ - 消光比数据已获取 (数值解析: {erStr})");
-                        return true;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"结果: PASS ✓ - 返回数据: {erData} (格式非预期但已获取)");
-                    return true;
-                }
+                double t1 = sw.Elapsed.TotalMilliseconds;
+                Console.Write($"  [{t1,8:F1}ms] 模块{module} TX ... ");
+                bool ok = _otp12.SW_SetRouteForModule(module, isTxTest: true);
+                double t2 = sw.Elapsed.TotalMilliseconds;
+                Console.WriteLine($"{(ok ? "OK" : "FAIL")} (耗时{t2 - t1:F1}ms)");
+                Thread.Sleep(50);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"结果: FAIL ✗ - 消光比读取异常: {ex.Message}");
-                return false;
-            }
+
+            sw.Stop();
+            Console.WriteLine();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] ■ 顺序切换完成，总耗时: {sw.ElapsedMilliseconds} ms");
+            Console.WriteLine("  (对比: 并发模式的总耗时应接近但略大于单步耗时，4个开关几乎同时动作)");
+
+            Thread.Sleep(500);
+            QueryAllSwitchStates();
         }
 
         #endregion

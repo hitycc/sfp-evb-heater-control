@@ -1,0 +1,88 @@
+2026-08-17 10:21:29.524 [INFO] [TRACE] StartNewTestSequence: about to await RunTestSequenceAsync
+2026-08-17 10:21:29.526 [INFO] [TRACE] RunTestSequenceAsync START
+2026-08-17 10:21:29.527 [INFO] [TRACE] RunTestSequenceAsync: calling FirstTestProcessAsync
+2026-08-17 10:21:29.617 [INFO] 进入调试模式
+2026-08-17 10:21:35.356 [INFO] [TRACE] DDM: vcc=3.235V temp=21.56C bias=17.66 txPwr=-5.86 rxPwr=-35.23
+2026-08-17 10:21:35.465 [INFO] rx_test
+2026-08-17 10:21:35.576 [INFO] RxPwrDDMAutoCal
+2026-08-17 10:21:39.869 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:21:39.871 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:21:40.297 [INFO] 设置TXSFP光源1：Success AttVal10.76 rxAdc:3856
+2026-08-17 10:21:40.298 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:21:40.299 [INFO] [TRACE] DDM: vcc=3.235V temp=22.01C bias=17.88 txPwr=-5.93 rxPwr=-35.23
+2026-08-17 10:21:42.591 [INFO] 设置TXSFP光源2：Success AttVal24.749 rxAdc:147
+2026-08-17 10:21:43.050 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:21:43.050 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:21:44.035 [INFO] 设置TXSFP光源3：Success AttVal32.77 rxAdc:23
+2026-08-17 10:21:44.037 [INFO] [TRACE] UI判断: vcc=3.42 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:21:44.038 [INFO] [TRACE] DDM: vcc=3.418V temp=76.25C bias=20.99 txPwr=-7.24 rxPwr=-18.30
+2026-08-17 10:21:49.618 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:21:49.618 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:21:50.938 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:21:50.939 [INFO] [TRACE] DDM: vcc=3.235V temp=22.46C bias=17.88 txPwr=-5.78 rxPwr=-40.00
+2026-08-17 10:21:51.044 [INFO] RxLosAutoSet
+2026-08-17 10:21:52.606 [INFO] rxDLosAtt :  att:29.77
+2026-08-17 10:21:55.057 [INFO] los_val : 70
+2026-08-17 10:21:55.453 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:21:55.453 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:21:55.469 [INFO] rxALosAtt :  att:36.765
+2026-08-17 10:21:55.988 [INFO] los_val : 80
+2026-08-17 10:21:56.381 [INFO] los_val : 75
+2026-08-17 10:21:56.773 [INFO] los_val : 70
+2026-08-17 10:21:57.297 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:21:57.298 [INFO] [TRACE] DDM: vcc=3.235V temp=23.36C bias=17.66 txPwr=-5.78 rxPwr=-40.00
+2026-08-17 10:21:57.327 [INFO] SaveRxDataAfterDebug
+2026-08-17 10:22:00.736 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:00.736 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:22:02.091 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:22:02.092 [INFO] [TRACE] DDM: vcc=3.235V temp=22.91C bias=18.09 txPwr=-5.86 rxPwr=-26.99
+2026-08-17 10:22:02.106 [INFO] rx_sen_test
+2026-08-17 10:22:02.107 [INFO] RxSenBitErrorCheck
+2026-08-17 10:22:05.780 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:05.780 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:22:05.937 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:22:05.953 [INFO] [TRACE] DDM: vcc=3.235V temp=23.81C bias=17.88 txPwr=-5.86 rxPwr=-26.99
+2026-08-17 10:22:06.450 [INFO] tx_test
+2026-08-17 10:22:06.451 [INFO] 关闭发射自动温补功能 TxTempLookupTableCtrl
+2026-08-17 10:22:11.108 [INFO] TxPowerAutoSet
+2026-08-17 10:22:11.662 [INFO] txpwr_debug_method:0x11
+2026-08-17 10:22:12.739 [INFO] txpwer2:-5.83765 APC:37 meter_ch:3 meter_err:11.4
+2026-08-17 10:22:12.850 [INFO] txpwer2:-5.83765 bias2:18.094 APC:37
+2026-08-17 10:22:12.850 [INFO] 判断：光功率达到目标值 并且 bias在合理范围内
+2026-08-17 10:22:14.099 [INFO] TxErAutoSet
+2026-08-17 10:22:14.101 [INFO] txpwr_debug_method:其他，AutoSetTxEr_MethodA
+2026-08-17 10:22:14.109 [INFO] erValMaxErr:0.3 er_target:12 MOdmin:80 Modmax:250
+2026-08-17 10:22:16.311 [INFO] mod:165 txEr:15.6766 txEr_target:12
+2026-08-17 10:22:19.725 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:19.725 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:22:20.818 [INFO] [TRACE] UI判断: vcc=3.23 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:22:20.819 [INFO] [TRACE] DDM: vcc=3.228V temp=24.71C bias=18.31 txPwr=-5.70 rxPwr=-25.09
+2026-08-17 10:22:22.134 [INFO] mod:122 txEr:14.8195 txEr_target:12
+2026-08-17 10:22:28.503 [INFO] mod:100 txEr:13.4853 txEr_target:12
+2026-08-17 10:22:30.579 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:30.579 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:22:32.994 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:22:32.995 [INFO] [TRACE] DDM: vcc=3.242V temp=24.71C bias=17.44 txPwr=-5.70 rxPwr=-25.09
+2026-08-17 10:22:34.412 [INFO] mod:89 txEr:12.8494 txEr_target:12
+2026-08-17 10:22:39.593 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:39.593 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:22:40.698 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:22:40.699 [INFO] [TRACE] DDM: vcc=3.235V temp=24.71C bias=18.53 txPwr=-5.77 rxPwr=-25.09
+2026-08-17 10:22:42.223 [INFO] mod:84 txEr:11.8529 txEr_target:12
+2026-08-17 10:22:42.239 [INFO] txPower:0
+2026-08-17 10:22:42.240 [INFO] WriteTxCalData
+2026-08-17 10:22:45.983 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:45.983 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:22:47.356 [INFO] txPower:0
+2026-08-17 10:22:47.356 [INFO] SaveTxDataAfterDebug
+2026-08-17 10:22:47.357 [INFO] [TRACE] UI判断: vcc=3.23 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:22:47.357 [INFO] [TRACE] DDM: vcc=3.228V temp=25.16C bias=18.31 txPwr=-5.77 rxPwr=-25.09
+2026-08-17 10:22:52.568 [INFO] [TRACE] CheckTestTypeInfo: typeCheckOk=False pn=SFP-SM3124-20DC chipIsOK=False moduleIsSR=False
+2026-08-17 10:22:52.568 [INFO] [TRACE] 跳过状态检查: typeCheckOk=False pn=SFP-SM3124-20DC
+2026-08-17 10:23:13.840 [INFO] TxFinalTestCheck
+2026-08-17 10:23:13.840 [INFO] GetFlashInfoDebug
+2026-08-17 10:23:14.061 [INFO] 读取模块flash调试信息失败！
+2026-08-17 10:23:14.062 [INFO] [TRACE] RunTestSequenceAsync: FirstTestProcessAsync returned False
+2026-08-17 10:23:14.065 [INFO] [TRACE] StartNewTestSequence: RunTestSequenceAsync done, Test_ok=False status=3
+2026-08-17 10:23:14.073 [INFO] [TRACE] UI判断: vcc=3.24 typeOk=False statOk=True autoCtrl=True online=True sqlConn=False sqlRec=False pwd=0x00 tType=firstTest mType=SFP-UX3320T
+2026-08-17 10:23:14.082 [INFO] [TRACE] DDM: vcc=3.242V temp=25.61C bias=18.31 txPwr=-5.77 rxPwr=-25.09

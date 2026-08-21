@@ -1,0 +1,7 @@
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\QSFP模块终测检查软件.csprojResolveAssemblyReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\QSFP模块终测检查软件.csproj.ResolveComReference.cache
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\SFP模块终测检查软件.Login_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\SFP模块终测检查软件.Main_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\SFP模块终测检查软件.Properties.Resources.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\SFP模块终测检查软件.Setup_Form.resources
+D:\ProgramData\ProjectDate\Projects\sfp-evb-heater-control\addproject\addproject0\QSFP模块自动测试软件1-将原来调节APD的方式换成接收采样突变点\SFP模块终测检查软件\obj\CodexVerify\QSFP模块终测检查软件.csproj.GenerateResource.Cache

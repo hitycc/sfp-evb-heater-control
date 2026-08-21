@@ -499,24 +499,33 @@ namespace FibertopTest_Common
 
             return true;
         }
-
         public bool GetFlashInfoDebug()
         {
             byte[] readbuffer = new byte[256];
             int i;
 
             if (SelectTable(3) == false) return false; // 表选择
-            if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //{
+            //    return false;
+            //}
+
+            if (!I2C_ReadSplit(0xA2, 128, readbuffer, 128))
             {
                 return false;
             }
+
             for (i = 0; i < 128; i++)
             {
                 TestResult2.flash_data[i + 512] = readbuffer[i];
             }
 
             if (SelectTable(4) == false) return false; // 表选择
-            if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //{
+            //    return false;
+            //}
+            if (!I2C_ReadSplit(0xA2, 128, readbuffer, 128))
             {
                 return false;
             }
@@ -526,20 +535,31 @@ namespace FibertopTest_Common
             }
 
             if (SelectTable(5) == false) return false; // 表选择
-            if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //{
+            //    return false;
+            //}
+            if (!I2C_ReadSplit(0xA2, 128, readbuffer, 128))
             {
                 return false;
             }
+
             for (i = 0; i < 128; i++)
             {
                 TestResult2.flash_data[i + 768] = readbuffer[i];
             }
 
             if (SelectTable(6) == false) return false; // 表选择
-            if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //if (TWI_ReadPage(0xa2, 128, readbuffer, 128) != 128)
+            //{
+            //    return false;
+            //}
+
+            if (!I2C_ReadSplit(0xA2, 128, readbuffer, 128))
             {
                 return false;
             }
+
             for (i = 0; i < 128; i++)
             {
                 TestResult2.flash_data[i + 896] = readbuffer[i];
@@ -573,10 +593,16 @@ namespace FibertopTest_Common
             }
 
             // 再次读取A2: 0-95
-            if (TWI_ReadPage(0xa2, 0, readbuffer, 96) != 96)
+            //if (TWI_ReadPage(0xa2, 0, readbuffer, 96) != 96)
+            //{
+            //    return false;
+            //}
+
+            if (!I2C_ReadSplit(0xA2, 0, readbuffer, 96))
             {
                 return false;
             }
+
             for (i = 0; i < 96; i++)
             {
                 TestResult2.flash_data[i + 256] = readbuffer[i];
@@ -1675,26 +1701,29 @@ namespace FibertopTest_Common
             }
             //
 
-            //写入A2Lower 0x60-0x77 保留字节 默认值00
-            TWI_WritePage(0xa2, 0x60, A2Lower60h, 24);
+            // SFP_EVB_Heater 单次 I2C 事务最多支持 8 字节。这里的数据块
+            // 长度为 24/93/96/105 字节，必须分包传输；直接整块发送会导致
+            // 设备超时或只返回部分数据，进而使保存 Tx 参数失败。
+            // 写入 A2Lower 0x60-0x77 保留字节，默认值 00。
+            if (!I2C_WriteSplit(0xa2, 0x60, A2Lower60h, 24)) return false;
             Thread.Sleep(10);
 
-            if (TWI_WritePage(0xa2, 0x00, A2hLow96, 96) != 96) return false;
+            if (!I2C_WriteSplit(0xa2, 0x00, A2hLow96, 96)) return false;
             Thread.Sleep(10);
-            if (TWI_ReadPage(0xa2, 0x00, r_A2hLow96, 96) != 96) return false;
+            if (!I2C_ReadSplit(0xa2, 0x00, r_A2hLow96, 96)) return false;
 
             if (SelectTable(4) == false) return false; //表选择
-            if (TWI_WritePage(0xa2, 0x80, w_biasLUT, 105) != 105) return false;
+            if (!I2C_WriteSplit(0xa2, 0x80, w_biasLUT, 105)) return false;
             Thread.Sleep(10);
-            if (TWI_ReadPage(0xa2, 0x80, r_biasLUT, 105) != 105) return false;
+            if (!I2C_ReadSplit(0xa2, 0x80, r_biasLUT, 105)) return false;
 
             if (SelectTable(5) == false) return false; //表选择
-            if (TWI_WritePage(0xa2, 0x80, w_modLUT, 105) != 105) return false;
+            if (!I2C_WriteSplit(0xa2, 0x80, w_modLUT, 105)) return false;
             Thread.Sleep(10);
-            if (TWI_ReadPage(0xa2, 0x80, r_modLUT, 105) != 105) return false;
+            if (!I2C_ReadSplit(0xa2, 0x80, r_modLUT, 105)) return false;
 
             if (SelectTable(6) == false) return false; //表选择
-            if (TWI_ReadPage(0xa2, 0x80, r_apdLUT, 105) != 105) return false;
+            if (!I2C_ReadSplit(0xa2, 0x80, r_apdLUT, 105)) return false;
             for (i = 0; i < 105; i++)
             {
                 w_apdLUT[i] += r_apdLUT[i];
@@ -1721,7 +1750,7 @@ namespace FibertopTest_Common
             }
 
             //if (SelectTable(3) == false) return false;
-            if (TWI_ReadPage(0xa2, 0x80, r_regTbl3, 93) != 93)
+            if (!I2C_ReadSplit(0xa2, 0x80, r_regTbl3, 93))
             {
                 return false;
             }

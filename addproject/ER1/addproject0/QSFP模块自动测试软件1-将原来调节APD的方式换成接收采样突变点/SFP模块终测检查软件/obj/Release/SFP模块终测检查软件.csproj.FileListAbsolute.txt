@@ -1,0 +1,183 @@
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\My Data\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\My Projects\Test Software\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Ivi.ConfigServer.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Ivi.Driver.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\bin\Release\Ivi.Scope.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Ivi.ConfigServer.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Ivi.Driver.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Ivi.Scope.Interop.DLL
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+E:\我的项目\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Ivi.ConfigServer.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Ivi.Driver.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\bin\Release\Ivi.Scope.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.01\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\Ivi.ConfigServer.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\Ivi.Driver.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\bin\Release\Ivi.Scope.Interop.DLL
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.04_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+E:\MyProject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.03.05_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.20_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.24_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.28_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.05.30_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.01_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\bin\Release\SFPXFP模块自动测试软件.pdb
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\bin\Release\Agilent.AgilentInfiniiumDCA.Interop.DLL
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\bin\Release\Agilent.Itl.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\bin\Release\Ivi.Visa.Interop.dll
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\ResolveAssemblyReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Login_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Main_Form.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.Properties.Resources.resources
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.03_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.GenerateResource.Cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.18_ok\SFP模块终测检查软件\obj\Release\SFP模块终测检查软件.csproj.ResolveComReference.cache
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.18_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.exe
+F:\myproject\SFPXFP\SFPXFP模块自动测试软件2024.06.18_ok\SFP模块终测检查软件\obj\Release\SFPXFP模块自动测试软件.pdb
